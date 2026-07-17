@@ -1,0 +1,11 @@
+any loaction:
+	->press windows + r
+	->type "CMD"
+	........
+
+To generate PDF:
+	->uvicorn Apps.app:app --reload
+	#if that won't work then try changing the port
+	->uvicorn Apps.app:app --reload --port 8001
+
+	note: you can use port inbetween 8000 to 8005

@@ -1,0 +1,194 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[margin=0.75in, bottom=1.4in, footskip=0.6in]{geometry}
+% === DYNAMIC PREAMBLE ===
+\VAR{preamble | safe}
+% === END DYNAMIC PREAMBLE ===
+\usepackage[dvipsnames,svgnames,x11names]{xcolor}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{tikz}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{multicol}
+
+\definecolor{ImageNavy}{HTML}{001f5c}
+
+% === LINK COLORS ===
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=black,
+    citecolor=black
+}
+
+% ==========================================
+% FONT COMMANDS (XeLaTeX / fontspec compatible)
+% ==========================================
+\newcommand{\journalmetafont}{\fontsize{10}{12}\selectfont}
+\newfontfamily\timesfont{Times New Roman}[Path=../../../Fonts/, UprightFont=*, BoldFont=*-Bold, ItalicFont=*-Italic, BoldItalicFont=*-BoldItalic]
+\newfontfamily\calibrifont{Calibri}[Path=../../../Fonts/, UprightFont=*-Regular, BoldFont=*-Bold, ItalicFont=*-Italic, BoldItalicFont=*-BoldItalic]
+\newcommand{\articletypefont}{\fontsize{9}{13}\timesfont\itshape\bfseries\selectfont}
+\newcommand{\articleTitleFont}{\fontsize{22}{24}\bfseries\color{ImageNavy}\selectfont}
+\newcommand{\authorfont}{\fontsize{11}{15}\bfseries\selectfont}
+\newcommand{\affiliationfont}{\fontsize{10}{13}\selectfont}
+\newcommand{\emailfont}{\fontsize{9}{11}\selectfont}
+\newcommand{\headingfont}{\fontsize{16}{14}\calibrifont\bfseries\selectfont}
+\newcommand{\subheadingfont}{\fontsize{10}{14}\bfseries\selectfont}
+\newcommand{\contentfont}{\fontsize{10}{12}\calibrifont\selectfont}
+\newcommand{\footerfont}{\fontsize{8}{11}\selectfont}
+\newcommand{\citationfont}{\fontsize{8}{11}\selectfont}
+
+% ==========================================
+% SECTION FORMATTING
+% ==========================================
+\titleformat{\section}{\headingfont}{\thesection}{1em}{}
+\titleformat{\subsection}{\subheadingfont}{\thesubsection}{1em}{}
+\titlespacing{\section}{0pt}{6pt}{8pt}
+
+% ==========================================
+% EXTRACT AUTHOR PARTS FOR CITATION
+% ==========================================
+\BLOCK{ set author_parts = author.split(" ") }
+\BLOCK{ set author_last = author_parts[-1] }
+\BLOCK{ set author_first_initial = author_parts[0][0:1] if author_parts|length > 1 else "" }
+\BLOCK{ set pub_year = published.split("-")[-1] if "-" in published else published }
+
+% ==========================================
+% HEADER & FOOTER --- DEFAULT (subsequent pages)
+% ==========================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyfoot[C]{%
+    \citationfont
+    \vspace{0.1cm}
+    \noindent \textbf{Citation:} \VAR{author_last} \VAR{author_first_initial} (\VAR{pub_year}). \VAR{title | latex_escape | safe}. \VAR{shortJournalName | latex_escape | safe}: \VAR{pdfNo}.
+}
+
+% ==========================================
+% FIRST PAGE STYLE
+% ==========================================
+\fancypagestyle{firstpage}{
+    \fancyhf{}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0pt}
+    \fancyfoot[C]{
+        \begin{minipage}{\textwidth}
+            \hrule height 0.4pt
+            \vskip 0.15cm
+            \noindent \footerfont \textbf{Received:} \VAR{received}, Manuscript No. \VAR{manuscriptNo | latex_escape | safe}; \textbf{Editor assigned:} \VAR{editorAssigned}, PreQC No. \VAR{manuscriptNo | latex_escape | safe} (PQ); \textbf{Reviewed:} \VAR{reviewed}, QC No. \VAR{manuscriptNo | latex_escape | safe}; \textbf{Revised:} \VAR{revised}, Manuscript No. \VAR{manuscriptNo | latex_escape | safe} (R); \textbf{Published:} \VAR{published}
+            \vskip 0.15cm
+            \hrule height 0.4pt
+            \vskip 0.15cm
+            \noindent \citationfont \textbf{Citation:} \VAR{author_last} \VAR{author_first_initial} (\VAR{pub_year}). \VAR{title | latex_escape | safe}. \VAR{shortJournalName | latex_escape | safe}: \VAR{pdfNo}.
+        \end{minipage}
+    }
+}
+
+% ==========================================
+% MAIN DOCUMENT
+% ==========================================
+\begin{document}
+
+\thispagestyle{firstpage}
+
+% --- Top header block: logo + journal metadata ---
+\noindent
+\begin{minipage}[t]{3.4cm}
+    \vspace{0pt}
+    \includegraphics[height=3.81cm, width=3.4cm]{../../../Logo/intresjournal.jpeg}
+\end{minipage}%
+\hspace{0.3cm}
+\begin{minipage}[t]{\dimexpr\textwidth-3.7cm\relax}
+    \vspace{0pt}
+    \raggedright
+    \journalmetafont
+    \VAR{journalName | latex_escape | safe} (ISSN: \VAR{ISSN | latex_escape | safe}) Vol. \VAR{volume}(\VAR{issues}) pp. \VAR{pdfNo}, \VAR{published} \\
+    DOI: \href{https://doi.org/\VAR{doi | safe}}{https://doi.org/\VAR{doi | safe}} \\
+    Available online \href{\VAR{parentLink | safe}}{\VAR{parentLink | safe}} \\
+    Copyright \copyright\ \VAR{pub_year} International Research Journals
+
+    \vspace{1.7cm}
+    {\articletypefont \VAR{type | latex_escape | safe}}
+\end{minipage}
+
+\vspace{0.4cm}
+
+% --- Title, author, affiliation block ---
+\begin{center}
+    {\articleTitleFont \VAR{title | latex_escape | safe}} \\
+    \vspace{0.25cm}
+    {\authorfont \VAR{author | latex_escape | safe}\textsuperscript{*}} \\
+    \vspace{0.15cm}
+    {\affiliationfont \VAR{authorsDepartment | latex_escape | safe}} \\
+    {\emailfont E-mail: \href{mailto:\VAR{email}}{\VAR{email | latex_escape | safe}}}
+\end{center}
+
+\vspace{0.4cm}
+
+% ==========================================
+% BODY --- TWO-COLUMN LAYOUT
+% ==========================================
+\contentfont
+\setlength{\columnsep}{0.7cm}
+\begin{multicols}{2}
+
+    \section*{INTRODUCTION}
+    \begin{otherlanguage}{\VAR{lang_name}}
+    \VAR{introduction | latex_escape | safe}
+    \end{otherlanguage}
+
+    \vspace{0.4em}
+
+    \section*{DESCRIPTION}
+    \begin{otherlanguage}{\VAR{lang_name}}
+    \VAR{description | latex_escape | safe}
+    \end{otherlanguage}
+
+    \vspace{0.4em}
+
+    \section*{CONCLUSION}
+    \begin{otherlanguage}{\VAR{lang_name}}
+    \VAR{conclusion | latex_escape | safe}
+    \end{otherlanguage}
+
+    \vspace{0.4em}
+
+    % ==========================================
+    % REFERENCES
+    % ==========================================
+    \section*{REFERENCES}
+    {\citationfont
+    \BLOCK{ if content|length == 0 }
+        \noindent No references generated.
+    \BLOCK{ else }
+    \BLOCK{ for key, item in content.items() }
+        \noindent\hangindent=1.5em\hangafter=1
+        \BLOCK{ if item.authors_short|length > 3 }
+            \VAR{item.authors_short | latex_escape | safe} et al.
+        \BLOCK{ else }
+            \VAR{item.authors_short | latex_escape | safe}
+        \BLOCK{ endif }
+        (\VAR{item.published}).
+        \BLOCK{ if item.url }
+            \href{\VAR{item.url | safe}}{\VAR{item.title | latex_escape | safe}.}
+        \BLOCK{ else }
+            \VAR{item.title | latex_escape | safe}.
+        \BLOCK{ endif }
+        \textit{\VAR{item.journalShortName | latex_escape | safe}},
+        \BLOCK{ if item.issues }
+            \VAR{item.volume}(\VAR{item.issues}):\VAR{item.pageRangeOrNumber}.
+        \BLOCK{ else }
+            \VAR{item.volume}:\VAR{item.pageRangeOrNumber}.
+        \BLOCK{ endif }
+
+    \BLOCK{ endfor }
+    \BLOCK{ endif }
+    }
+
+\end{multicols}
+
+\end{document}
