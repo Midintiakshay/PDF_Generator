@@ -4,6 +4,8 @@ from Apps.models_journal import PulsusInputStr, PulsusOutputStr
 from Apps.language_fonts import LatexLanguageConfig
 from Apps.library_import import *
 from Apps.library_import import pathOfPathLib
+from Apps.template_configs import TemplateFactory
+
 
 
 
@@ -277,19 +279,7 @@ class PipelineService:
         """
         response = PipelineService._ask_gemini_with_retries(prompt)
 
-        if journal.brandName == "alliedAcademy.tex":
-            storeTempTitle = response.split(": ")
-            if len(storeTempTitle) != 1:
-                count = 0
-                for i in storeTempTitle:
-                    storeTempTitle[count] = i.capitalize()
-                    count += 1
-                response = ": ".join(storeTempTitle)
-            else:
-                response = response.capitalize()
-            storeTempTitle = None
-
-        return response.strip()
+        return TemplateFactory.get(journal.brandName).format_title(response)
 
     # =======================
     # AUTHOR FORMAT UTILITIES
@@ -384,21 +374,7 @@ class PipelineService:
                 "year": int(journal.published.split("-")[-1]),
                 "month": str(journal.published.split("-")[1]),
                 "manuscriptNo": journal.manuscriptNo,
-                "QCNo": (
-                    f"Q-{journal.manuscriptNo.split('-')[-1]}"
-                    if journal.brandName == "hilaris.tex"
-                    else journal.manuscriptNo
-                ),
-                "preQCNo": (
-                    f"P-{journal.manuscriptNo.split('-')[-1]}"
-                    if journal.brandName == "hilaris.tex"
-                    else journal.manuscriptNo
-                ),
-                "RManuNo": (
-                    f"R-{journal.manuscriptNo.split('-')[-1]}"
-                    if journal.brandName == "hilaris.tex"
-                    else journal.manuscriptNo
-                ),
+                **TemplateFactory.get(journal.brandName).format_manuscript_numbers(journal.manuscriptNo),
                 "volume": (
                     f"0{journal.volume}"
                     if len(str(journal.volume)) == 1
@@ -443,116 +419,20 @@ class PipelineService:
             html_template = env_html.get_template("Format.html")
             forHtml = copy.deepcopy(output_data[journal.id])
 
-            # Logic for processing references for HTML
-            if journal.brandName == "Irjesti.tex":
-                start = 0
-                for i in forHtml["content"].keys():
-                    start += 1
-                    storeChangedName = f"[{forHtml['content'][i]['authors_short'].split(', ')[0]} et al., {forHtml['content'][i]['published']}]"
-                    forHtml["introduction"] = forHtml["introduction"].replace(
-                        f"[{start}].",
-                        f"[<a href='#{start}' title='{start}'>{storeChangedName}</a>].</p><p>",
-                    )
-                    forHtml["description"] = forHtml["description"].replace(
-                        f"[{start}].",
-                        f"[<a href='#{start}' title='{start}'>{storeChangedName}</a>].</p><p>",
-                    )
-                    forHtml["discussion"] = forHtml["discussion"].replace(
-                        f"[{start}].",
-                        f"[<a href='#{start}' title='{start}'>{storeChangedName}</a>].</p><p>",
-                    )
-            else:
-                for i in range(1, len(forHtml["content"]) + 1):
-                    forHtml["introduction"] = forHtml["introduction"].replace(
-                        f"[{i}].", f"[<a href='#{i}' title='{i}'>{i}</a>].</p><p>"
-                    )
-                    forHtml["description"] = forHtml["description"].replace(
-                        f"[{i}].", f"[<a href='#{i}' title='{i}'>{i}</a>].</p><p>"
-                    )
-                    forHtml["discussion"] = forHtml["discussion"].replace(
-                        f"[{i}].", f"[<a href='#{i}' title='{i}'>{i}</a>].</p><p>"
-                    )
-                    forHtml["abstract"] = forHtml["abstract"].replace(
-                        f"[{i}].", f"[<a href='#{i}' title='{i}'>{i}</a>].</p><p>"
-                    )
-                    forHtml["conclusion"] = forHtml["conclusion"].replace(
-                        f"[{i}].", f"[<a href='#{i}' title='{i}'>{i}</a>].</p><p>"
-                    )
+            # Logic for processing in-text citations for HTML (numeric or author-date)
+            forHtml = TemplateFactory.get(journal.brandName).link_in_text_citations_html(forHtml)
 
             forHtml["description"] = forHtml["description"].replace(r"\n\n", "</p><p>")
             forHtml["description"] = forHtml["description"].replace(r"\n", "</p><p>")
 
-            storeBody = {}
-
-            if journal.brandName == "alliedAcademy.tex":
-                storeBody["Introduction"] = forHtml["introduction"]
-                storeBody["Conclusion"] = forHtml["conclusion"]
-            elif journal.brandName == "omics.tex":
-                storeBody["Abstract"] = forHtml["abstract"]
-                storeBody["Keywords"] = forHtml["keywords"]
-                storeBody["Introduction"] = forHtml["introduction"]
-                storeBody["Description"] = forHtml["description"]
-                storeBody["Conclusion"] = forHtml["conclusion"]
-            elif journal.brandName == "hilaris.tex":
-                storeBody["Introduction"] = forHtml["introduction"]
-                storeBody["Description"] = forHtml["description"]
-                storeBody["Conclusion"] = forHtml["conclusion"]
-                storeBody["Acknowledgement"] = None
-                storeBody["Conflict_of_Interest"] = None
-            elif journal.brandName == "iomc.tex":
-                storeBody["Introduction"] = forHtml["introduction"]
-                storeBody["Description"] = forHtml["description"]
-                storeBody["Conclusion"] = forHtml["conclusion"]
-            elif journal.brandName == "Irjesti.tex":
-                storeBody["Introduction"] = forHtml["introduction"]
-                storeBody["Description"] = forHtml["description"]
-                storeBody["Discussion"] = forHtml["discussion"]
-                storeBody["Conclusion"] = forHtml["conclusion"]
-            elif journal.brandName == "ABAcademies.tex":
-                storeBody["Abstract"] = forHtml["abstract"]
-                storeBody["Keywords"] = forHtml["keywords"]
-                storeBody["Introduction"] = forHtml["introduction"]
-                storeBody["Description"] = forHtml["description"]
-                storeBody["Discussion"] = forHtml["discussion"]
-                storeBody["Conclusion"] = forHtml["conclusion"]
-            elif journal.brandName == "Interesjournal.tex":
-                storeBody["Introduction"] = forHtml["introduction"]
-                storeBody["Description"] = forHtml["description"]
-                storeBody["Conclusion"] = forHtml["conclusion"]
-            else:
-                storeBody["Introduction"] = forHtml["introduction"]
-                storeBody["Description"] = forHtml["description"]
-                storeBody["Conclusion"] = forHtml["conclusion"]
-
-            forHtml["storeBody"] = storeBody
+            forHtml["storeBody"] = TemplateFactory.get(journal.brandName).get_html_body_sections(forHtml)
 
             count = 0
             forHtml["storeRefPart"] = ""
             for i in forHtml["content"].values():
                 count += 1
                 i["issues"] = f"({i['issues']})" if i.get("issues") else ""
-
-                if journal.brandName == "alliedAcademy.tex":
-                    temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors_short"]}. <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>. {i["journalShortName"]}. {i["published"]};{i["volume"]}{i["issues"]}:{i["pageRangeOrNumber"]}.
-                    <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p></li>"""
-                elif journal.brandName == "omics.tex":
-                    temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors_short"]} ({i["published"]}) <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>.{i["journalShortName"]} {i["volume"]}:{i["pageRangeOrNumber"]}.
-                    <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p></li>"""
-                elif journal.brandName == "hilaris.tex":
-                    temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors_full"]}. <a href="{i["parentLink"]}" target="_blank">"{i["title"]}"</a>.<i>{i["journalShortName"]}</i> {i["volume"]} ({i["published"]}):{i["pageRangeOrNumber"]}.
-                    <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p></li>"""
-                elif journal.brandName == "iomc.tex":
-                    temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors_short"]} <a href="{i["url"]}" target="_blank">"{i["title"]}"</a>.<i>{i["journalShortName"]}</i> ({i["published"]});{i["volume"]}:{i["pageRangeOrNumber"]}.
-                    <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p></li>"""
-                elif journal.brandName == "ABAcademies.tex":
-                    temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors_short"]} ({i["published"]}). <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>. <i>{i["journalShortName"]}</i>, {i["volume"]}{i["issues"]}:{i["pageRangeOrNumber"]}.
-                    <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p></li>"""
-                elif journal.brandName == "Interesjournal.tex":
-                    temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors_short"]} ({i["published"]}). <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>. <i>{i["journalShortName"]}</i>, {i["volume"]}{i["issues"]}:{i["pageRangeOrNumber"]}.
-                    <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p></li>"""
-                else:
-                    temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors_short"]}. <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>. {i["journalShortName"]}. {i["published"]};{i["volume"]}{i["issues"]}:{i["pageRangeOrNumber"]}.
-                    <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p></li>"""
+                temp = TemplateFactory.get(journal.brandName).render_html_reference(count, i)
 
                 forHtml["storeRefPart"] = f"""{forHtml['storeRefPart']}\n{temp}"""
 
@@ -638,22 +518,8 @@ class PipelineService:
 
         forPdf = copy.deepcopy(output_data[journal.id])
 
-        if journal.brandName == "Irjesti.tex":
-            start = 0
-            for i in forPdf["content"].keys():
-                start += 1
-                storeChangedName = f"({forPdf['content'][i]['authors_short'].split(', ')[0]} et al., {forPdf['content'][i]['published']})."
-                storeChangedName = "rizzBro" + storeChangedName + "hoez"
-
-                forPdf["introduction"] = forPdf["introduction"].replace(
-                    f"[{start}].", storeChangedName
-                )
-                forPdf["description"] = forPdf["description"].replace(
-                    f"[{start}].", storeChangedName
-                )
-                forPdf["discussion"] = forPdf["discussion"].replace(
-                    f"[{start}].", storeChangedName
-                )
+        # Logic for processing in-text citations for PDF/LaTeX (brand-specific)
+        forPdf = TemplateFactory.get(journal.brandName).link_in_text_citations_pdf(forPdf)
 
         rendered_latex = template.render(**forPdf)
 

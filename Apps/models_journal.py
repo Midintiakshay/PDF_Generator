@@ -40,6 +40,7 @@ from Apps.library_import import (
     datetime,
 )
 from Apps.services.io_service import IOService
+from Apps.template_configs import TemplateFactory
 
 
 class GeminiRequest(BaseModel):
@@ -428,76 +429,39 @@ class PulsusInputStr(BaseModel):
         """
         Auto-calculate workflow dates after model initialization.
 
-        This method is called automatically after the model is instantiated.
-        It calculates key dates in the journal submission workflow based on:
-        1. The received date (submission date)
-        2. The journal brand (determines day-counting method)
-        3. Pre-defined delay periods for each stage
-
-        Workflow stages:
-        - Editor Assigned: 2 days after received
-        - Reviewed: 14 days after editor assigned (16 days from received)
-        - Revised: 7 days after reviewed (23 days from received)
-        - Published: 7 days after revised (30 days from received)
-
-        For alliedAcademy journals, these are business days.
-        For other brands, calendar days are used with weekend adjustments.
+        Delegates all date-interval and business-day logic to the
+        TemplateFactory so brand-specific rules live in one place.
 
         Side effects:
             - Modifies self.editorAssigned, self.reviewed, self.revised, self.published
             - Reformats self.received to DD-Mon-YYYY format
         """
-        tempDate = []
-        if self.brandName == "alliedAcademy.tex":
-            # Days for each workflow stage: [editor assign, review, revise, publish]
-            tempDate = [2, 14, 7, 7]
-        else:
-            # For other brands (hilaris, omics, etc.)
-            tempDate = [2, 14, 5, 7]
+        template = TemplateFactory.get(self.brandName)
+        d = template.date_intervals          # [editor_assign, review, revise, publish]
 
         # Parse the received date from YYYY-MM-DD format
         received_date = datetime.datetime.strptime(self.received, "%Y-%m-%d").date()
 
-        # Calculate and format each workflow date
+        # Calculate and format each workflow date via the template's business-day logic
         self.editorAssigned = DateUtils.format_date(
-            DateUtils.add_business_days(received_date, tempDate[0], self.brandName)
+            template.add_business_days(received_date, d[0])
         )
         self.reviewed = DateUtils.format_date(
-            DateUtils.add_business_days(
-                received_date, tempDate[0] + tempDate[1], self.brandName
-            )
+            template.add_business_days(received_date, d[0] + d[1])
         )
         self.revised = DateUtils.format_date(
-            DateUtils.add_business_days(
-                received_date, tempDate[0] + tempDate[1] + tempDate[2], self.brandName
-            )
+            template.add_business_days(received_date, d[0] + d[1] + d[2])
         )
         self.published = DateUtils.format_date(
-            DateUtils.add_business_days(
-                received_date,
-                tempDate[0] + tempDate[1] + tempDate[2] + tempDate[3],
-                self.brandName,
-            )
+            template.add_business_days(received_date, d[0] + d[1] + d[2] + d[3])
         )
         self.received = DateUtils.format_date(received_date)
 
     @computed_field
     @property
     def citeAuthorFormate(self) -> str:
-        if self.brandName == "hilaris.tex":
-            return """author full names(there must be 3 to 6 authors and seperated with comma). title of that journal inside double quotation(“ ”). Journal short name Volume of the journal (year of publishing inside parenthesis):the page range or the number.end it with a full stop (for example: 'first author full name, second author full name, third author full name. “titleOFtheJournal.” journalShortName Volume (year):ThePageRangeOrTheNumber.')"""
-
-        elif self.brandName == "alliedAcademy.tex":
-            return """author names(first name + the remainings name's first letter(ex.: Arupa Nanda Swain then that should be Arupa NS) and there must be 3 or less, not more authors then that and seperated with comma). title of that journal. Journal short name. year of publishing;Volume of the journal:the page range or the number.(for example: 'author n, author n, author n. titleOFtheJournal. journalShortName. year;Volume:ThePageRangeOrTheNumber.')"""
-
-        elif self.brandName == "omics.tex":
-            return """author names(first name + the remainings name's first letter(ex.: Arupa Nanda Swain then that should be Arupa NS) and there must be 3 to 6 authors and seperated with comma) (year of publishing inside parenthesis) title of that journal. Journal short name Volume of the journal:the page range or the number.(for example: 'author n, author n, author n (year) titleOFtheJournal. journalShortName Volume:ThePageRangeOrTheNumber')"""
-
-        elif self.brandName == "ABAcademies.tex":
-            return """author names(first name + the remainings name's first letter(ex.: Arupa Nanda Swain then that should be Arupa NS) and there must be 3 or less authors and seperated with comma). (year of publishing inside parenthesis). title of that journal. Journal short name, Volume(Issue):the page range or the number.(for example: 'author n, author n, author n. (year). titleOFtheJournal. journalShortName, Volume(Issue):ThePageRangeOrTheNumber.')"""
-
-        else:
-            return """author names(first name + the remainings name's first letter(ex.: Arupa Nanda Swain then that should be Arupa NS) and there must be 3 or less, not more authors then that and seperated with comma). title of that journal. Journal short name. year of publishing;Volume of the journal:the page range or the number.(for example: 'author n, author n, author n. titleOFtheJournal. journalShortName. year;Volume:ThePageRangeOrTheNumber.')"""
+        """Returns the LLM citation format prompt for this brand — delegated to the template config."""
+        return TemplateFactory.get(self.brandName).get_citation_format_prompt()
 
     @field_validator("author")
     @classmethod
@@ -1271,51 +1235,18 @@ class PulsusOutputStr(BaseModel):
         """
         Generate a properly formatted citation for this journal article.
 
-        Creates a complete citation in the format appropriate for the journal brand.
-        Different journals use different citation styles (Chicago, APA-style, etc.).
-
-        The citation format depends on brandName:
-        - hilaris.tex: "LastName, FirstName. "Title." ShortName Volume (Year):page."
-        - alliedAcademy.tex: "LastName Initial. Title. ShortName. Year;Volume(Issue):page."
-        - omics.tex: "LastName I. (Year) Title. ShortName Volume:page."
-        - others: Similar to alliedAcademy with DOI appended.
+        Delegates to the brand-specific template so that citation style
+        is defined in one place (Apps/template_configs/<brand>.py).
 
         Returns:
             str: Fully formatted citation ready for bibliographies and references.
-
-        Example:
-            >>> output.author = "John Michael Smith"
-            >>> output.title = "Machine Learning"
-            >>> output.brandName = "alliedAcademy.tex"
-            >>> output.citation
-            'Smith J. Machine Learning. JAI. 2024;5(2):45.'
-
-        Note:
-            Helper function formatAuthor() abbreviates names as: "LastName Initials"
-            where Initials are the first letters of all names except the last.
         """
-
-        def formatAuthor(name: str) -> str:
-            """Format author name as LastName + initials of other names."""
-            intials = ""
-            name = name.split(" ")
-            for i in range(len(name) - 1):
-                intials += name[i][0]
-            return f"{name[-1]} {intials}"
-
-        if self.brandName == "hilaris.tex":
-            justToCite = self.author.split(" ")
-            justToCite = f"{justToCite[-1]}, {' '.join(justToCite[:-1])}"
-            return f"""{justToCite}. "{self.title}." {self.shortJournalName} {self.volume} ({self.published.split("-")[-1]}):{self.pdfNo}."""
-
-        elif self.brandName == "alliedAcademy.tex":
-            return f"""{formatAuthor(self.author)}. {self.title}. {self.shortJournalName}. {self.published.split("-")[-1]};{self.volume}({self.issues}):{self.pdfNo}."""
-
-        elif self.brandName == "omics.tex":
-            return f"""{formatAuthor(self.author)} ({self.published.split("-")[-1]}) {self.title}. {self.shortJournalName} {self.volume}: {self.pdfNo}."""
-
-        elif self.brandName == 'iomc.tex':
-            return f"""{formatAuthor(self.author)}, {self.title}. {self.shortJournalName}({self.published.split("-")[-1]}) {self.volume}: {self.pdfNo}."""
-
-        else:
-            return f"""{formatAuthor(self.author)},({self.published.split("-")[-1]}) {self.title}. {self.shortJournalName} {self.volume}: {self.pdfNo}."""
+        return TemplateFactory.get(self.brandName).format_output_citation(
+            author=self.author,
+            title=self.title,
+            short_journal=self.shortJournalName,
+            volume=self.volume,
+            issues=self.issues,
+            published=self.published,
+            pdf_no=self.pdfNo,
+        )
