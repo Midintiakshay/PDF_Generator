@@ -5,11 +5,19 @@ Abstract base class that every journal template must inherit from.
 
 Adding a new template
 ~~~~~~~~~~~~~~~~~~~~~
-1. Create a new file  Apps/template_configs/<my_brand>.py
+1. Create  Apps/template_configs/<my_brand>.py
 2. Subclass BaseJournalTemplate
-3. Set class-level brand_name  (must match the .tex filename, e.g. "myBrand.tex")
-4. Override only the methods whose behaviour differs from the defaults below
-5. Register it in  Apps/template_configs/factory.py
+3. Set  brand_name  (must match the .tex filename, e.g. "myBrand.tex")
+4. Implement the 3 abstract methods + the 3 prompt methods (see below)
+5. Override any optional hooks that differ from defaults
+6. Register it in  Apps/template_configs/factory.py
+
+Every template file must define these 5 methods directly (no inheritance of defaults):
+    get_references_prompt(journal)   — Step 1 LLM prompt
+    get_sections_prompt(content_data)— Step 2 LLM prompt
+    get_title_prompt(summary)        — Step 3 LLM prompt
+    get_citation_format_prompt()     — inline citation format hint
+    format_output_citation(...)      — final citation string
 """
 
 from __future__ import annotations
@@ -21,9 +29,9 @@ class BaseJournalTemplate(ABC):
     """
     Defines the contract every journal template must fulfil.
 
-    Defaults implement the most common behaviour (calendar-day counting,
-    numeric in-text citations, a simple reference <li>, etc.).
-    Subclasses only need to override what is different for their brand.
+    Shared utilities (calendar math, HTML citation linking, etc.) have
+    default implementations here.  Every prompt and citation style lives
+    exclusively in the concrete template file — nothing is inherited.
     """
 
     # ------------------------------------------------------------------
@@ -41,7 +49,7 @@ class BaseJournalTemplate(ABC):
     def add_business_days(self, start_date: date, days: int) -> date:
         """
         Default: add calendar days; if landing on Sat/Sun, move to Monday.
-        Override this method for weekday-only counting (e.g. alliedAcademy).
+        Override for weekday-only counting (e.g. alliedAcademy).
         """
         current_date = start_date + timedelta(days=days)
         while current_date.weekday() > 4:           # 5=Sat, 6=Sun
@@ -49,14 +57,13 @@ class BaseJournalTemplate(ABC):
         return current_date
 
     # ------------------------------------------------------------------
-    # 3. LLM CITATION PROMPT
+    # 3. LLM CITATION FORMAT PROMPT  (abstract — must define in each file)
     # ------------------------------------------------------------------
     @abstractmethod
     def get_citation_format_prompt(self) -> str:
         """
-        Returns the natural-language prompt snippet that instructs the LLM
-        how to format citations for this journal brand.
-        This is used by PulsusInputStr.citeAuthorFormate.
+        The inline citation format hint sent to the LLM.
+        Used by PulsusInputStr.citeAuthorFormate.
         """
 
     # ------------------------------------------------------------------
@@ -64,7 +71,7 @@ class BaseJournalTemplate(ABC):
     # ------------------------------------------------------------------
     def format_manuscript_numbers(self, manuscript_no: str) -> dict:
         """
-        Default: all three number fields are identical to the raw manuscriptNo.
+        Default: all three fields equal the raw manuscriptNo.
         hilaris.tex overrides this to add Q-, P-, R- prefixes.
         """
         return {
@@ -90,7 +97,6 @@ class BaseJournalTemplate(ABC):
         """
         Default sections rendered in the HTML output.
         Returns an ordered dict of {SectionLabel: content_string | None}.
-        None values are rendered as empty placeholders.
         Override to add/remove/reorder sections for your brand.
         """
         return {
@@ -100,7 +106,7 @@ class BaseJournalTemplate(ABC):
         }
 
     # ------------------------------------------------------------------
-    # 7. IN-TEXT CITATION LINKING  (for HTML output)
+    # 7. IN-TEXT CITATION LINKING — HTML
     # ------------------------------------------------------------------
     def link_in_text_citations_html(self, forHtml: dict) -> dict:
         """
@@ -115,11 +121,11 @@ class BaseJournalTemplate(ABC):
         return forHtml
 
     # ------------------------------------------------------------------
-    # 7b. IN-TEXT CITATION LINKING  (for LaTeX/PDF output)
+    # 7b. IN-TEXT CITATION LINKING — LaTeX / PDF
     # ------------------------------------------------------------------
     def link_in_text_citations_pdf(self, forPdf: dict) -> dict:
         """
-        Default: no transformation needed; LaTeX template handles [N] markers.
+        Default: no transformation; LaTeX template handles [N] markers.
         Irjesti overrides this to substitute bold author-date markers.
         """
         return forPdf
@@ -129,9 +135,8 @@ class BaseJournalTemplate(ABC):
     # ------------------------------------------------------------------
     def render_html_reference(self, count: int, ref: dict) -> str:
         """
-        Default reference <li> format (alliedAcademy / fallback style).
-        Override to change author name usage (short vs full), punctuation,
-        field order, etc.
+        Default <li> format.
+        Override to change author format, punctuation, field order, etc.
         """
         title_query = "+".join(ref.get("title", "").split(" "))
         return (
@@ -148,7 +153,7 @@ class BaseJournalTemplate(ABC):
         )
 
     # ------------------------------------------------------------------
-    # 9. OUTPUT CITATION (PulsusOutputStr.citation computed field)
+    # 9. OUTPUT CITATION  (abstract — must define in each file)
     # ------------------------------------------------------------------
     @abstractmethod
     def format_output_citation(
@@ -162,6 +167,49 @@ class BaseJournalTemplate(ABC):
         pdf_no: int,
     ) -> str:
         """
-        Returns the formatted citation string used in the final PDF output.
-        Each brand has its own citation style (Chicago, APA-like, custom).
+        Formatted citation string used in the final PDF output.
+        Each brand has its own citation style.
+        """
+
+    # ------------------------------------------------------------------
+    # 10. LATEX FONT CONFIGURATION
+    # ------------------------------------------------------------------
+    @property
+    def latex_font(self) -> str:
+        r"""
+        LaTeX fontspec block for this brand's main font.
+        Default is Times New Roman. Override in files that use a different typeface.
+        """
+        return r"""
+        \usepackage{fontspec}
+        \setmainfont{Times New Roman}[
+            Path=../../../Fonts/,
+            UprightFont    = * ,
+            BoldFont       = *-Bold ,
+            ItalicFont     = *-Italic ,
+            BoldItalicFont = *-BoldItalic
+        ]"""
+
+    # ------------------------------------------------------------------
+    # 11–13. LLM PROMPTS  (abstract — must define in each template file)
+    # ------------------------------------------------------------------
+    @abstractmethod
+    def get_references_prompt(self, journal) -> str:
+        """
+        Step-1 prompt: generate 10 structured references (C001-C010).
+        Define the full prompt string in each template file.
+        """
+
+    @abstractmethod
+    def get_sections_prompt(self, content_data: dict) -> str:
+        """
+        Step-2 prompt: turn references into intro/description/summary/abstract/discussion/keywords.
+        Define the full prompt string in each template file.
+        """
+
+    @abstractmethod
+    def get_title_prompt(self, summary: str) -> str:
+        """
+        Step-3 prompt: generate a short article title from the summary.
+        Define the full prompt string in each template file.
         """

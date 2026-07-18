@@ -143,92 +143,29 @@ class LatexLanguageConfig:
     Manage LaTeX language and font configurations.
     """
 
-    # Define it as a class-level variable
-    brand_fonts = {
-        "default": r"""
-        \usepackage{fontspec}
-        \setmainfont{Times New Roman}[
-            Path=../../../Fonts/,
-            UprightFont    = * ,
-            BoldFont       = *-Bold ,
-            ItalicFont     = *-Italic ,
-            BoldItalicFont = *-BoldItalic
-        ]""",
-        "alliedAcademy": r"""
-        \usepackage{fontspec}
-        \setmainfont{Times New Roman}[
-            Path=../../../Fonts/,
-            UprightFont    = * ,
-            BoldFont       = *-Bold ,
-            ItalicFont     = *-Italic ,
-            BoldItalicFont = *-BoldItalic
-        ]""",
-        "hilaris": r"""
-        \usepackage{fontspec}
-        \setmainfont{ArchivoNarrow}[
-            Path=../../../Fonts/,
-            UprightFont    = *-Regular ,
-            BoldFont       = *-Bold ,
-            ItalicFont     = *-Italic ,
-            BoldItalicFont = *-BoldItalic
-        ]""",
-        "iomc": r"""
-        \usepackage{fontspec}
-        \setmainfont{Times New Roman}[
-            Path=../../../Fonts/,
-            UprightFont    = * ,
-            BoldFont       = *-Bold ,
-            ItalicFont     = *-Italic ,
-            BoldItalicFont = *-BoldItalic
-        ]""",
-        "omics": r"""
-        \usepackage{fontspec}
-        \setmainfont{Times New Roman}[
-            Path=../../../Fonts/,
-            UprightFont    = * ,
-            BoldFont       = *-Bold ,
-            ItalicFont     = *-Italic ,
-            BoldItalicFont = *-BoldItalic
-        ]""",
-        "Irjesti": r"""
-        \usepackage{fontspec}
-        \setmainfont{Calibri}[
-            Path=../../../Fonts/,
-            UprightFont    = *-Regular ,
-            BoldFont       = *-Bold ,
-            ItalicFont     = *-Italic ,
-            BoldItalicFont = *-BoldItalic
-        ]""",
-        "ABAcademies": r"""
-        \usepackage{fontspec}
-        \setmainfont{Times New Roman}[
-            Path=../../../Fonts/,
-            UprightFont    = * ,
-            BoldFont       = *-Bold ,
-            ItalicFont     = *-Italic ,
-            BoldItalicFont = *-BoldItalic
-        ]""",
-        "Interesjournal": r"""
-        \usepackage{fontspec}
-        \setmainfont{NotoSans}[
-            Path=../../../Fonts/,
-            UprightFont    = *-Regular ,
-            BoldFont       = *-Regular ,
-            ItalicFont     = *-Regular ,
-            BoldItalicFont = *-Regular ,
-            BoldFeatures   = {FakeBold=1.5} ,
-            ItalicFeatures = {FakeSlant=0.2} ,
-            BoldItalicFeatures = {FakeBold=1.5, FakeSlant=0.2}
-        ]""",
-    }
+    def get_lang_map(self, font_block: str = "") -> dict[str, dict[str, str]]:
+        """
+        Return the language-to-LaTeX config map.
 
-    def get_lang_map(self, brand: str = "default") -> dict[str, dict[str, str]]:
-        # Return the big lang_map you had earlier.
-        # For brevity here we provide just a subset; copy your full map in here.
+        Args:
+            font_block: The complete \\usepackage{fontspec}\\setmainfont{...} block
+                        string for the brand. Provided by each template's
+                        ``latex_font`` property. If empty, falls back to Times New Roman.
+        """
+        if not font_block:
+            font_block = r"""
+        \usepackage{fontspec}
+        \setmainfont{Times New Roman}[
+            Path=../../../Fonts/,
+            UprightFont    = * ,
+            BoldFont       = *-Bold ,
+            ItalicFont     = *-Italic ,
+            BoldItalicFont = *-BoldItalic
+        ]"""
         lang_map = {
             "default": {
                 "polyglossia": r"\setdefaultlanguage{english}",
-                "font": LatexLanguageConfig.brand_fonts.get(brand, LatexLanguageConfig.brand_fonts["default"]),
+                "font": font_block,
             },
             # === Indic Scripts (Devanagari, Tamil, Bengali, etc.) ===
             "hi": {
@@ -773,9 +710,9 @@ class LatexLanguageConfig:
         return lang_map
 
 
-# convenience helper to keep old import style `from Apps.language_fonts import get_lang_map`
-def get_lang_map(brand: str = "default"):
-    return LatexLanguageConfig().get_lang_map(brand)
+# convenience helper — pass the template's latex_font string directly
+def get_lang_map(font_block: str = ""):
+    return LatexLanguageConfig().get_lang_map(font_block)
 
 
 __all__ = ["LatexLanguageConfig", "get_lang_map"]

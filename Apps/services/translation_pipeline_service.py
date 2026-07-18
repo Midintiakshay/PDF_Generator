@@ -4,6 +4,7 @@ from Apps.services.io_service import IOService
 from Apps.services.translate_service import TranslationService
 from Apps.language_fonts import LatexLanguageConfig
 from Apps.models_journal import TranslatePage
+from Apps.template_configs import TemplateFactory
 
 
 class TranslationPipelineService:
@@ -219,9 +220,9 @@ class TranslationPipelineService:
         env_latex.filters["format_reference"] = format_reference
         template = env_latex.get_template(journal_data["brandName"])
 
-        # Determine language setup
-        brand_key = journal_data["brandName"].replace(".tex", "")
-        lang_map = LatexLanguageConfig.get_lang_map(brand_key)
+        # Determine language setup — get font from the brand's template
+        journal_template = TemplateFactory.get(journal_data["brandName"])
+        lang_map = LatexLanguageConfig().get_lang_map(journal_template.latex_font)
 
         target_lang = translatePage.language or output_data[translatePage.id].get(
             "lang", "en"
