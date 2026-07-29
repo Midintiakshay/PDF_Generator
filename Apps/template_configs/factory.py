@@ -24,6 +24,7 @@ from .iomc import IomcTemplate
 from .irjesti import IrjestiTemplate
 from .ab_academies import ABAcademiesTemplate
 from .interesjournal import InteresJournalTemplate
+from .primary_school_library import PrimarySchoolLibraryTemplate
 
 
 # ---------------------------------------------------------------------------
@@ -37,6 +38,7 @@ _REGISTRY: dict[str, BaseJournalTemplate] = {
     "Irjesti.tex":        IrjestiTemplate(),
     "ABAcademies.tex":    ABAcademiesTemplate(),
     "Interesjournal.tex": InteresJournalTemplate(),
+    "PrimarySchoolLibrary.tex": PrimarySchoolLibraryTemplate(),
 }
 
 # Lazy default (used when brand is unknown / new template in progress)

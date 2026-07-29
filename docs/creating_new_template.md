@@ -93,7 +93,34 @@ Define which sections should appear in the generated HTML and in what order. The
 
 ---
 
-## Step 5: Citations and References
+## Step 5: Formatting Hooks (Optional)
+
+You can override how manuscript numbers and titles are formatted before they hit the template.
+
+### A. Manuscript Numbers
+By default, the `QCNo`, `preQCNo`, and `RManuNo` are all exactly equal to the base `manuscript_no`. If your journal adds prefixes (like `Q-` or `P-`), override this:
+
+```python
+    def format_manuscript_numbers(self, manuscript_no: str) -> dict:
+        return {
+            "QCNo": f"Q-{manuscript_no}",
+            "preQCNo": f"P-{manuscript_no}",
+            "RManuNo": f"R-{manuscript_no}",
+        }
+```
+
+### B. Title Formatting
+If your journal enforces specific casing for titles (e.g., Sentence Case), override this hook:
+
+```python
+    def format_title(self, generated_title: str) -> str:
+        # e.g., Allied Academies enforces sentence case
+        return generated_title.strip().capitalize()
+```
+
+---
+
+## Step 6: Citations and References
 
 Journals have wildly different citation styles. You must define how citations are requested from the LLM, how they are rendered in HTML, and how they appear in the final PDF.
 
@@ -144,7 +171,7 @@ If your journal uses `[1]` format, the base class handles this automatically. If
 
 ---
 
-## Step 6: The 3 Core LLM Prompts
+## Step 7: The 3 Core LLM Prompts
 
 Every template **must** define its own prompts for generating the article content. This ensures no template accidentally inherits a prompt that breaks its specific layout requirements.
 
@@ -189,7 +216,7 @@ Generates the 5-7 word title.
 
 ---
 
-## Step 7: Registration
+## Step 8: Registration
 
 Once your `my_new_brand.py` file is complete, you must register it in the factory so the pipeline knows it exists.
 

@@ -291,3 +291,7 @@ SOFTWARE.
 ---
 
 If you'd like, I can replace the contact placeholders with your real name/email and add a GitHub Actions workflow for basic CI (linting/tests).
+
+
+## for testing 
+python -m Apps.testing.test_template
