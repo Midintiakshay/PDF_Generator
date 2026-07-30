@@ -31,6 +31,14 @@ class AlliedAcademyTemplate(BaseJournalTemplate):
         return current_date
 
     # ------------------------------------------------------------------
+    # VOLUME / ISSUE FORMATTING — zero-pad both when single digit
+    # ------------------------------------------------------------------
+    def format_volume_issue(self, volume: "int | str", issues: "int | str") -> "tuple[str, str]":
+        v = f"0{volume}" if len(str(volume)) == 1 else str(volume)
+        i = f"0{issues}" if len(str(issues)) == 1 else str(issues)
+        return v, i
+
+    # ------------------------------------------------------------------
     # 2. INLINE CITATION FORMAT PROMPT
     # ------------------------------------------------------------------
     def get_citation_format_prompt(self) -> str:

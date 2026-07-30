@@ -7,12 +7,60 @@ Self-contained: all prompts, font, and layout defined here.
 """
 
 from __future__ import annotations
+from datetime import date, timedelta
 from .base_template import BaseJournalTemplate
 
 
 class ABAcademiesTemplate(BaseJournalTemplate):
     brand_name = "ABAcademies.tex"
-    date_intervals = [2, 14, 5, 7]
+    #: Days for each workflow stage [editor_assign, review, revise, publish]
+    date_intervals = [2, 14, 5, 7]     # calendar days
+
+    # ------------------------------------------------------------------
+    # 0a. MULTI-PASS FLAG — trigger a 3rd xelatex run once page count is known
+    # ------------------------------------------------------------------
+    needs_page_count_recompile: bool = True
+
+    # ------------------------------------------------------------------
+    # VOLUME / ISSUE FORMATTING — issues: no zero-padding; volume: zero-padded
+    # ------------------------------------------------------------------
+    def format_volume_issue(self, volume: "int | str", issues: "int | str") -> "tuple[str, str]":
+        """
+        ABAcademies: volume is zero-padded when single-digit, but issues is
+        always returned as-is (no leading zero).
+        """
+        v = f"0{volume}" if len(str(volume)) == 1 else str(volume)
+        i = str(issues)   # never zero-pad issues for this brand
+        return v, i
+
+    def build_pdf_no(self, page_count: int) -> str:
+        """
+        ABAcademies citation format requires a page range: "1-{total_pages}".
+        Called by the pipeline after the first-pass PDF is compiled.
+        """
+        return f"1-{page_count}"
+
+    # ------------------------------------------------------------------
+    # 0. DATE LOGIC — calendar days, skip weekends to Monday
+    # ------------------------------------------------------------------
+    # def add_business_days(self, start_date: date, days: int) -> date:
+    #     """Add calendar days; if landing on Sat/Sun, advance to Monday."""
+    #     current_date = start_date + timedelta(days=days)
+    #     while current_date.weekday() > 4:   # 5=Sat, 6=Sun
+    #         current_date += timedelta(days=1)
+    #     return current_date
+
+    # ------------------------------------------------------------------
+    # 0. DATE LOGIC — weekdays only
+    # ------------------------------------------------------------------
+    def add_business_days(self, start_date: date, days: int) -> date:
+        current_date = start_date
+        added_days = 0
+        while added_days < days:
+            current_date += timedelta(days=1)
+            if current_date.weekday() < 5:          # Mon-Fri
+                added_days += 1
+        return current_date
 
     # ------------------------------------------------------------------
     # 1. INLINE CITATION FORMAT PROMPT
@@ -133,7 +181,7 @@ class ABAcademiesTemplate(BaseJournalTemplate):
     def get_sections_prompt(self, content_data: dict) -> str:
         return f"""
             You are given the following data: {content_data}
-            You are also provided with reference details in the format: "C001", "C002", etc., where each reference contains full bibliographic information.
+            You are also provided with reference details in the format: "C001", "C002", etc., where each reference contains full bibliographic information including author names and publication year.
 
             Your task is to process this data and generate structured content in JSON format. Follow these instructions carefully:
 
@@ -157,15 +205,25 @@ class ABAcademiesTemplate(BaseJournalTemplate):
 
             Introduction
             - Word count: 500-700.
-            - Include sequential citation markers from the references: "C001" -> [1], "C002" -> [2], and so on.
+            - Include in-text author-year citations derived from the reference data. Use the following strict citation format rules:
+                * 1 author:  (AuthorLastName, Year)  — e.g. (Hero, 2024)
+                * 2 authors: (Author1LastName & Author2LastName, Year)  — e.g. (Smith & Jones, 2021)
+                * 3 authors: (Author1LastName, Author2LastName & Author3LastName, Year)  — e.g. (Smith, Jones & Lee, 2019)
+                * 4 or more authors: (FirstAuthorLastName et al., Year)  — e.g. (Smith et al., 2020)
             - The Introduction must contain exactly 10 paragraphs, each corresponding to one reference.
             - The citation marker must be placed at the end of the paragraph, immediately before the period, followed by two line breaks(\n).
+            - Do NOT use numeric markers such as [1], [2], or "C001" style codes in the final text.
 
             Description
             - Word count: 500-700.
-            - Include sequential citation markers: "C001" -> [1], "C002" -> [2], and so on.
+            - Include in-text author-year citations derived from the reference data. Apply the same strict citation format rules as above:
+                * 1 author:  (AuthorLastName, Year)  — e.g. (Hero, 2024)
+                * 2 authors: (Author1LastName & Author2LastName, Year)  — e.g. (Smith & Jones, 2021)
+                * 3 authors: (Author1LastName, Author2LastName & Author3LastName, Year)  — e.g. (Smith, Jones & Lee, 2019)
+                * 4 or more authors: (FirstAuthorLastName et al., Year)  — e.g. (Smith et al., 2020)
             - The Description must also contain exactly 10 paragraphs, each corresponding to one reference.
             - The citation marker must be placed at the end of the paragraph, immediately before the period, followed by two line breaks(\n).
+            - Do NOT use numeric markers such as [1], [2], or "C001" style codes in the final text.
 
             Summary
             - Word count: 150-300.
@@ -184,7 +242,7 @@ class ABAcademiesTemplate(BaseJournalTemplate):
 
             Keywords
             - Extract 5-10 keywords directly from the content.
-            - Keywords should be in Title Case and separated by semi-colon(;).
+            - Keywords should be in Title Case and separated by comma(,).
 
             3. Writing Style
             - Formal academic tone.

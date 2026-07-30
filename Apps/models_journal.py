@@ -134,70 +134,21 @@ class LatexRequest(BaseModel):
 
 class DateUtils:
     """
-    Utility class for date formatting and business day calculations.
+    Utility class for date formatting.
 
-    Provides static methods to handle date operations specific to journal workflows,
-    including business day calculations that vary by journal brand/type.
-
-    Different journal brands use different day-counting methods:
-    - alliedAcademy: Counts only weekdays (excludes weekends)
-    - Other brands: Count calendar days, but adjust for weekends
+    Business-day calculations are now fully delegated to each brand's template class
+    via ``template.add_business_days(start_date, days)``.  Every template in
+    ``Apps/template_configs/`` owns its own date logic so that it can be changed
+    per-brand without touching this file.
 
     Notes:
         - All dates are expected in datetime.date format
         - Output dates are formatted as DD-Mon-YYYY (e.g., 15-Jan-2024)
 
     Example:
-        >>> start = datetime.date(2024, 1, 15)
-        >>> new_date = DateUtils.add_business_days(start, 5, "alliedAcademy.tex")
-        >>> formatted = DateUtils.format_date(new_date)
+        >>> formatted = DateUtils.format_date(datetime.date(2024, 1, 15))
+        >>> # '15-Jan-2024'
     """
-
-    @staticmethod
-    def add_business_days(
-        start_date: datetime.date, days: int, brand: str
-    ) -> datetime.date:
-        """
-        Add business days to a start date based on journal brand rules.
-
-        For alliedAcademy journals, counts only weekdays (Mon-Fri).
-        For other journals (hilaris, omics, etc.), adds calendar days but ensures
-        the result doesn't fall on a weekend.
-
-        Args:
-            start_date (datetime.date): The initial date to start counting from.
-            days (int): Number of business days (or calendar days) to add.
-            brand (str): Journal brand name (should match template filename).
-                        Common values: "alliedAcademy.tex", "hilaris.tex", "omics.tex"
-
-        Returns:
-            datetime.date: The calculated date after adding the specified days.
-
-        Raises:
-            ValueError: If brand is not a string or days is not an integer.
-
-        Example:
-            >>> from datetime import date
-            >>> start = date(2024, 1, 15)  # Monday
-            >>> result = DateUtils.add_business_days(start, 5, "alliedAcademy.tex")
-            >>> # Returns date 5 weekdays later
-        """
-        current_date = start_date
-
-        if brand == "alliedAcademy.tex":
-            # Count only weekdays (Monday=0 to Friday=4)
-            added_days = 0
-            while added_days < days:
-                current_date += datetime.timedelta(days=1)
-                if current_date.weekday() < 5:  # 0-4 are weekdays, 5-6 are weekend
-                    added_days += 1
-        else:
-            # Just add calendar days
-            current_date += datetime.timedelta(days=days)
-            # If it lands on Saturday(5) or Sunday(6), move to Monday
-            while current_date.weekday() > 4:
-                current_date += datetime.timedelta(days=1)
-        return current_date
 
     @staticmethod
     def format_date(date_obj: datetime.date) -> str:
@@ -388,6 +339,14 @@ class PulsusInputStr(BaseModel):
         int,
         Field(
             ..., title="The pdf number", description="Enter the pdf number....", gt=0
+        ),
+    ]
+    issueType: Annotated[
+        Optional[str],
+        Field(
+            default="Issue",
+            title="Issue Type",
+            description="Select 'Issue' or 'Special Issue'. Only applies to ABAcademies brand.",
         ),
     ]
     doi: Annotated[
@@ -667,6 +626,14 @@ class UpdateInputPartJournal(BaseModel):
             title="The pdf number",
             description="Enter the pdf number....",
             gt=0,
+        ),
+    ]
+    issueType: Annotated[
+        Optional[str],
+        Field(
+            default=None,
+            title="Issue Type",
+            description="Select 'Issue' or 'Special Issue'. Only applies to ABAcademies brand.",
         ),
     ]
     doi: Annotated[
@@ -1125,6 +1092,14 @@ class PulsusOutputStr(BaseModel):
             ...,
             title="The issue no. of the volume",
             description="Enter the issue no. of the volume...",
+        ),
+    ]
+    issueType: Annotated[
+        Optional[str],
+        Field(
+            default="Issue",
+            title="Issue Type",
+            description="'Issue' or 'Special Issue'. Only applies to ABAcademies brand.",
         ),
     ]
     ISSN: Annotated[

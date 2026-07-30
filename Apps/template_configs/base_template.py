@@ -56,6 +56,16 @@ class BaseJournalTemplate(ABC):
             current_date += timedelta(days=1)
         return current_date
 
+    def format_volume_issue(self, volume: "int | str", issues: "int | str") -> "tuple[str, str]":
+        """
+        Format volume and issue numbers for the LaTeX template context.
+        Default: zero-pad both values when they are a single digit (e.g. 4 → 04).
+        Override in a brand template to apply different formatting rules.
+        """
+        v = f"0{volume}" if len(str(volume)) == 1 else str(volume)
+        i = f"0{issues}" if len(str(issues)) == 1 else str(issues)
+        return v, i
+
     # ------------------------------------------------------------------
     # 3. LLM CITATION FORMAT PROMPT  (abstract — must define in each file)
     # ------------------------------------------------------------------
@@ -170,6 +180,24 @@ class BaseJournalTemplate(ABC):
         Formatted citation string used in the final PDF output.
         Each brand has its own citation style.
         """
+
+    # ------------------------------------------------------------------
+    # 10. MULTI-PASS PAGE-COUNT HOOK
+    # ------------------------------------------------------------------
+    #: Set to True in a brand template to trigger a 3rd xelatex compile
+    #: after the total page count is known.  False for all other brands.
+    needs_page_count_recompile: bool = False
+
+    def build_pdf_no(self, page_count: int) -> str:
+        """
+        Given the total page count of the first-pass PDF, return the
+        formatted ``pdfNo`` string to inject on the 3rd compile.
+
+        Default returns the raw count as a string (no-op for brands that
+        don't need a page range).  ABAcademies overrides this to return
+        ``"1-{page_count}"``.
+        """
+        return str(page_count)
 
     # ------------------------------------------------------------------
     # 10. LATEX FONT CONFIGURATION

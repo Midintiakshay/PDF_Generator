@@ -271,21 +271,18 @@ class PipelineService:
                 "month": str(journal.published.split("-")[1]),
                 "manuscriptNo": journal.manuscriptNo,
                 **TemplateFactory.get(journal.brandName).format_manuscript_numbers(journal.manuscriptNo),
-                "volume": (
-                    f"0{journal.volume}"
-                    if len(str(journal.volume)) == 1
-                    else str(journal.volume)
-                ),
-                "issues": (
-                    f"0{journal.issues}"
-                    if len(str(journal.issues)) == 1
-                    else str(journal.issues)
-                ),
+                **dict(zip(
+                    ("volume", "issues"),
+                    TemplateFactory.get(journal.brandName).format_volume_issue(
+                        journal.volume, journal.issues
+                    ),
+                )),
                 "pdfNo": journal.pdfNo,
                 "ISSN": journal.ISSN,
                 "imgPath": journal.imgPath,
                 "parentLink": str(journal.parentLink),
                 "conclusion": gem_info["summary"],
+                "issueType": journal.issueType if journal.issueType else "Issue",
             }
         }
         return output
@@ -455,6 +452,56 @@ class PipelineService:
                     status_code=500,
                     detail=f"LaTeX compilation failed on run {i + 1}:\n\n{error_text}",
                 )
+
+        # --- Optional 3rd pass: inject real page range into pdfNo (brand opt-in only) ---
+        if template.needs_page_count_recompile:
+            pdf_file_path = journal_folder / f"{journal.id}.pdf"
+            try:
+                from pypdf import PdfReader
+                reader = PdfReader(str(pdf_file_path))
+                total_pages = len(reader.pages)
+            except Exception as e:
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Failed to read page count from first-pass PDF: {e}",
+                )
+
+            # Ask the brand template to format the final pdfNo string (e.g. "1-6")
+            forPdf["pdfNo"] = template.build_pdf_no(total_pages)
+            print(f"Step 10a: Page count = {total_pages}, pdfNo → '{forPdf['pdfNo']}' ✔")
+
+            # Re-render the .tex file with the real pdfNo and recompile
+            rendered_latex_final = latex_template.render(**forPdf)
+            tex_file_path.write_text(rendered_latex_final, encoding="utf-8")
+
+            result_final = subprocess.run(
+                [
+                    "xelatex",
+                    "-interaction=nonstopmode",
+                    tex_file_path.name,
+                ],
+                capture_output=True,
+                text=True,
+                cwd=journal_folder,
+            )
+
+            if result_final.returncode != 0:
+                log_file_path = log_folder / f"{journal.id}.log"
+                error_text = "Unknown LaTeX error in final recompile. Check the log file."
+                if log_file_path.exists():
+                    with open(log_file_path, "r") as f:
+                        lines = f.readlines()
+                    error_snippets = [line for line in lines if line.startswith("! ")]
+                    error_text = (
+                        "\n".join(error_snippets)
+                        or f"LaTeX final recompile failed. Full log in {log_file_path}"
+                    )
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"LaTeX final recompile (pass 3) failed:\n\n{error_text}",
+                )
+
+            print("Step 10b: Final PDF recompiled with real pdfNo ✔")
 
         for ext in [".log", ".aux", ".out"]:
             src = journal_folder / f"{journal.id}{ext}"

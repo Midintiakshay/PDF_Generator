@@ -7,12 +7,32 @@ Self-contained: all prompts, font, and layout defined here.
 """
 
 from __future__ import annotations
+from datetime import date, timedelta
 from .base_template import BaseJournalTemplate
 
 
 class IrjestiTemplate(BaseJournalTemplate):
     brand_name = "Irjesti.tex"
-    date_intervals = [2, 14, 5, 7]
+    date_intervals = [2, 14, 5, 7]     # calendar days
+
+    # ------------------------------------------------------------------
+    # 0. DATE LOGIC — calendar days, skip weekends to Monday
+    # ------------------------------------------------------------------
+    def add_business_days(self, start_date: date, days: int) -> date:
+        """Add calendar days; if landing on Sat/Sun, advance to Monday."""
+        current_date = start_date + timedelta(days=days)
+        while current_date.weekday() > 4:   # 5=Sat, 6=Sun
+            current_date += timedelta(days=1)
+        return current_date
+
+
+    # ------------------------------------------------------------------
+    # VOLUME / ISSUE FORMATTING — zero-pad both when single digit
+    # ------------------------------------------------------------------
+    def format_volume_issue(self, volume: "int | str", issues: "int | str") -> "tuple[str, str]":
+        v = f"0{volume}" if len(str(volume)) == 1 else str(volume)
+        i = f"0{issues}" if len(str(issues)) == 1 else str(issues)
+        return v, i
 
     # ------------------------------------------------------------------
     # 1. INLINE CITATION FORMAT PROMPT

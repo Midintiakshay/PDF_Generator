@@ -50,7 +50,7 @@
 \fancyhf{}
 
 \fancyhead[L]{\headerfont \VAR{journalName | latex_escape | safe}}
-\fancyhead[R]{\headerfont Volume \VAR{volume}, Issue \VAR{issues}, \VAR{year}}
+\fancyhead[R]{\headerfont Volume \VAR{volume}, \VAR{issueType} \VAR{issues}, \VAR{year}}
 \renewcommand{\headrulewidth}{0pt}
 
 \BLOCK{ set parts = author.split(" ") }
@@ -64,7 +64,7 @@
         \raggedright
         \citationfont
         \begin{tabularx}{\textwidth}{@{}l X@{}}
-            \textbf{Citation Information:} & \VAR{last} \VAR{initials}. (\VAR{year}). \VAR{title | latex_escape | safe}. \textit{\VAR{journalName | latex_escape | safe}}, \VAR{volume}(\VAR{issues}), \VAR{pdfNo}.
+            \textbf{Citation Information:} & \VAR{last} \VAR{initials}. (\VAR{year}). \VAR{title | latex_escape | safe}. \textit{\VAR{journalName | latex_escape | safe}}, \VAR{volume}(\BLOCK{ if issueType|lower == 'special issue' }S\BLOCK{ endif }\VAR{issues}), \VAR{pdfNo}.
         \end{tabularx}
     \end{minipage}%
 }
@@ -81,7 +81,7 @@
 
     \vspace{1.2em}
 
-    {\fontsize{13}{10}\selectfont\noindent\textbf{\VAR{author | safe}*, \VAR{authorsDepartment | latex_escape | safe}}}
+    {\fontsize{13}{10}\selectfont\noindent\textbf{\VAR{author | safe}, \VAR{authorsDepartment | latex_escape | safe}}}
 
     \vspace{1.2em}
 
@@ -100,7 +100,7 @@
 
 \vspace{1em}
 
-\noindent\textbf{Keywords:} \VAR{keywords | latex_escape | safe}
+\noindent\textbf{Keywords:} \VAR{keywords.replace(';', ',') | latex_escape | safe}
 
 \vspace{1em}
 

@@ -32,28 +32,55 @@ class MyNewBrandTemplate(BaseJournalTemplate):
 
 ---
 
-## Step 2: Date Logic
+## Step 2: Date Logic (Required)
 
-By default, the base class calculates target dates by adding simple calendar days (skipping weekends if they land exactly on a Saturday/Sunday).
+Every template **must** define its own `add_business_days` method. The central `DateUtils` class no longer handles brand-specific routing — each brand owns its date logic entirely. There are two standard patterns to choose from:
 
-If your journal requires a different timeline (e.g., only counting business days, or different intervals for review/publish), override these:
+### Option A — Calendar days (skip weekends to Monday)
+Use this when your journal counts all calendar days but never lands on a Saturday or Sunday:
 
 ```python
     # Days for: [editor_assign, review, revise, publish]
-    date_intervals = [2, 14, 5, 7]
+    date_intervals = [2, 14, 5, 7]     # calendar days
 
-    # Optional: Override if you only count Mon-Fri
+    # ------------------------------------------------------------------
+    # DATE LOGIC — calendar days, skip weekends to Monday
+    # ------------------------------------------------------------------
     def add_business_days(self, start_date: date, days: int) -> date:
+        """Add calendar days; if landing on Sat/Sun, advance to Monday."""
+        current_date = start_date + timedelta(days=days)
+        while current_date.weekday() > 4:   # 5=Sat, 6=Sun
+            current_date += timedelta(days=1)
+        return current_date
+```
+
+### Option B — Weekdays only (Mon–Fri counting)
+Use this when your journal counts only business days and skips weekends entirely during counting (like Allied Academy):
+
+```python
+    # Days for: [editor_assign, review, revise, publish]
+    date_intervals = [2, 14, 7, 7]     # weekdays only
+
+    # ------------------------------------------------------------------
+    # DATE LOGIC — weekdays only (Mon–Fri)
+    # ------------------------------------------------------------------
+    def add_business_days(self, start_date: date, days: int) -> date:
+        """Count only Mon–Fri; weekends are skipped and not counted."""
         current_date = start_date
         added_days = 0
         while added_days < days:
             current_date += timedelta(days=1)
-            if current_date.weekday() < 5:  # Mon-Fri
+            if current_date.weekday() < 5:  # 0-4 are weekdays
                 added_days += 1
         return current_date
 ```
 
----
+> **Why is this required?**
+> `model_post_init` in `models_journal.py` calls `template.add_business_days(received_date, days)`
+> directly on the template object. If you don't define it, it falls back silently to the base
+> class default (Option A). Defining it explicitly in your file makes the intent clear and
+> lets you change the logic later without touching the base class or any other brand.
+
 
 ## Step 3: LaTeX Font Configuration
 
@@ -116,6 +143,17 @@ If your journal enforces specific casing for titles (e.g., Sentence Case), overr
     def format_title(self, generated_title: str) -> str:
         # e.g., Allied Academies enforces sentence case
         return generated_title.strip().capitalize()
+```
+
+### C. Volume and Issue Formatting
+By default, the base class zero-pads both `volume` and `issues` when they are single digits (e.g., `4` becomes `04`) before being passed to the LaTeX template. If your journal requires different formatting (e.g., leaving the issue as a single digit), override the `format_volume_issue` hook:
+
+```python
+    def format_volume_issue(self, volume: "int | str", issues: "int | str") -> "tuple[str, str]":
+        # Example: Zero-pad volume, but leave issues as-is (e.g. for ABAcademies)
+        v = f"0{volume}" if len(str(volume)) == 1 else str(volume)
+        i = str(issues)
+        return v, i
 ```
 
 ---
@@ -216,7 +254,31 @@ Generates the 5-7 word title.
 
 ---
 
-## Step 8: Registration
+## Step 8: Multi-Pass Page Count (Optional)
+
+In some citation styles, the page range isn't known until the PDF is generated (for example, `"1-{total_pages}"`). To solve this, the pipeline supports a **3-pass xelatex compilation**.
+
+If your brand requires this, set the opt-in flag to `True` and override `build_pdf_no`:
+
+```python
+    # ------------------------------------------------------------------
+    # MULTI-PASS FLAG — trigger a 3rd xelatex run once page count is known
+    # ------------------------------------------------------------------
+    needs_page_count_recompile: bool = True
+
+    def build_pdf_no(self, page_count: int) -> str:
+        """
+        Formats the pdfNo string using the actual page count of the generated PDF.
+        For example, returning "1-6" instead of just a number.
+        """
+        return f"1-{page_count}"
+```
+
+By default, `needs_page_count_recompile` is `False`, meaning the pipeline skips the 3rd pass for efficiency.
+
+---
+
+## Step 9: Registration
 
 Once your `my_new_brand.py` file is complete, you must register it in the factory so the pipeline knows it exists.
 

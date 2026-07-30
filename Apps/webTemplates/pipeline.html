@@ -53,6 +53,21 @@
         </select>
     </div>
 
+    <!-- Issue Type (ABAcademies only) -->
+    <div class="col-md-6" id="issueTypePanel" style="display:none;">
+        <label class="form-label fw-semibold">Issue Type</label>
+        <div class="d-flex gap-3 align-items-center mt-1">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="issueType" id="issueTypeRegular" value="Issue" checked>
+                <label class="form-check-label" for="issueTypeRegular">Issue</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="issueType" id="issueTypeSpecial" value="Special Issue">
+                <label class="form-check-label" for="issueTypeSpecial">Special Issue</label>
+            </div>
+        </div>
+    </div>
+
     <div class="col-md-12">
         <label class="form-label">Author's Department</label>
         <input type="text" name="authorsDepartment" class="form-control" required>
@@ -127,6 +142,17 @@
             preview.classList.remove("d-none");
         } else {
             preview.classList.add("d-none");
+        }
+    });
+
+    // Show Issue Type radio buttons only for ABAcademies brand
+    document.querySelector('select[name="brandName"]').addEventListener('change', function () {
+        const panel = document.getElementById('issueTypePanel');
+        if (this.value === 'ABAcademies.tex') {
+            panel.style.display = '';
+        } else {
+            panel.style.display = 'none';
+            document.getElementById('issueTypeRegular').checked = true;
         }
     });
     // Handle form submit
