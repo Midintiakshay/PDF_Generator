@@ -248,6 +248,7 @@ class PipelineService:
                 "title": gem_title,
                 "journalName": journal.journalName,
                 "shortJournalName": journal.shortJournalName,
+                "secondShortName": journal.secondShortName,
                 "type": journal.type,
                 "author": journal.author,
                 "email": journal.email,

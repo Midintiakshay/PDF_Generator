@@ -1,5 +1,5 @@
 DUMMY_DATA = {
-    "title": "Machine Learning: Transforming Science, Business, and Life",
+    "title": "Machine Learning: Transforming Science, Business, and Life Transforming Science, Business, and Life",
     "journalName": "Journal of AI Research",
     "shortJournalName": "J. AI Res.",
     "type": "Research Article",
@@ -23,6 +23,7 @@ DUMMY_DATA = {
     "volume": "06",
     "issues": "02",
     "pdfNo": "56",
+    "citation": "Smith J (2026). Machine Learning: Transforming Science, Business, and Life. J. AI Res.. 06(02):56.",
     "ISSN": "1234-567X",
     "imgPath": "Apps/images/default.png",
     "parentLink": "https://example.com/journal-ai",

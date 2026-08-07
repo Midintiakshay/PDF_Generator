@@ -13,6 +13,7 @@ sys.path.append(str(project_root))
 from Apps.testing.dummy_data import DUMMY_DATA
 from Apps.template_configs import TemplateFactory
 from Apps.language_fonts import LatexLanguageConfig
+from Apps.models_journal import PulsusOutputStr
 
 # Setup paths
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -67,9 +68,27 @@ def run_test(template_name="ABAcademies.tex"):
         
     # 3. Render Template
     forPdf = copy.deepcopy(DUMMY_DATA)
+    brand_name = template_name
+    forPdf["brandName"] = brand_name
+    
+    try:
+        pulsus_output = PulsusOutputStr(**forPdf)
+        forPdf = pulsus_output.model_dump()
+    except Exception as e:
+        print(f"Warning: PulsusOutputStr model dump failed: {e}")
+        template = TemplateFactory.get(brand_name)
+        if "citation" not in forPdf or not forPdf["citation"]:
+            forPdf["citation"] = template.format_output_citation(
+                author=forPdf.get("author", ""),
+                title=forPdf.get("title", ""),
+                short_journal=forPdf.get("shortJournalName", ""),
+                volume=forPdf.get("volume", ""),
+                issues=forPdf.get("issues", ""),
+                published=forPdf.get("published", ""),
+                pdf_no=forPdf.get("pdfNo", ""),
+            )
     
     # Generate dynamic fields via TemplateFactory
-    brand_name = template_name
     template = TemplateFactory.get(brand_name)
     lang_map = LatexLanguageConfig().get_lang_map(template.latex_font)
     default_cfg = lang_map.get("default")
@@ -126,5 +145,5 @@ def run_test(template_name="ABAcademies.tex"):
     print(f"PDF successfully generated at {tex_file_path.with_suffix('.pdf')}")
 
 if __name__ == "__main__":
-    template_name = "PrimarySchoolLibrary.tex"
+    template_name = "Interesjournal.tex"
     run_test(template_name)

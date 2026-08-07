@@ -21,6 +21,7 @@ bottom=30pt
 \usepackage{microtype}
 \usepackage{titlesec}
 \usepackage{hyperref}
+\usepackage{enumitem}
 
 % Format for ALL Sections
 \titleformat{\section}
@@ -51,7 +52,7 @@ bottom=30pt
 }
 
 \begin{document}
-
+\setlength{\columnsep}{20pt} 
 \vspace*{-30pt}
 \definecolor{color_29791}{rgb}{0,0,0}
 \definecolor{color_271878}{rgb}{0.968628,0.588235,0.27451}
@@ -155,7 +156,7 @@ bottom=30pt
 \put(308.09,-36.79999){\fontsize{3.96}{1}\sffamily\selectfont\color{color_29791} }
 % DYNAMIC: Volume, issue, page range, and year
 \put(308.09,-44.96002){\fontsize{8.0}{1}\sffamily\selectfont\color{color_29791}Vol. \VAR{volume} (\VAR{issues}), pp. \VAR{pdfNo} \VAR{year}                                                                }
-\put(308.09,-54.20001){\fontsize{8.0}{1}\rmfamily\bfseries\selectfont\color{color_29791}\textbf{cPrime Scholars Library }                                               }
+\put(308.09,-54.20001){\fontsize{8.0}{1}\rmfamily\bfseries\selectfont\color{color_29791}\textbf{©Prime Scholars Library }                                               }
 \put(308.09,-63.44){\fontsize{8.0}{1}\sffamily\selectfont\color{color_29791}Author(s) retain the copyright of this article. }
 \put(308.09,-71.71997){\fontsize{7}{1}\sffamily\selectfont\color{color_29791}Article\quad remain\quad permanently\quad open\quad access\quad under\quad CC\quad BY-NC-ND\quad license}
 \put(308.09,-79.78003){\fontsize{7}{1}\rmfamily\selectfont\color{color_30046}https://creativecommons.org/licenses/by-nc-nd/4.0/}
@@ -274,7 +275,7 @@ bottom=30pt
 \end{tikzpicture}
 % STATIC: Journal logo (overlay, anchored to page top - never moves)
 \begin{picture}(-5,0)(2.5,0)
-\put(23.7,-79.60999){\includegraphics[width=63.74999pt,height=45pt]{../../../Logo/PrimarySchoolLibrary.png}}
+\put(23.7,-79.60999){\includegraphics[width=63.74999pt,height=45pt]{../../../Logo/PrimeScholarsLibrary.png}}
 \end{picture}
 % ---------------------------------------------------------------
 % DYNAMIC HEADER BLOCK - flows with content, no fixed coordinates
@@ -372,43 +373,27 @@ bottom=30pt
 
 % DYNAMIC: Reference list
 {
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=14pt, itemsep=5pt, parsep=1pt]
 \BLOCK{ if content|length == 0 }
-    \noindent No references generated.
+    \item No references generated.
 \BLOCK{ else }
 \BLOCK{ for key, item in content.items() }
-\noindent\hangindent=1em\hangafter=1
-\VAR{item.authors_short | latex_escape | safe} (\VAR{item.published}).
-\BLOCK{ if item.url }
-    \href{\VAR{item.url | safe}}{\VAR{item.title | latex_escape | safe}.}
-\BLOCK{ else }
-    \VAR{item.title | latex_escape | safe}.
-\BLOCK{ endif }
+\item \VAR{item.authors_short | latex_escape | safe} (\VAR{item.published}).
+\VAR{item.title | latex_escape | safe}.
 \textit{\VAR{item.journalShortName | latex_escape | safe}},
 \BLOCK{ if item.issues }
     \VAR{item.volume}(\VAR{item.issues}), \VAR{item.pageRangeOrNumber}.
 \BLOCK{ else }
     \VAR{item.volume}, \VAR{item.pageRangeOrNumber}.
 \BLOCK{ endif }
-
 \BLOCK{ endfor }
 \BLOCK{ endif }
+\end{enumerate}
 }
 
 \end{multicols}
 \end{adjustwidth}
 
-% === Bottom dates / manuscript tracking info ===
-\vfill
-\noindent
-\begin{adjustwidth}{30pt}{30pt}
-{\fontsize{7.5}{9}\sffamily\selectfont\color{color_29791}
-\textbf{Received:} \VAR{received}, Manuscript No. \VAR{manuscriptNo | latex_escape | safe};
-\textbf{Editor assigned:} \VAR{editorAssigned}, PreQC No. \VAR{preQCNo | latex_escape | safe};
-\textbf{Reviewed:} \VAR{reviewed}, QC No. \VAR{QCNo | latex_escape | safe};
-\textbf{Revised:} \VAR{revised}, Manuscript No. \VAR{RManuNo | latex_escape | safe};
-\textbf{Published:} \VAR{published},
-DOI: \href{\VAR{parentLink | safe}}{\VAR{doi}}
-}
-\end{adjustwidth}
+% === Bottom dates / manuscript tracking info removed ===
 
 \end{document}

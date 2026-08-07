@@ -1,0 +1,290 @@
+\documentclass[twoside]{article}
+
+\usepackage{fontspec}
+
+\setmainfont{Times New Roman}[
+    Path = ../../../Fonts/,
+    Extension = .ttf,
+    UprightFont = *,
+    BoldFont = *-Bold,
+    ItalicFont = *-Italic,
+    BoldItalicFont = *-BoldItalic
+]
+
+\setsansfont{Calibri}[
+    Path = ../../../Fonts/,
+    Extension = .ttf,
+    UprightFont = *-Regular,
+    BoldFont = *-Bold,
+    ItalicFont = *-Italic,
+    BoldItalicFont = *-BoldItalic
+]
+\usepackage{polyglossia}
+\setdefaultlanguage{\VAR{lang_name}}
+
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{eso-pic}
+\usepackage[hidelinks]{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{multicol}
+\usepackage{enumitem}
+
+% =========================================================================
+% GEOMETRY: Matched to original PDF body text coordinates
+% =========================================================================
+\usepackage[paperwidth=595pt, paperheight=841pt,
+            left=38pt, right=38pt,
+            top=65pt, bottom=95pt,
+            headheight=0pt, headsep=0pt,
+            footskip=0pt]{geometry}
+
+% Suppress fancyhdr layout warnings
+\setlength{\headheight}{14pt}
+\setlength{\footskip}{14pt}
+
+% Command for body font
+\newcommand{\timesfont}{\rmfamily} 
+
+% =========================================================================
+% COLORS (from original PDF)
+% =========================================================================
+\definecolor{color_102033}{rgb}{0.282353,0.368628,0.533333}
+\definecolor{color_29791}{rgb}{0,0,0}
+\definecolor{color_194610}{rgb}{0.647059,0.764706,0.819608}
+\definecolor{color_101071}{rgb}{0.278431,0.368628,0.529412}
+\definecolor{color_102993}{rgb}{0.286275,0.368628,0.529412}
+\definecolor{color_257187}{rgb}{0.898039,0.898039,0.894118}
+
+% =========================================================================
+% HYPERREF SETUP
+% =========================================================================
+\hypersetup{
+    colorlinks=true,
+    urlcolor=color_102033,
+    linkcolor=color_29791,
+    citecolor=color_102033
+}
+
+% =========================================================================
+% HEADER / FOOTER - Absolute TikZ overlays (matches original EXACTLY)
+% =========================================================================
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% --- DEFAULT STYLE (Page 2 and beyond) ---
+\fancyhf{}
+% --- EVEN PAGES (Left Aligned) ---
+\fancyhead[LE]{%
+ \normalfont
+ \begin{tikzpicture}[remember picture, overlay, shift={(current page.north west)}]
+  % Background tabs
+  \fill[color_194610] (0pt, 0pt) rectangle (40pt, -65.90887pt);
+  \fill[color_194610] (550pt, 0pt) rectangle (595pt, -65.90887pt);
+  % Header rule line
+  \draw[color_101071,line width=3.948pt] (0pt, -54.90887pt) -- (595pt, -54.90887pt);
+  % Footer rule line
+  \draw[color_102033,line width=3.948pt] (0pt, -776.9751pt) -- (595pt, -776.9751pt);
+
+  % Page number (left tab)
+  \node[anchor=base west, inner sep=0pt] at (12pt, -50.93512pt)
+    {\fontsize{14}{14}\sffamily\bfseries\color{color_29791}\thepage};
+
+  % Flexible citation header (left-aligned)
+  \node[anchor=south west, inner sep=0pt, text width=460pt, align=left] at (48pt, -50.935pt) {%
+    \fontsize{10}{12}\sffamily\itshape\color{color_29791!90}%
+    \BLOCK{ if year | string | length == 2 }%
+      \VAR{ citation.split('. ')[0] | replace(year|string, '20' ~ year|string) | latex_escape | safe }%
+    \BLOCK{ else }%
+      \VAR{ citation.split('. ')[0] | latex_escape | safe }%
+    \BLOCK{ endif } - \VAR{ title[:55] | latex_escape | safe }\BLOCK{ if title|length > 55 }\dots\BLOCK{ endif }%
+  };
+
+  % Footer journal info (left-aligned)
+  \node[anchor=base west, inner sep=0pt, align=left] at (48pt, -795pt)
+    {\fontsize{10}{10}\sffamily\mdseries\itshape\color{color_29791}%
+     \VAR{shortJournalName | latex_escape | safe} -- Volume \VAR{volume} (\VAR{year}), Issue \VAR{issues}};
+ \end{tikzpicture}%
+}
+
+% --- ODD PAGES (Right Aligned) ---
+\fancyhead[RO]{%
+ \normalfont
+ \begin{tikzpicture}[remember picture, overlay, shift={(current page.north west)}]
+  % Background tabs
+  \fill[color_194610] (0pt, 0pt) rectangle (40pt, -65.90887pt);
+  \fill[color_194610] (550pt, 0pt) rectangle (595pt, -65.90887pt);
+  % Header rule line
+  \draw[color_101071,line width=3.948pt] (0pt, -54.90887pt) -- (595pt, -54.90887pt);
+  % Footer rule line
+  \draw[color_102033,line width=3.948pt] (0pt, -776.9751pt) -- (595pt, -776.9751pt);
+
+  % Page number (right tab)
+  \node[anchor=base west, inner sep=0pt] at (565pt, -50.93512pt)
+    {\fontsize{14}{14}\sffamily\bfseries\color{color_29791}\thepage};
+
+  % Flexible citation header (right-aligned)
+  \node[anchor=south east, inner sep=0pt, text width=460pt, align=right] at (545pt, -50.935pt) {%
+    \fontsize{10}{12.5}\sffamily\itshape\color{color_29791!90}%
+    \BLOCK{ if year | string | length == 2 }%
+      \VAR{ citation.split('. ')[0] | replace(year|string, '20' ~ year|string) | latex_escape | safe }%
+    \BLOCK{ else }%
+      \VAR{ citation.split('. ')[0] | latex_escape | safe }%
+    \BLOCK{ endif } - \VAR{ title[:55] | latex_escape | safe }\BLOCK{ if title|length > 55 }\dots\BLOCK{ endif }%
+  };
+
+  % Footer journal info (right-aligned)
+  \node[anchor=base east, inner sep=0pt, align=right] at (545pt, -795pt)
+    {\fontsize{10}{10}\sffamily\mdseries\itshape\color{color_29791}%
+     \VAR{shortJournalName | latex_escape | safe} -- Volume \VAR{volume} (\VAR{year}), Issue \VAR{issues}};
+ \end{tikzpicture}%
+}
+
+% --- FIRST PAGE STYLE ---
+\fancypagestyle{firstpage}{
+    \fancyhf{}
+    \fancyhead[L]{%
+     \begin{tikzpicture}[remember picture, overlay, shift={(current page.north west)}]
+      % Background tabs
+      \fill[color_194610] (0pt, 0pt) rectangle (40pt, -65.90887pt);
+      \fill[color_194610] (550pt, 0pt) rectangle (595pt, -65.90887pt);
+      % Header rule line
+      \draw[color_101071,line width=3.948pt] (0pt, -54.90887pt) -- (595pt, -54.90887pt);
+      % Footer rule line
+      \draw[color_102033,line width=3.948pt] (0pt, -776.9751pt) -- (595pt, -776.9751pt);
+
+      % Article type label (left)
+      \node[anchor=base west, inner sep=0pt] at (45pt, -49.09222pt)
+        {\fontsize{10}{10}\sffamily\bfseries\color{color_29791}\VAR{type | latex_escape | safe}};
+
+      % Page number (right tab)
+      \node[anchor=base west, inner sep=0pt] at (565pt, -50.93512pt)
+        {\fontsize{14}{14}\sffamily\bfseries\color{color_29791}\thepage};
+
+      % Footer journal info (right-aligned on first page)
+      \node[anchor=base east, inner sep=0pt, align=right] at (545pt, -795pt)
+        {\fontsize{10}{10}\sffamily\mdseries\itshape\color{color_29791}%
+         \VAR{shortJournalName | latex_escape | safe} -- Volume \VAR{volume} (\VAR{year}), Issue \VAR{issues}};
+     \end{tikzpicture}%
+    }
+}
+
+% =========================================================================
+% DOCUMENT BEGIN
+% =========================================================================
+\begin{document}
+\setcounter{page}{1}
+\thispagestyle{firstpage}
+
+% Disable hyphenation globally
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\sloppy
+
+% =========================================================================
+% TITLE & AUTHOR BLOCK
+% =========================================================================
+\begin{center}
+    {\fontsize{18}{22}\sffamily\bfseries\color{color_102993}%
+     \begin{otherlanguage}{\VAR{lang_name}}%
+     \VAR{title | latex_escape | safe}%
+     \end{otherlanguage}}\\[18pt]
+
+    {\fontsize{11}{14}\sffamily\bfseries\color{color_29791}%
+     \VAR{author | safe}*}\\[6pt]
+
+    {\fontsize{10}{12}\sffamily\color{color_29791}%
+     \VAR{authorsDepartment | latex_escape | safe}}
+\end{center}
+
+
+% =========================================================================
+% GRAY METADATA BOX
+% =========================================================================
+\begin{center}
+\begin{tcolorbox}[colback=color_257187, colframe=color_257187, boxrule=0pt, arc=0pt,
+                  left=10pt, right=10pt, top=3pt, bottom=3pt, width=490.12pt]
+
+    % LEFT COLUMN - Correspondence
+    \begin{minipage}[t]{185pt}
+        \fontsize{8}{12}\sffamily\selectfont\color{color_29791}
+        {\fontsize{8}{12}\sffamily\bfseries\color{color_102033} Correspondence to:}\\[6pt]
+        \textbf{\VAR{author | safe}}\\
+        \VAR{authorsDepartment | latex_escape | safe}\\
+        Email: \href{mailto:\VAR{email}}{\VAR{email | latex_escape | safe}}
+    \end{minipage}%
+    \hfill
+    % RIGHT COLUMN - Publication metadata
+    \begin{minipage}[t]{205pt}
+        \fontsize{8}{12}\sffamily\selectfont\color{color_29791}
+        \textbf{Citation:} \VAR{citation | latex_escape | safe}\\[3pt]
+       \BLOCK{ if doi }
+        \textbf{DOI:} \VAR{doi | latex_escape | safe}\\[3pt]
+        \BLOCK{ endif }
+        \textbf{Received:} \VAR{received}, Manuscript No. \VAR{manuscriptNo};\\
+        \textbf{Editor assigned:} \VAR{editorAssigned}, Pre QC No. \VAR{preQCNo} \textit{(PQ)};\\
+        \textbf{Reviewed:} \VAR{reviewed}, QC No. \VAR{QCNo};\\
+        \textbf{Revised:} \VAR{revised}, Manuscript No. \VAR{RManuNo} \textit{(R)};\\
+        \textbf{Published:} \VAR{published}
+    \end{minipage}
+\end{tcolorbox}
+\end{center}
+
+% =========================================================================
+% TWO-COLUMN BODY
+% =========================================================================
+\setlength{\columnsep}{10pt}
+\begin{multicols}{2}
+\setlength{\parindent}{0pt}
+\fontsize{10pt}{13pt}\selectfont\color{color_29791}
+
+% --- Introduction ---
+\noindent{\fontsize{12pt}{13pt}\sffamily\bfseries\color{color_102993}1. \hspace{20pt} Introduction}\par\vspace{4pt}
+
+\timesfont
+\setlength{\parindent}{0pt} % Removes indentation
+\begin{otherlanguage}{\VAR{lang_name}}
+\VAR{introduction | latex_escape | safe}
+\end{otherlanguage}
+
+\vspace{6pt}
+
+% --- Discussion ---
+\noindent{\fontsize{12pt}{13pt}\sffamily\bfseries\color{color_102993}2. \hspace{20pt} Discussion}\par\vspace{4pt}
+
+\timesfont
+\begin{otherlanguage}{\VAR{lang_name}}
+\VAR{discussion | latex_escape | safe}
+\end{otherlanguage}
+
+\vspace{6pt}
+
+% --- Conclusion ---
+\noindent{\fontsize{12pt}{13pt}\sffamily\bfseries\color{color_102993}3. \hspace{20pt} Conclusion}\par\vspace{4pt}
+
+\timesfont
+\begin{otherlanguage}{\VAR{lang_name}}
+\VAR{conclusion | latex_escape | safe}
+\end{otherlanguage}
+
+\vspace{10pt}
+% --- References ---
+\noindent{\fontsize{12pt}{13pt}\sffamily\bfseries\color{color_102993}References}\vspace{4pt}
+\timesfont
+\fontsize{10pt}{12pt}\selectfont
+\hypersetup{urlcolor=color_29791} % Changes URL color to black specifically for the references section
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=14pt, itemsep=5pt, parsep=3pt]
+\BLOCK{ if content|length == 0 }
+    \item No references generated.
+\BLOCK{ else }
+\BLOCK{ for key, item in content.items() }
+    \item \VAR{item.authors_short | latex_escape | safe} (\VAR{item.published}). \VAR{item.title | latex_escape | safe}. \VAR{item.journalShortName | latex_escape | safe}\BLOCK{ if item.issues }, \VAR{item.volume}(\VAR{item.issues}), \VAR{item.pageRangeOrNumber}.\BLOCK{ else }, \VAR{item.volume}, \VAR{item.pageRangeOrNumber}.\BLOCK{ endif }
+\BLOCK{ endfor }
+\BLOCK{ endif }
+\end{enumerate}
+
+\end{multicols}
+
+\end{document}
