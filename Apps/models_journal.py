@@ -268,6 +268,14 @@ class PulsusInputStr(BaseModel):
             description="Enter the short journal name where it belongs from...",
         ),
     ]
+    secondShortName: Annotated[
+        Optional[str],
+        Field(
+            default=None,
+            title="Second short journal name",
+            description="Enter the second short journal name (Only applies to Interesjournal.tex)...",
+        ),
+    ]
     type: Annotated[
         str,
         Field(
@@ -513,6 +521,14 @@ class UpdateInputPartJournal(BaseModel):
             default=None,
             title="Name of the short journal name where it belongs to.",
             description="Enter the short journal name where it belongs from...",
+        ),
+    ]
+    secondShortName: Annotated[
+        Optional[str],
+        Field(
+            default=None,
+            title="Second short journal name",
+            description="Enter the second short journal name (Only applies to Interesjournal.tex)...",
         ),
     ]
     type: Annotated[
@@ -895,6 +911,14 @@ class PulsusOutputStr(BaseModel):
             ...,
             title="Short Journal Name",
             description="The abbreviated or short form of the journal’s name.",
+        ),
+    ]
+    secondShortName: Annotated[
+        Optional[str],
+        Field(
+            default=None,
+            title="Second short journal name",
+            description="Enter the second short journal name (Only applies to Interesjournal.tex)...",
         ),
     ]
     type: Annotated[

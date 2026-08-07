@@ -1,5 +1,5 @@
 DUMMY_DATA = {
-    "title": "Machine Learning: Transforming Science, Business, and Life",
+    "title": "Machine Learning: Transforming Science, Business, and Life Transforming Science, Business, and Life",
     "journalName": "Journal of AI Research",
     "shortJournalName": "J. AI Res.",
     "type": "Research Article",

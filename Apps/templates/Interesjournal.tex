@@ -1,5 +1,5 @@
-\documentclass[a4paper,10pt]{article}
-\usepackage[margin=0.75in, bottom=1.4in, footskip=0.6in]{geometry}
+\documentclass[a4paper,10pt,twoside]{article}
+\usepackage[margin=0.75in, top=1.2in, bottom=1.4in, headheight=15pt, headsep=0.4in, footskip=0.6in]{geometry} % Adjusted margins and spacing for header and footer
 % === DYNAMIC PREAMBLE ===
 \VAR{preamble | safe}
 % === END DYNAMIC PREAMBLE ===
@@ -26,17 +26,20 @@
 % ==========================================
 % FONT COMMANDS (XeLaTeX / fontspec compatible)
 % ==========================================
-\newcommand{\journalmetafont}{\fontsize{10}{12}\selectfont}
+\newcommand{\journalmetafont}{\fontsize{10}{12}\franklingothicbookfont\selectfont}
 \newfontfamily\timesfont{Times New Roman}[Path=../../../Fonts/, UprightFont=*, BoldFont=*-Bold, ItalicFont=*-Italic, BoldItalicFont=*-BoldItalic]
 \newfontfamily\calibrifont{Calibri}[Path=../../../Fonts/, UprightFont=*-Regular, BoldFont=*-Bold, ItalicFont=*-Italic, BoldItalicFont=*-BoldItalic]
+\newfontfamily\franklingothicfont{FRADM}[Path=../../../Fonts/, UprightFont=*, ItalicFont=*IT]
+\newfontfamily\franklingothicbookfont{FRABK}[Path=../../../Fonts/, UprightFont=*, ItalicFont=*IT]
+\newfontfamily\arialfont{arial}[Path=../../../Fonts/, UprightFont=arial, BoldFont=arialbd, ItalicFont=ariali, BoldItalicFont=arialbi, Extension=.ttf]
 \newcommand{\articletypefont}{\fontsize{9}{13}\timesfont\itshape\bfseries\selectfont}
-\newcommand{\articleTitleFont}{\fontsize{22}{24}\bfseries\color{ImageNavy}\selectfont}
-\newcommand{\authorfont}{\fontsize{11}{15}\bfseries\selectfont}
-\newcommand{\affiliationfont}{\fontsize{10}{13}\selectfont}
-\newcommand{\emailfont}{\fontsize{9}{11}\selectfont}
+\newcommand{\articleTitleFont}{\fontsize{17}{20}\franklingothicfont\bfseries\color{ImageNavy}\selectfont}
+\newcommand{\authorfont}{\fontsize{11}{15}\timesfont\bfseries\selectfont}
+\newcommand{\affiliationfont}{\fontsize{10}{13}\arialfont\selectfont}
+\newcommand{\emailfont}{\fontsize{9}{11}\arialfont\selectfont}
 \newcommand{\headingfont}{\fontsize{16}{14}\calibrifont\bfseries\selectfont}
 \newcommand{\subheadingfont}{\fontsize{10}{14}\bfseries\selectfont}
-\newcommand{\contentfont}{\fontsize{10}{12}\calibrifont\selectfont}
+\newcommand{\contentfont}{\fontsize{10}{13}\calibrifont\selectfont}
 \newcommand{\footerfont}{\fontsize{8}{11}\selectfont}
 \newcommand{\citationfont}{\fontsize{8}{11}\selectfont}
 
@@ -54,6 +57,12 @@
 \BLOCK{ set author_last = author_parts[-1] }
 \BLOCK{ set author_first_initial = author_parts[0][0:1] if author_parts|length > 1 else "" }
 \BLOCK{ set pub_year = published.split("-")[-1] if "-" in published else published }
+\BLOCK{ set author_list = author.split(",") }
+\BLOCK{ if author_list|length > 1 }
+\BLOCK{ set header_author = author_list[0].strip().split(" ")[-1] ~ ", et al." }
+\BLOCK{ else }
+\BLOCK{ set header_author = author.strip() }
+\BLOCK{ endif }
 
 % ==========================================
 % HEADER & FOOTER --- DEFAULT (subsequent pages)
@@ -62,11 +71,13 @@
 \fancyhf{}
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0.4pt}
-\fancyfoot[C]{%
+\fancyfoot[L]{%
     \citationfont
     \vspace{0.1cm}
-    \noindent \textbf{Citation:} \VAR{author_last} \VAR{author_first_initial} (\VAR{pub_year}). \VAR{title | latex_escape | safe}. \VAR{shortJournalName | latex_escape | safe}: \VAR{pdfNo}.
+    \noindent \textbf{Citation:} \VAR{author_last} \VAR{author_first_initial} (\VAR{pub_year}). \VAR{title | latex_escape | safe}. \VAR{shortJournalName | latex_escape | safe}. \VAR{volume}: \VAR{pdfNo}.
 }
+\fancyhead[LE]{\fontsize{9}{11}\timesfont\selectfont \thepage\quad \BLOCK{ if secondShortName }\VAR{secondShortName | latex_escape | safe}\BLOCK{ else }\VAR{shortJournalName | latex_escape | safe}\BLOCK{ endif }}
+\fancyhead[RO]{\fontsize{9}{11}\timesfont\selectfont \VAR{header_author | latex_escape | safe}\quad \thepage}
 
 % ==========================================
 % FIRST PAGE STYLE
@@ -83,7 +94,7 @@
             \vskip 0.15cm
             \hrule height 0.4pt
             \vskip 0.15cm
-            \noindent \citationfont \textbf{Citation:} \VAR{author_last} \VAR{author_first_initial} (\VAR{pub_year}). \VAR{title | latex_escape | safe}. \VAR{shortJournalName | latex_escape | safe}: \VAR{pdfNo}.
+            \noindent \citationfont \textbf{Citation:} \VAR{author_last} \VAR{author_first_initial} (\VAR{pub_year}). \VAR{title | latex_escape | safe}. \VAR{shortJournalName | latex_escape | safe}. \VAR{volume}: \VAR{pdfNo}.
         \end{minipage}
     }
 }
@@ -95,13 +106,15 @@
 
 \thispagestyle{firstpage}
 
+\vspace*{-0.6in} % Pulls first page up to negate the global top=1.2in margin (reverts to ~0.75in effective top margin)
+
 % --- Top header block: logo + journal metadata ---
 \noindent
 \begin{minipage}[t]{3.4cm}
     \vspace{0pt}
     \includegraphics[height=3.81cm, width=3.4cm]{../../../Logo/intresjournal.jpeg}
 \end{minipage}%
-\hspace{0.3cm}
+\hspace{0cm}
 \begin{minipage}[t]{\dimexpr\textwidth-3.7cm\relax}
     \vspace{0pt}
     \raggedright
@@ -119,12 +132,12 @@
 
 % --- Title, author, affiliation block ---
 \begin{center}
-    {\articleTitleFont \VAR{title | latex_escape | safe}} \\
+    {\articleTitleFont \VAR{title | latex_escape | safe}\par}
     \vspace{0.25cm}
-    {\authorfont \VAR{author | latex_escape | safe}\textsuperscript{*}} \\
+    {\authorfont \VAR{author | latex_escape | safe}\textsuperscript{*}\par}
     \vspace{0.15cm}
-    {\affiliationfont \VAR{authorsDepartment | latex_escape | safe}} \\
-    {\emailfont E-mail: \href{mailto:\VAR{email}}{\VAR{email | latex_escape | safe}}}
+    {\affiliationfont \VAR{authorsDepartment | latex_escape | safe}\par}
+    {\emailfont E-mail: \href{mailto:\VAR{email}}{\VAR{email | latex_escape | safe}}\par}
 \end{center}
 
 \vspace{0.4cm}
@@ -134,6 +147,8 @@
 % ==========================================
 \contentfont
 \setlength{\columnsep}{0.7cm}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}
 \begin{multicols}{2}
 
     \section*{INTRODUCTION}
@@ -184,6 +199,7 @@
         \BLOCK{ else }
             \VAR{item.volume}:\VAR{item.pageRangeOrNumber}.
         \BLOCK{ endif }
+        \par\vspace{0pt}
 
     \BLOCK{ endfor }
     \BLOCK{ endif }

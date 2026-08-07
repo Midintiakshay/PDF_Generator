@@ -26,6 +26,12 @@
         <input type="text" name="shortJournalName" class="form-control" required>
     </div>
 
+    <!-- Second Short Journal Name (Interesjournal only) -->
+    <div class="col-md-6" id="secondShortNamePanel" style="display:none;">
+        <label class="form-label text-info fw-semibold">Second Short Journal Name</label>
+        <input type="text" name="secondShortName" id="secondShortNameInput" class="form-control" placeholder="Required for Interesjournal">
+    </div>
+
     <div class="col-md-4">
         <label class="form-label">Type</label>
         <input type="text" name="type" class="form-control" required>
@@ -141,14 +147,26 @@
             }
         });
 
-        // Show Issue Type radio buttons only for ABAcademies brand
+        // Show Issue Type radio buttons only for ABAcademies brand and second short name for Interesjournal
         document.querySelector('select[name="brandName"]').addEventListener('change', function () {
             const panel = document.getElementById('issueTypePanel');
+            const secondShortPanel = document.getElementById('secondShortNamePanel');
+            const secondShortInput = document.getElementById('secondShortNameInput');
+
             if (this.value === 'ABAcademies.tex') {
                 panel.style.display = '';
             } else {
                 panel.style.display = 'none';
                 document.getElementById('issueTypeRegular').checked = true;
+            }
+
+            if (this.value === 'Interesjournal.tex') {
+                secondShortPanel.style.display = '';
+                secondShortInput.required = true;
+            } else {
+                secondShortPanel.style.display = 'none';
+                secondShortInput.required = false;
+                secondShortInput.value = '';
             }
         });
 

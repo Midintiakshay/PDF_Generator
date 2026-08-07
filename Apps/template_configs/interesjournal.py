@@ -163,8 +163,8 @@ class InteresJournalTemplate(BaseJournalTemplate):
             Produce only a valid JSON object with the following keys:
 
             "content": {{
-                "introduction": "...",
-                "description": "...",
+                "introduction": "...", # Do not add any citations or paragraph citations here
+                "description": "...", # Do not add any citations or paragraph citations here
                 "summary": "...", # Do not add any citations here
                 "abstract": "...",
                 "discussion": "...",
@@ -179,15 +179,13 @@ class InteresJournalTemplate(BaseJournalTemplate):
 
             Introduction
             - Word count: 500-700.
-            - Include sequential citation markers from the references: "C001" -> [1], "C002" -> [2], and so on.
-            - The Introduction must contain exactly 10 paragraphs, each corresponding to one reference.
-            - The citation marker must be placed at the end of the paragraph, immediately before the period, followed by two line breaks(\n).
+            - Format the content into appropriate paragraphs separated by two line breaks(\n\n).
+            - Do not include citations or paragraph citations like (C001) (Strictly).
 
             Description
             - Word count: 500-700.
-            - Include sequential citation markers: "C001" -> [1], "C002" -> [2], and so on.
-            - The Description must also contain exactly 10 paragraphs, each corresponding to one reference.
-            - The citation marker must be placed at the end of the paragraph, immediately before the period, followed by two line breaks(\n).
+            - Format the content into appropriate paragraphs separated by two line breaks(\n\n).
+            - Do not include citations or paragraph citations like (C001) (Strictly).
 
             Summary
             - Word count: 150-300.
@@ -202,7 +200,6 @@ class InteresJournalTemplate(BaseJournalTemplate):
             Discussion
             - Word count: 200-400.
             - Include analysis, implications, or commentary derived from the content.
-            - Citation markers can be included in ascending order, one per paragraph, placed at the end and before the period.
 
             Keywords
             - Extract 5-10 keywords directly from the content.
@@ -225,7 +222,7 @@ class InteresJournalTemplate(BaseJournalTemplate):
     # ------------------------------------------------------------------
     def get_title_prompt(self, summary: str) -> str:
         return f"""
-        Generate a 5-7 word title based on this summary: {summary}
+        Generate a 5-15 word title based on this summary: {summary}
 
         IMPORTANT: Respond with ONLY the title. The title should be in title case, all articles and joining words should be in lower case (Example: The Financial Literacy: Crucial for Outcomes and Resilience). No additional text, explanations, or formatting.
         """
