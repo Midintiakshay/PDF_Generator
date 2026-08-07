@@ -127,7 +127,7 @@
 
   % Flexible citation header (right-aligned)
   \node[anchor=south east, inner sep=0pt, text width=460pt, align=right] at (545pt, -50.935pt) {%
-    \fontsize{10}{12}\sffamily\itshape\color{color_29791!90}%
+    \fontsize{10}{12.5}\sffamily\itshape\color{color_29791!90}%
     \BLOCK{ if year | string | length == 2 }%
       \VAR{ citation.split('. ')[0] | replace(year|string, '20' ~ year|string) | latex_escape | safe }%
     \BLOCK{ else }%
@@ -218,7 +218,7 @@
     \hfill
     % RIGHT COLUMN - Publication metadata
     \begin{minipage}[t]{205pt}
-        \fontsize{8}{12.5}\sffamily\selectfont\color{color_29791}
+        \fontsize{8}{12}\sffamily\selectfont\color{color_29791}
         \textbf{Citation:} \VAR{citation | latex_escape | safe}\\[3pt]
        \BLOCK{ if doi }
         \textbf{DOI:} \VAR{doi | latex_escape | safe}\\[3pt]
@@ -238,7 +238,7 @@
 \setlength{\columnsep}{10pt}
 \begin{multicols}{2}
 \setlength{\parindent}{0pt}
-\fontsize{10pt}{12pt}\selectfont\color{color_29791}
+\fontsize{10pt}{13pt}\selectfont\color{color_29791}
 
 % --- Introduction ---
 \noindent{\fontsize{12pt}{13pt}\sffamily\bfseries\color{color_102993}1. \hspace{20pt} Introduction}\par\vspace{4pt}
