@@ -1,7 +1,7 @@
 """
-primary_school_library.py
+prime_scholars_library.py
 --------------------------
-Template configuration for PrimarySchoolLibrary.tex
+Template configuration for PrimeScholarsLibrary.tex
 
 Self-contained: all prompts, font, and layout defined here.
 """
@@ -11,8 +11,8 @@ from datetime import date, timedelta
 from .base_template import BaseJournalTemplate
 
 
-class PrimarySchoolLibraryTemplate(BaseJournalTemplate):
-    brand_name = "PrimarySchoolLibrary.tex"
+class PrimeScholarsLibraryTemplate(BaseJournalTemplate):
+    brand_name = "PrimeScholarsLibrary.tex"
     date_intervals = [2, 14, 5, 7]     # calendar days
 
     # ------------------------------------------------------------------
@@ -167,15 +167,15 @@ class PrimarySchoolLibraryTemplate(BaseJournalTemplate):
 
             Introduction
             - Word count: 500-700.
-            - Include sequential citation markers from the references: "C001" -> [1], "C002" -> [2], and so on.
             - The Introduction must contain exactly 10 paragraphs, each corresponding to one reference.
-            - The citation marker must be placed at the end of the paragraph, immediately before the period, followed by two line breaks(\\n).
+            - Do not include any citations or citation markers (Strictly).
+            - Separate paragraphs with two line breaks (\\n\\n).
 
             Description
             - Word count: 500-700.
-            - Include sequential citation markers: "C001" -> [1], "C002" -> [2], and so on.
             - The Description must also contain exactly 10 paragraphs, each corresponding to one reference.
-            - The citation marker must be placed at the end of the paragraph, immediately before the period, followed by two line breaks(\\n).
+            - Do not include any citations or citation markers (Strictly).
+            - Separate paragraphs with two line breaks (\\n\\n).
 
             Discussion
             - Word count: 200-350.

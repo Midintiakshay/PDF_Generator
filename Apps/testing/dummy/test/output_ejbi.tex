@@ -1,0 +1,297 @@
+\documentclass[twoside]{article}
+
+\usepackage{fontspec}
+
+\setmainfont{Times New Roman}[
+    Path = ../../../Fonts/,
+    Extension = .ttf,
+    UprightFont = *,
+    BoldFont = *-Bold,
+    ItalicFont = *-Italic,
+    BoldItalicFont = *-BoldItalic
+]
+
+\setsansfont{Calibri}[
+    Path = ../../../Fonts/,
+    Extension = .ttf,
+    UprightFont = *-Regular,
+    BoldFont = *-Bold,
+    ItalicFont = *-Italic,
+    BoldItalicFont = *-BoldItalic
+]
+\usepackage{polyglossia}
+\setdefaultlanguage{english}
+
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{eso-pic}
+\usepackage[hidelinks]{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{multicol}
+\usepackage{enumitem}
+
+% =========================================================================
+% GEOMETRY: Matched to original PDF body text coordinates
+% =========================================================================
+\usepackage[paperwidth=595pt, paperheight=841pt,
+            left=38pt, right=38pt,
+            top=65pt, bottom=95pt,
+            headheight=0pt, headsep=0pt,
+            footskip=0pt]{geometry}
+
+% Suppress fancyhdr layout warnings
+\setlength{\headheight}{14pt}
+\setlength{\footskip}{14pt}
+
+% Command for body font
+\newcommand{\timesfont}{\rmfamily} 
+
+% =========================================================================
+% COLORS (from original PDF)
+% =========================================================================
+\definecolor{color_102033}{rgb}{0.282353,0.368628,0.533333}
+\definecolor{color_29791}{rgb}{0,0,0}
+\definecolor{color_194610}{rgb}{0.647059,0.764706,0.819608}
+\definecolor{color_101071}{rgb}{0.278431,0.368628,0.529412}
+\definecolor{color_102993}{rgb}{0.286275,0.368628,0.529412}
+\definecolor{color_257187}{rgb}{0.898039,0.898039,0.894118}
+
+% =========================================================================
+% HYPERREF SETUP
+% =========================================================================
+\hypersetup{
+    colorlinks=true,
+    urlcolor=color_102033,
+    linkcolor=color_29791,
+    citecolor=color_102033
+}
+
+% =========================================================================
+% HEADER / FOOTER - Absolute TikZ overlays (matches original EXACTLY)
+% =========================================================================
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% --- DEFAULT STYLE (Page 2 and beyond) ---
+\fancyhf{}
+% --- EVEN PAGES (Left Aligned) ---
+\fancyhead[LE]{%
+ \normalfont
+ \begin{tikzpicture}[remember picture, overlay, shift={(current page.north west)}]
+  % Background tabs
+  \fill[color_194610] (0pt, 0pt) rectangle (40pt, -65.90887pt);
+  % Header rule line
+  \draw[color_101071,line width=3.948pt] (0pt, -54.90887pt) -- (595pt, -54.90887pt);
+  % Footer rule line
+  \draw[color_102033,line width=3.948pt] (0pt, -776.9751pt) -- (595pt, -776.9751pt);
+
+  % Page number (left tab)
+  \node[anchor=base west, inner sep=0pt] at (12pt, -50.93512pt)
+    {\fontsize{14}{14}\sffamily\bfseries\color{color_29791}\thepage};
+
+  % Flexible citation header (left-aligned)
+  \node[anchor=south west, inner sep=0pt, text width=460pt, align=left] at (48pt, -50.935pt) {%
+    \fontsize{10}{12}\sffamily\itshape\color{color_29791!90}%
+    %
+      John S (2026)%
+     - Machine Learning: Transforming Science, Business, and L\dots%
+  };
+
+  % Footer journal info (left-aligned)
+  \node[anchor=base west, inner sep=0pt, align=left] at (48pt, -795pt)
+    {\fontsize{10}{10}\sffamily\mdseries\itshape\color{color_29791}%
+     J. AI Res. -- Volume 06 (2026), Issue 02};
+ \end{tikzpicture}%
+}
+
+% --- ODD PAGES (Right Aligned) ---
+\fancyhead[RO]{%
+ \normalfont
+ \begin{tikzpicture}[remember picture, overlay, shift={(current page.north west)}]
+  % Background tabs
+  \fill[color_194610] (550pt, 0pt) rectangle (595pt, -65.90887pt);
+  % Header rule line
+  \draw[color_101071,line width=3.948pt] (0pt, -54.90887pt) -- (595pt, -54.90887pt);
+  % Footer rule line
+  \draw[color_102033,line width=3.948pt] (0pt, -776.9751pt) -- (595pt, -776.9751pt);
+
+  % Page number (right tab)
+  \node[anchor=base west, inner sep=0pt] at (565pt, -50.93512pt)
+    {\fontsize{14}{14}\sffamily\bfseries\color{color_29791}\thepage};
+
+  % Flexible citation header (right-aligned)
+  \node[anchor=south east, inner sep=0pt, text width=460pt, align=right] at (545pt, -50.935pt) {%
+    \fontsize{10}{12}\sffamily\itshape\color{color_29791!90}%
+    %
+      John S (2026)%
+     - Machine Learning: Transforming Science, Business, and L\dots%
+  };
+
+  % Footer journal info (right-aligned)
+  \node[anchor=base east, inner sep=0pt, align=right] at (545pt, -795pt)
+    {\fontsize{10}{10}\sffamily\mdseries\itshape\color{color_29791}%
+     J. AI Res. -- Volume 06 (2026), Issue 02};
+ \end{tikzpicture}%
+}
+
+% --- FIRST PAGE STYLE ---
+\fancypagestyle{firstpage}{
+    \fancyhf{}
+    \fancyhead[L]{%
+     \begin{tikzpicture}[remember picture, overlay, shift={(current page.north west)}]
+      % Background tabs
+      \fill[color_194610] (0pt, 0pt) rectangle (40pt, -65.90887pt);
+      \fill[color_194610] (550pt, 0pt) rectangle (595pt, -65.90887pt);
+      % Header rule line
+      \draw[color_101071,line width=3.948pt] (0pt, -54.90887pt) -- (595pt, -54.90887pt);
+      % Footer rule line
+      \draw[color_102033,line width=3.948pt] (0pt, -776.9751pt) -- (595pt, -776.9751pt);
+
+      % Article type label (left)
+      \node[anchor=base west, inner sep=0pt] at (45pt, -49.09222pt)
+        {\fontsize{10}{10}\sffamily\bfseries\color{color_29791}Research Article};
+
+      % Page number (right tab)
+      \node[anchor=base west, inner sep=0pt] at (565pt, -50.93512pt)
+        {\fontsize{14}{14}\sffamily\bfseries\color{color_29791}\thepage};
+
+      % Footer journal info (right-aligned on first page)
+      \node[anchor=base east, inner sep=0pt, align=right] at (545pt, -795pt)
+        {\fontsize{10}{10}\sffamily\mdseries\itshape\color{color_29791}%
+         J. AI Res. -- Volume 06 (2026), Issue 02};
+     \end{tikzpicture}%
+    }
+}
+
+% =========================================================================
+% DOCUMENT BEGIN
+% =========================================================================
+\begin{document}
+\setcounter{page}{56}
+\thispagestyle{firstpage}
+
+% =========================================================================
+% TITLE & AUTHOR BLOCK
+% =========================================================================
+\begin{center}
+    {\fontsize{18}{22}\sffamily\bfseries\color{color_102993}%
+     \begin{otherlanguage}{english}%
+     Machine Learning: Transforming Science, Business, and Life%
+     \end{otherlanguage}}\\[18pt]
+
+    {\fontsize{11}{14}\sffamily\bfseries\color{color_29791}%
+     John Smith*}\\[6pt]
+
+    {\fontsize{10}{12}\sffamily\color{color_29791}%
+     Computer Science}
+\end{center}
+
+
+% =========================================================================
+% GRAY METADATA BOX
+% =========================================================================
+\begin{center}
+\begin{tcolorbox}[colback=color_257187, colframe=color_257187, boxrule=0pt, arc=0pt,
+                  left=10pt, right=10pt, top=3pt, bottom=3pt, width=490.12pt]
+
+    % LEFT COLUMN - Correspondence
+    \begin{minipage}[t]{185pt}
+        \fontsize{8}{12}\sffamily\selectfont\color{color_29791}
+        {\fontsize{8}{12}\sffamily\bfseries\color{color_102033} Correspondence to:}\\[6pt]
+        \textbf{John Smith}\\
+        Computer Science\\
+        Email: \href{mailto:john.smith@example.com}{john.smith@example.com}
+    \end{minipage}%
+    \hfill
+    % RIGHT COLUMN - Publication metadata
+    \begin{minipage}[t]{205pt}
+        \fontsize{8}{12.5}\sffamily\selectfont\color{color_29791}
+        \textbf{Citation:} John S (2026). Machine Learning: Transforming Science, Business, and Life. J. AI Res.. 06(02):56.\\[3pt]
+                \textbf{DOI:} \href{https://example.com/journal-ai}{10.1234/jair.2026.001}\\[3pt]
+                \textbf{Received:} 18-Jul-2026, Manuscript No. 2024-001;\\
+        \textbf{Editor assigned:} 20-Jul-2026, Pre QC No. 2024-001 \textit{(PQ)};\\
+        \textbf{Reviewed:} 03-Aug-2026, QC No. 2024-001;\\
+        \textbf{Revised:} 10-Aug-2026, Manuscript No. 2024-001 \textit{(R)};\\
+        \textbf{Published:} 2026-08-17
+    \end{minipage}
+\end{tcolorbox}
+\end{center}
+
+\vspace{4pt}
+
+% =========================================================================
+% TWO-COLUMN BODY
+% =========================================================================
+\setlength{\columnsep}{14pt}
+\begin{multicols}{2}
+\setlength{\parindent}{0pt}
+\fontsize{10pt}{12pt}\selectfont\color{color_29791}
+
+% --- Introduction ---
+\noindent{\fontsize{12pt}{13pt}\sffamily\bfseries\color{color_102993}1. \hspace{20pt} Introduction}\par\vspace{4pt}
+
+\timesfont
+\setlength{\parindent}{0pt} % Removes indentation
+\begin{otherlanguage}{english}
+The pervasive integration of machine learning (ML) into scientific endeavors is fundamentally reshaping the landscape of research and discovery across numerous disciplines. This transformative technology is proving instrumental in accelerating the pace of innovation, refining experimental methodologies, and unlocking unprecedented capabilities in data analysis. In the realm of drug discovery, ML algorithms are adept at identifying novel therapeutic targets and predicting the efficacy of potential drug candidates, thereby significantly shortening development cycles and reducing costs [1].
+
+Similarly, materials science is witnessing a revolution with ML's ability to predict the properties of new materials, guide synthesis processes, and optimize material performance for specific applications. This predictive power allows researchers to explore vast combinatorial spaces of potential materials that would be intractable through traditional experimentation alone [1].
+
+In climate modeling, ML is contributing to more accurate predictions of weather patterns, climate change impacts, and the effectiveness of mitigation strategies. By analyzing complex datasets from various sources, ML models can discern intricate relationships and provide insights that enhance our understanding of global climate systems [1].
+
+The field of natural language processing (NLP) has seen remarkable advancements due to deep learning techniques. These techniques enable machines to understand, interpret, and generate human language with increasing sophistication, driving progress in applications such as machine translation and sentiment analysis [2].
+
+Cybersecurity is another critical domain benefiting from ML's capabilities. The ability of ML algorithms to process vast quantities of network traffic and system logs allows for the real-time detection of anomalies indicative of malicious activity, thus bolstering defenses against evolving cyber threats [3].
+
+The healthcare sector is increasingly leveraging ML for a variety of applications, ranging from enhanced diagnostic accuracy through medical image analysis to the development of personalized treatment plans and accelerating drug development pipelines, ultimately aiming to improve patient outcomes and streamline healthcare operations [4].
+
+Robotics and autonomous systems are being propelled forward by reinforcement learning (RL), a subfield of ML. RL enables robots to learn complex control policies through experience, allowing them to navigate dynamic environments, perform intricate tasks, and interact more effectively with humans and their surroundings [5].
+
+Financial markets are also being influenced by ML, particularly in the areas of forecasting and algorithmic trading. ML models can analyze historical data and market sentiment to predict stock price movements and develop automated trading strategies, aiming to capitalize on market opportunities and manage risk [6].
+
+Intelligent transportation systems (ITS) are being enhanced by ML through applications such as traffic prediction, route optimization, and autonomous vehicle control. By integrating ML with sensor data and communication networks, ITS can improve road safety, reduce congestion, and boost overall transportation efficiency [7].
+
+In agriculture, ML is driving the adoption of precision farming techniques. By analyzing data from various sources, ML models can optimize resource allocation for irrigation, fertilization, and pest control, leading to increased crop yields, reduced environmental impact, and enhanced food security [8].
+\end{otherlanguage}
+
+\vspace{6pt}
+
+% --- Discussion ---
+\noindent{\fontsize{12pt}{13pt}\sffamily\bfseries\color{color_102993}2. \hspace{20pt} Discussion}\par\vspace{4pt}
+
+\timesfont
+\begin{otherlanguage}{english}
+The collective insights presented underscore the profound and pervasive influence of machine learning across a multitude of sectors. The capacity of ML algorithms to process and interpret vast, complex datasets is consistently driving innovation and efficiency, often surpassing the capabilities of traditional methodologies. The trend towards more specialized ML applications, such as reinforcement learning in robotics and deep learning in NLP, indicates a maturing field capable of tackling increasingly intricate problems.
+
+However, the successful implementation of ML is not without its challenges. Issues such as data privacy, model interpretability, and the need for continuous adaptation to evolving data landscapes are recurrent themes. Addressing these challenges will be crucial for the sustained and ethical deployment of ML technologies, ensuring their benefits are realized broadly and responsibly.
+
+Looking ahead, the integration of ML into fields like renewable energy and education suggests a continued expansion of its utility. The potential for ML to optimize resource management, personalize learning experiences, and contribute to global challenges like food security and climate change is immense. As ML capabilities advance, interdisciplinary research and development will be key to unlocking its full potential and navigating its associated complexities.
+
+The overarching narrative is one of rapid advancement and broad applicability. From accelerating fundamental scientific research to optimizing practical systems in industry and public services, machine learning is proving to be a foundational technology of the 21st century. Continued exploration of novel algorithms and applications, coupled with careful consideration of ethical implications, will shape the future trajectory of this transformative field [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].
+\end{otherlanguage}
+
+\vspace{6pt}
+
+% --- Conclusion ---
+\noindent{\fontsize{12pt}{13pt}\sffamily\bfseries\color{color_102993}3. \hspace{20pt} Conclusion}\par\vspace{4pt}
+
+\timesfont
+\begin{otherlanguage}{english}
+This collection of research explores the widespread applications of machine learning across diverse fields. Machine learning is revolutionizing scientific discovery, enabling accelerated research in areas like drug discovery, materials science, and climate modeling. Deep learning advancements are transforming natural language processing, while ML enhances cybersecurity by detecting threats and improves healthcare through diagnostics and personalized treatments. In robotics, reinforcement learning drives autonomous systems, and financial markets utilize ML for forecasting and trading. Furthermore, ML optimizes intelligent transportation systems and agricultural practices, contributing to efficiency and sustainability. Emerging applications also extend to renewable energy forecasting and educational technology.
+\end{otherlanguage}
+
+\vspace{8pt}
+% --- References ---
+\noindent{\fontsize{12pt}{13pt}\sffamily\bfseries\color{color_102993}4. \hspace{20pt} References}\par\vspace{2pt}
+
+\timesfont
+\fontsize{10pt}{10.5pt}\selectfont
+\hypersetup{urlcolor=color_29791} % Changes URL color to black specifically for the references section
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=14pt, itemsep=5pt, parsep=2pt]
+    \item Marcos VR, Sergej FGW, Alana LVJ (2021). Machine learning for scientific discovery. Nature, 591(591), 523-530.    \item Quan L, Yongliang S, Wenfeng C (2022). A Survey of Deep Learning for Natural Language Processing. IEEE Transactions on Pattern Analysis and Machine Intelligence, 44(12), 8275-8291.\end{enumerate}
+
+\end{multicols}
+
+\end{document}

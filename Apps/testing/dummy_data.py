@@ -23,6 +23,7 @@ DUMMY_DATA = {
     "volume": "06",
     "issues": "02",
     "pdfNo": "56",
+    "citation": "Smith J (2026). Machine Learning: Transforming Science, Business, and Life. J. AI Res.. 06(02):56.",
     "ISSN": "1234-567X",
     "imgPath": "Apps/images/default.png",
     "parentLink": "https://example.com/journal-ai",
