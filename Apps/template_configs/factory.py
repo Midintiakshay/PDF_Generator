@@ -28,6 +28,7 @@ from .prime_scholars_library import PrimeScholarsLibraryTemplate
 from .ejbi import EJBITemplate
 from .jrmds import JrmdsTemplate
 from .aabps import AabpsTemplate
+from .jwhc import JwhcTemplate
 
 
 # ---------------------------------------------------------------------------
@@ -45,6 +46,7 @@ _REGISTRY: dict[str, BaseJournalTemplate] = {
     "ejbi.tex":                EJBITemplate(),
     "jrmds.tex":               JrmdsTemplate(),
     "aabps.tex":               AabpsTemplate(),
+    "jwhc.tex":                JwhcTemplate(),
 }
 
 # Lazy default (used when brand is unknown / new template in progress)

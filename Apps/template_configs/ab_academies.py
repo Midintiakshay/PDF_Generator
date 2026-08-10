@@ -30,7 +30,7 @@ class ABAcademiesTemplate(BaseJournalTemplate):
         always returned as-is (no leading zero).
         """
         v = f"0{volume}" if len(str(volume)) == 1 else str(volume)
-        i = str(issues)   # never zero-pad issues for this brand
+        i = str(issues)   # never zero-pad issues for this brand0979
         return v, i
 
     def build_pdf_no(self, page_count: int) -> str:

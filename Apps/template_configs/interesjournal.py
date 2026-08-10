@@ -222,7 +222,7 @@ class InteresJournalTemplate(BaseJournalTemplate):
     # ------------------------------------------------------------------
     def get_title_prompt(self, summary: str) -> str:
         return f"""
-        Generate a 5-15 word title based on this summary: {summary}
+        Generate a 5-7 word title based on this summary: {summary}
 
         IMPORTANT: Respond with ONLY the title. The title should be in title case, all articles and joining words should be in lower case (Example: The Financial Literacy: Crucial for Outcomes and Resilience). No additional text, explanations, or formatting.
         """

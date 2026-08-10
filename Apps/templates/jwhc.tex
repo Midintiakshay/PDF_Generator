@@ -1,0 +1,208 @@
+\documentclass{article}
+
+% === DYNAMIC PREAMBLE (XeLaTeX fontspec injected by pipeline) ===
+\VAR{preamble | safe}
+% === END DYNAMIC PREAMBLE ===
+
+% === FONT SETUP: Times New Roman ===
+\usepackage{fontspec}
+\setmainfont{Times New Roman}[
+    Path           = ../../../Fonts/,
+    Extension      = .ttf,
+    UprightFont    = *,
+    BoldFont       = *-Bold,
+    ItalicFont     = *-Italic,
+    BoldItalicFont = *-BoldItalic
+]
+% === END FONT SETUP ===
+
+\usepackage{amsmath}
+\usepackage[hidelinks]{hyperref}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{color}
+\usepackage{tikz}
+
+% =========================================================================
+% 1. GEOMETRY
+% =========================================================================
+\usepackage[paperwidth=595pt, paperheight=842pt,
+            left=25pt, right=25pt,
+            top=65pt, bottom=45pt,
+            headheight=15pt, headsep=15pt,
+            footskip=20pt]{geometry}
+
+% Custom Colors
+\definecolor{color_29791}{rgb}{0,0,0}
+\definecolor{color_74543}{rgb}{0.168628,0.415686,0.560784}
+\definecolor{color_77457}{rgb}{0.180392,0.419608,0.560784}
+
+% =========================================================================
+% 2. DYNAMIC HEADER & FOOTER (Applies to Page 2 and onwards)
+% =========================================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% --- Header for Page 2+ ---
+\fancyhead[L]{%
+    \BLOCK{ set author_p = author.split(" ") }
+    \BLOCK{ set author_l = author_p[-1] }
+    \fontsize{9.5}{12}\fontseries{b}\selectfont\color{color_29791} \VAR{author_l}.%
+}
+\fancyhead[R]{%
+    \fontsize{7.56}{9.5}\bfseries\color{color_77457}%
+    OPEN \raisebox{8pt}{\raisebox{-11pt}{\includegraphics[width=8.16pt,height=13.32pt]{../../../Logo/jwhckey.png}}}\hspace{2pt}ACCESS Freely available online%
+}
+
+% --- Footer for Page 2+ ---
+\fancyfoot[C]{%
+    \begin{minipage}{\textwidth}
+        \begin{minipage}[t]{0.7\textwidth}
+            \fontsize{8}{10}\fontseries{m}\selectfont\ \VAR{shortJournalName | latex_escape | safe}, Vol. \VAR{volume} Iss. \VAR{issues} No: \VAR{pdfNo}
+        \end{minipage}%
+        \begin{minipage}[t]{0.2\textwidth}
+            \raggedleft
+            \fontsize{10}{10}\fontseries{m}\selectfont\color{color_29791}\thepage\hspace{-50pt}
+        \end{minipage}
+    \end{minipage}
+}
+
+% =========================================================================
+% 2.5 FIRST PAGE FOOTER (Custom style for Page 1)
+% =========================================================================
+\fancypagestyle{firstpage}{
+    \fancyhf{}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0pt}
+    \fancyfoot[C]{%
+        \raisebox{0pt}[0pt][0pt]{%
+            \begin{minipage}[b]{\textwidth}
+                % --- METADATA BLOCK ---
+                \rule{\textwidth}{0.5pt} \\[9pt]
+                \fontsize{9.3}{11}\selectfont\color{color_29791}
+                \textbf{*Corresponding author:} \VAR{author | safe}, \VAR{authorsDepartment | latex_escape | safe}. Email: \href{mailto:\VAR{email}}{\VAR{email | latex_escape | safe}} \\[4pt]
+                \textbf{Received:} \VAR{received}, Manuscript No. \VAR{manuscriptNo}; \textbf{Editor assigned:} \VAR{editorAssigned}, PreQC No. \VAR{preQCNo} (PQ); \textbf{Reviewed:} \VAR{reviewed}, QC No. \VAR{QCNo}; \textbf{Revised:} \VAR{revised}, Manuscript No. \VAR{RManuNo} (R); \textbf{Published:} \VAR{published}, DOI: \href{\VAR{parentLink | safe}}{\VAR{doi}} \\[4pt]
+                \BLOCK{ set author_parts = author.split(" ") }
+                \BLOCK{ set author_last = author_parts[-1] }
+                \BLOCK{ set author_initial = author_parts[0][0] if author_parts|length > 1 else "" }
+                \BLOCK{ set pub_parts = published.split("-") }
+                \BLOCK{ set pub_year = pub_parts[0] if pub_parts[0]|length == 4 else pub_parts[-1] }
+                \textbf{Citation:} \VAR{author_last} \VAR{author_initial} (\VAR{pub_year}). \VAR{title | latex_escape | safe}. \VAR{shortJournalName | latex_escape | safe}. \VAR{volume}(\VAR{issues}):\VAR{pdfNo}. \\[4pt]
+                \textbf{Copyright:} \copyright\ \VAR{pub_year} \VAR{author_last} \VAR{author_initial}, et al. This is an open-access article distributed under the terms of the Creative Commons Attribution License, which permits unrestricted use, distribution, and reproduction in any medium, provided the original author and source are credited\\[-6pt]
+                % --- STANDARD FOOTER CONTENT ---
+                \rule{\textwidth}{0.5pt} \\[5pt]
+                \begin{minipage}[t]{0.7\textwidth}
+                    \fontsize{8}{10}\fontseries{m}\selectfont\ \VAR{shortJournalName | latex_escape | safe}, Vol. \VAR{volume} Iss. \VAR{issues} No: \VAR{pdfNo}
+                \end{minipage}%
+                \begin{minipage}[t]{0.2\textwidth}
+                    \raggedleft
+                    \fontsize{10}{10}\fontseries{m}\selectfont\color{color_29791}\thepage\hspace{-50pt}
+                \end{minipage}
+            \end{minipage}%
+        }%
+    }
+}
+
+\begin{document}
+\raggedbottom
+\setcounter{page}{1}
+
+% Apply the custom footer to the first page ONLY
+\thispagestyle{firstpage}
+\vspace*{-40pt}
+
+% =========================================================================
+% 3. HEADER BLOCK (First Page Only - TikZ drawn)
+% =========================================================================
+\noindent
+\begin{tikzpicture}
+    % 1. Logo
+    \node[anchor=north west, inner sep=0pt] (logo) at (0, 0) {\includegraphics[width=44pt,height=44pt]{../../../Logo/jwhc.png}};
+
+    % 2. Journal Title
+    \node[anchor=west, inner sep=0pt] at (55pt, -15pt) {\fontsize{14.04}{16}\fontseries{b}\selectfont\color{color_29791}\VAR{journalName | latex_escape | safe}};
+
+    % 3. OPEN ACCESS badge
+    \node[anchor=north east, inner sep=0pt] at (\textwidth, 5pt) {%
+        \fontsize{7.56}{9.5}\bfseries\color{color_77457}OPEN \raisebox{8pt}{\raisebox{-11pt}{\includegraphics[width=8.16pt,height=13.32pt]{../../../Logo/jwhckey.png}}}\hspace{2pt}ACCESS Freely available online%
+    };
+
+    % 4. Article Type
+    \node[anchor=south east, inner sep=0pt] at (\textwidth, -54pt) {%
+        \fontsize{9.96}{12}\fontseries{b}\selectfont\color{color_29791}\VAR{type | latex_escape | safe}%
+    };
+
+    % 5. Top Divider Line
+    \draw[color_29791, line width=0.5pt] (0, -56pt) -- (\textwidth, -56pt);
+\end{tikzpicture}
+
+\vspace{10pt}
+
+% =========================================================================
+% 4. ARTICLE METADATA (Title, Author, Affiliation)
+% =========================================================================
+\noindent
+\begin{minipage}[t]{\textwidth}
+    {\fontsize{18}{22}\fontseries{b}\selectfont\color{color_29791}\VAR{title | latex_escape | safe}\par}
+    \vspace{8pt}
+    {\fontsize{11.3}{14}\fontseries{b}\selectfont\color{color_29791}\VAR{author | safe}*\par}
+    \vspace{4pt}
+    {\fontsize{9.5}{12}\fontshape{it}\selectfont\color{color_29791}\VAR{authorsDepartment | latex_escape | safe}\par}
+\end{minipage}
+
+\vspace{10pt}
+
+% =========================================================================
+% 5. TWO-COLUMN BODY CONTENT
+% =========================================================================
+\setlength{\columnsep}{16pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+\begin{multicols}{2}
+\enlargethispage{-118pt}
+
+\fontsize{9.5}{12}\selectfont\color{color_29791}
+
+\noindent {\fontsize{12}{14}\fontseries{b}\selectfont\color{color_29791}INTRODUCTION}\par
+\vspace*{2pt}
+\begin{otherlanguage}{\VAR{lang_name}}
+\noindent \VAR{introduction | latex_escape | safe}
+\end{otherlanguage}
+\vspace*{2pt}
+
+\noindent {\fontsize{12}{14}\fontseries{b}\selectfont\color{color_29791}DESCRIPTION}\par
+\vspace*{2pt}
+\begin{otherlanguage}{\VAR{lang_name}}
+\noindent \VAR{description | latex_escape | safe}
+\end{otherlanguage}
+\vspace*{2pt}
+
+\noindent {\fontsize{12}{14}\fontseries{b}\selectfont\color{color_29791}CONCLUSION}\par
+\vspace*{2pt}
+\begin{otherlanguage}{\VAR{lang_name}}
+\noindent \VAR{conclusion | latex_escape | safe}
+\end{otherlanguage}
+
+% --- REFERENCES SECTION ---
+\vspace*{6pt}
+\noindent {\fontsize{11}{13}\fontseries{b}\selectfont REFERENCES}
+\vspace*{-7.4pt}
+\fontsize{9}{10.5}\selectfont
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=12pt, labelwidth=8pt, labelsep=4pt, itemsep=5pt, parsep=0pt]
+\BLOCK{ if content|length == 0 }
+    \item No references generated.
+\BLOCK{ else }
+\BLOCK{ for key, item in content.items() }
+    \item \BLOCK{ if item.url }\href{\VAR{item.url | safe}}{\VAR{item.authors_short | latex_escape | safe} \VAR{item.published}. \VAR{item.title | latex_escape | safe}. \textit{\VAR{item.journalShortName | latex_escape | safe}}\BLOCK{ if item.issues }, \VAR{item.volume}(\VAR{item.issues}), \VAR{item.pageRangeOrNumber}.\BLOCK{ else }, \VAR{item.volume}, \VAR{item.pageRangeOrNumber}.\BLOCK{ endif }}\BLOCK{ else }\VAR{item.authors_short | latex_escape | safe} \VAR{item.published}. \VAR{item.title | latex_escape | safe}. \textit{\VAR{item.journalShortName | latex_escape | safe}}\BLOCK{ if item.issues }, \VAR{item.volume}(\VAR{item.issues}), \VAR{item.pageRangeOrNumber}.\BLOCK{ else }, \VAR{item.volume}, \VAR{item.pageRangeOrNumber}.\BLOCK{ endif }\BLOCK{ endif }
+\BLOCK{ endfor }
+\BLOCK{ endif }
+\end{enumerate}
+
+\end{multicols}
+
+\end{document}
