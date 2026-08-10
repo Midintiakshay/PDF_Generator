@@ -199,7 +199,7 @@ A lightweight, locally-hosted tool that converts journal templates into publicat
     "email": "jane@example.com",
     "brandName": "alliedAcademy.tex",
     "authorsDepartment": "CS",
-    "received": "2025-12-01",
+    "received": "2026-12-01",
     "manuscriptNo": "M-001",
     "volume": 1,
     "issues": 1,
@@ -258,7 +258,7 @@ Please replace the placeholders above with actual contact details. To report bug
 
 MIT License
 
-Copyright (c) 2025 John Doe
+Copyright (c) 2026 John Doe
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

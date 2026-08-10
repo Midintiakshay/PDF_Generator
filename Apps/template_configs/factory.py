@@ -26,6 +26,7 @@ from .ab_academies import ABAcademiesTemplate
 from .interesjournal import InteresJournalTemplate
 from .prime_scholars_library import PrimeScholarsLibraryTemplate
 from .ejbi import EJBITemplate
+from .jwhc import JwhcTemplate
 
 
 # ---------------------------------------------------------------------------
@@ -41,6 +42,7 @@ _REGISTRY: dict[str, BaseJournalTemplate] = {
     "Interesjournal.tex": InteresJournalTemplate(),
     "PrimeScholarsLibrary.tex": PrimeScholarsLibraryTemplate(),
     "ejbi.tex":                EJBITemplate(),
+    "jwhc.tex":                JwhcTemplate(),
 }
 
 # Lazy default (used when brand is unknown / new template in progress)
