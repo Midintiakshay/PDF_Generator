@@ -1,0 +1,201 @@
+\documentclass[10pt]{article}
+\VAR{preamble | safe}
+
+% ============ PACKAGES ============
+\usepackage[a4paper,left=0.55in,right=0.55in,top=0.95in,bottom=0.85in,footskip=30pt,headheight=15pt]{geometry}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{calc}
+\usepackage[final,protrusion=true]{microtype}
+\usepackage{paracol}
+
+% ============ FONT MAPPING ============
+\newfontfamily\franklin{Franklin Gothic Bold}[Path=../../../Fonts/, Extension=.ttf]
+\newfontfamily\franklinbook{FRANKGO}[Path=../../../Fonts/, Extension=.ttf]
+\newfontfamily\franklindemi{FranklinGothic-Light}[Path=../../../Fonts/, Extension=.ttf]
+\newfontfamily\franklinmedium{FRANKGO}[Path=../../../Fonts/, Extension=.ttf]
+
+% ============ COLORS ============
+\definecolor{titlebg}{rgb}{0.858824,0.898039,0.945098}     % Title block background
+\definecolor{editorialbg}{rgb}{0.858824,0.894118,0.941177} % Editorial bar background
+\definecolor{journalblue}{rgb}{0,0.12549,0.376471}         % Journal-name navy
+
+% ============ HEADER / FOOTER ============
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyhead[L]{\franklin\bfseries\fontsize{12}{14}\selectfont\color{journalblue}\VAR{journalName | latex_escape | safe}}
+\fancyfoot[L]{\franklinmedium\fontsize{9}{11}\selectfont\color{black}\VAR{shortJournalName | latex_escape | safe}| Volume \VAR{volume} | Issue \VAR{issues} | \VAR{year}}
+\fancyfoot[R]{\franklinbook\fontsize{9}{11}\selectfont\color{black}\thepage}
+\fancypagestyle{plain}{%
+  \fancyhf{}
+  \fancyhead[L]{\franklin\bfseries\fontsize{12}{14}\selectfont\color{journalblue}\VAR{journalName | latex_escape | safe}}
+  \fancyfoot[L]{\franklinmedium\fontsize{9}{11}\selectfont\color{black}\VAR{shortJournalName | latex_escape | safe}| Volume \VAR{volume} | Issue \VAR{issues} | \VAR{year}}
+  \fancyfoot[R]{\franklinbook\fontsize{9}{11}\selectfont\color{black}\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0pt}
+}
+
+% ============ SECTION / SUBSECTION STYLES ============
+\titleformat{\section}{\centering\franklindemi\fontsize{12}{14}\selectfont\color{black}}{}{0pt}{}
+\titlespacing{\section}{0pt}{10pt plus 2pt minus 1pt}{4pt}
+
+\titleformat{\subsection}{\raggedright\franklindemi\fontsize{10.5}{13}\selectfont\color{black}}{}{0pt}{}
+\titlespacing{\subsection}{0pt}{8pt plus 2pt minus 1pt}{3pt}
+
+% Body text default
+\newcommand{\bodytext}{\franklinbook\fontsize{10}{14}\selectfont\color{black}}
+
+\setlist[itemize]{leftmargin=1.2em,itemsep=2pt,topsep=2pt,parsep=0pt}
+\setlist[enumerate]{leftmargin=1.4em,itemsep=4pt,topsep=2pt,parsep=0pt}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\tolerance=1200
+\emergencystretch=2.5em
+\hbadness=10000
+\raggedbottom
+
+\begin{document}
+\bodytext
+
+% ======================================================================
+% TITLE BLOCK
+% ======================================================================
+\noindent\colorbox{titlebg}{%
+  \begin{minipage}{\dimexpr\textwidth-2\fboxsep\relax}
+    \centering
+    \vspace{8pt}
+    {\franklin\bfseries\fontsize{14}{17}\selectfont\color{black}%
+     \VAR{title | latex_escape | safe}}\par
+    \vspace{8pt}
+    {\franklindemi\fontsize{12}{14}\selectfont\color{black}\VAR{author | safe}\textsuperscript{*}}\par
+    \vspace{5pt}
+    {\franklinbook\fontsize{12}{14}\selectfont\color{black}%
+     \VAR{authorsDepartment | latex_escape | safe}}\par
+    \vspace{8pt}
+  \end{minipage}%
+}\par
+\vspace{6pt}
+\noindent\colorbox{editorialbg}{%
+  \begin{minipage}{\dimexpr\textwidth-2\fboxsep\relax}
+    \centering
+    \vspace{4pt}
+    {\franklin\bfseries\fontsize{12}{14}\selectfont\color{black}\VAR{type | latex_escape | safe}}\par
+    \vspace{4pt}
+  \end{minipage}%
+}\par
+\vspace{10pt}
+
+% ======================================================================
+% TWO-COLUMN HEADER BLOCK (Metadata on Left, Abstract/Keywords on Right)
+% ======================================================================
+\setlength{\columnsep}{18pt}
+\setlength{\columnseprule}{0.5pt}
+\setcolumnwidth{0.37\textwidth, 0.57\textwidth}
+
+\begin{paracol}{2}
+  % LEFT COLUMN: Metadata
+  \begin{sloppypar}
+  \franklinbook\fontsize{9}{12.5}\selectfont\color{black}
+  
+  \BLOCK{ if received }
+  {\franklindemi Received:} \VAR{received}, Manuscript No. \VAR{manuscript_no}; {\franklindemi Editor assigned:} \VAR{editorAssigned}, Pre-QC No. \VAR{preQCNo}; {\franklindemi Reviewed:} \VAR{reviewed}, QC No \VAR{QCNo}; {\franklindemi Revised:} \VAR{revised}, Manuscript No. \VAR{RManuNo}; {\franklindemi Published:} \VAR{published}, DOI: \VAR{doi | safe}\par
+  \vspace{9pt}
+  \BLOCK{ endif }
+
+  {\franklindemi *For Correspondence}\par
+  \vspace{2pt}
+  \VAR{author | safe}, \VAR{authorsDepartment | latex_escape | safe}\par
+  \vspace{9pt}
+
+  {\franklindemi E-mail:} \VAR{email | safe}\par
+  \vspace{9pt}
+
+  {\franklindemi Citation:} \VAR{author | safe}, \VAR{title | latex_escape | safe}. \VAR{shortJournalName | latex_escape | safe}. \VAR{year}.\VAR{volume}.\VAR{pdfNo}.\par
+  \vspace{9pt}
+
+  {\franklindemi Copyright:} \copyright\ \VAR{year} \VAR{author | safe}, this is an open-access article distributed under the terms of the Creative Commons Attribution License, which permits unrestricted use, distribution, and reproduction in any medium, provided the original author and source are credited.
+  \end{sloppypar}
+
+\switchcolumn
+  % RIGHT COLUMN: Abstract & Keywords
+  \begin{otherlanguage}{\VAR{lang_name}}
+  \BLOCK{ if abstract }
+    {\centering\franklindemi\fontsize{11}{13}\selectfont ABSTRACT\par}
+    \vspace{3pt}
+    {\franklinbook\fontsize{9.5}{13}\selectfont \VAR{abstract | latex_escape | safe}\par}
+    \vspace{10pt}
+  \BLOCK{ endif }
+
+  {\centering\franklindemi\fontsize{11}{13}\selectfont Keywords\par}
+  \vspace{3pt}
+  {\franklinbook\fontsize{9.5}{13}\selectfont \VAR{keywords | latex_escape | safe}\par}
+  \end{otherlanguage}
+\end{paracol}
+
+\vspace{12pt}
+\setlength{\columnseprule}{0pt}
+
+% ======================================================================
+% FULL-WIDTH MAIN BODY: INTRODUCTION & SUBSEQUENT SECTIONS
+% ======================================================================
+\bodytext
+\section*{INTRODUCTION}
+\begin{otherlanguage}{\VAR{lang_name}}
+\noindent \VAR{introduction | latex_escape | safe}
+\end{otherlanguage}
+
+\BLOCK{ if description }
+\begin{otherlanguage}{\VAR{lang_name}}
+\vspace{5pt}
+\noindent \VAR{description | latex_escape | safe}
+\end{otherlanguage}
+\BLOCK{ endif }
+
+\BLOCK{ if discussion }
+\section*{DISCUSSION}
+\begin{otherlanguage}{\VAR{lang_name}}
+\noindent \VAR{discussion | latex_escape | safe}
+\end{otherlanguage}
+\BLOCK{ endif }
+
+\BLOCK{ if conclusion }
+\section*{CONCLUSION}
+\begin{otherlanguage}{\VAR{lang_name}}
+\noindent \VAR{conclusion | latex_escape | safe}
+\end{otherlanguage}
+\BLOCK{ endif }
+
+% ======================================================================
+% REFERENCES
+% ======================================================================
+\section*{REFERENCES}
+
+\BLOCK{ if content|length == 0 }
+  \noindent No references generated.
+\BLOCK{ else }
+\begin{enumerate}[label=\arabic*.]
+\BLOCK{ for key, item in content.items() }
+\item \VAR{item.authors_short | latex_escape | safe} (\VAR{item.published}).
+\BLOCK{ if item.url }
+  \href{\VAR{item.url | safe}}{\VAR{item.title | latex_escape | safe}.}
+\BLOCK{ else }
+  \VAR{item.title | latex_escape | safe}.
+\BLOCK{ endif }
+\textit{\VAR{item.journalShortName | latex_escape | safe}},
+\BLOCK{ if item.issues }
+  \VAR{item.volume}(\VAR{item.issues}), \VAR{item.pageRangeOrNumber}.
+\BLOCK{ else }
+  \VAR{item.volume}, \VAR{item.pageRangeOrNumber}.
+\BLOCK{ endif }
+\BLOCK{ endfor }
+\end{enumerate}
+\BLOCK{ endif }
+
+\end{document}
