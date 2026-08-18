@@ -77,7 +77,7 @@
     \noindent \textbf{Citation:} \VAR{author_last} \VAR{author_first_initial} (\VAR{pub_year}). \VAR{title | latex_escape | safe}. \VAR{shortJournalName | latex_escape | safe}. \VAR{volume}: \VAR{pdfNo}.
 }
 \fancyhead[LE]{\fontsize{9}{11}\timesfont\selectfont \thepage\quad \BLOCK{ if secondShortName }\VAR{secondShortName | latex_escape | safe}\BLOCK{ else }\VAR{shortJournalName | latex_escape | safe}\BLOCK{ endif }}
-\fancyhead[RO]{\fontsize{9}{11}\timesfont\selectfont \VAR{header_author | latex_escape | safe}\quad \thepage}
+\fancyhead[RO]{\fontsize{9}{11}\timesfont\selectfont \BLOCK{ if secondShortName }\VAR{secondShortName | latex_escape | safe}\BLOCK{ else }\VAR{shortJournalName | latex_escape | safe}\BLOCK{ endif }\quad \thepage}
 
 % ==========================================
 % FIRST PAGE STYLE

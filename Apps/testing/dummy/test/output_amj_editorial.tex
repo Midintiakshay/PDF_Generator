@@ -1,0 +1,159 @@
+\documentclass{article}
+
+% ============================================================
+% PIPELINE PREAMBLE — XeLaTeX font config injected here
+% (Calibri as main font, Cambria as \rmfamily via named font)
+% ============================================================
+\usepackage{polyglossia}
+\setdefaultlanguage{english}
+
+        \usepackage{fontspec}
+        \usepackage{polyglossia}
+        \setdefaultlanguage{english}
+        % Heading / accent font: Cambria → \rmfamily (main roman font)
+        \setmainfont{cambria.ttc}[
+            Path=../../../Fonts/,
+            BoldFont       = cambriab.ttf,
+            ItalicFont     = cambriai.ttf,
+            BoldItalicFont = cambriaz.ttf
+        ]
+        % Body font: Calibri → \sffamily / \normalfont via sans default
+        \setsansfont{Calibri-Regular.ttf}[
+            Path=../../../Fonts/,
+            BoldFont       = Calibri-Bold.ttf,
+            ItalicFont     = Calibri-Italic.ttf,
+            BoldItalicFont = Calibri-BoldItalic.ttf
+        ]
+        % Make the document default to Calibri (sans) for body text
+        \renewcommand{\familydefault}{\sfdefault}
+        
+
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage[margin=0.6in,top=0.6in,bottom=0.6in,paperwidth=596pt,paperheight=842pt]{geometry}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+% Disable hyphenation globally
+\tolerance=1
+\emergencystretch=\maxdimen
+\hyphenpenalty=10000
+\hbadness=10000
+
+\setlength{\columnsep}{24pt}
+\pagestyle{empty}
+
+% ==================== COLOUR DEFINITIONS ====================
+\definecolor{color_29791}{rgb}{0,0,0}
+\definecolor{color_107508}{rgb}{0.313726,0.105882,0}
+\definecolor{color_33106}{rgb}{0,0.4,0.6}
+\definecolor{color_183489}{rgb}{0.623529,0.109804,0.121569}
+\definecolor{color_283006}{rgb}{1,1,1}
+
+\hypersetup{
+    colorlinks=true,
+    urlcolor=color_33106,
+    linkcolor=black,
+}
+
+\begin{document}
+
+% ==================== HEADER BLOCK ====================
+\noindent
+\begin{minipage}{\textwidth}
+    % 1. Logo and Citation (Side-by-side)
+    \includegraphics[width=110pt,height=31pt,keepaspectratio]{../../../Logo/amj_logo.png}%
+    \hspace{15pt}%
+    % Citation text — Font Style: Cambria (rmfamily)
+    \raisebox{12pt}{\fontsize{9}{12}\rmfamily\selectfont\color{color_29791}[AMJ 2026;06(02):56]}
+
+    \par\vspace{1em}\noindent
+
+    % 2. Main Red Header Banner — Font Style: Cambria (rmfamily)
+    \begin{tikzpicture}
+        \fill[color_183489] (0,0) rectangle (\textwidth, 1.4);
+        \draw[color_29791, line width=1.5pt] (0,0) rectangle (\textwidth, 1.4);
+        \node[text=color_283006, font=\bfseries\rmfamily, anchor=center] at (\textwidth/2, 0.9) {\fontsize{14}{16}\selectfont Research Article};
+        \node[text=color_283006, font=\rmfamily, anchor=center] at (\textwidth/2, 0.3) {\fontsize{11}{13}\selectfont AMJ 2026 06(02)};
+    \end{tikzpicture}
+\end{minipage}
+\vspace{2em}
+
+% ==================== EDITOR'S NOTE HEADING (OUTSIDE MULTICOLS) ====================
+% Placed in a minipage sized exactly to one column width (half of textwidth minus half of columnsep)
+\noindent
+\begin{minipage}{\dimexpr0.5\textwidth-12pt\relax}
+    \noindent\rule{\linewidth}{2.2pt}\par
+    \vspace{8pt}
+    % Section heading — Font Style: Cambria Bold (rmfamily + bfseries), dark brown color
+    \centerline{\fontsize{11}{14}\rmfamily\bfseries\color{color_107508}Research Article}\vspace{4pt}
+    \noindent\rule{\linewidth}{2.2pt}
+\end{minipage}
+
+% ==================== EVERYTHING BELOW FLOWS IN TWO COLUMNS ====================
+\begin{multicols*}{2}
+\sloppy
+\raggedcolumns
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+% Body font: Calibri (sffamily / normalfont as set by preamble via \familydefault=\sfdefault)
+\fontsize{10}{12}\sffamily\color{color_29791}
+\par
+\vspace*{-5pt}
+% ---- Author / Editor Info Block ----
+{\setlength{\leftskip}{8pt}
+\noindent {\fontsize{10}{13}\sffamily\bfseries\color{color_107508}John Smith}\\[0.3em]
+Computer Science\\
+Australasian Medical Journal\\
+E-mail: \textcolor{color_33106}{\href{mailto:john.smith@example.com}{john.smith@example.com}}\par}
+
+% ---- Rule BELOW the E-mail line ----
+\noindent\rule{\linewidth}{2.2pt}
+\vspace*{-7pt}
+
+% ---- Body Content (Editorial Note text) ----
+\begin{otherlanguage}{english}
+\noindent Dear Readers,\\[1em]  
+\noindent Season's greetings!\\[1em]
+\noindent The pervasive integration of machine learning (ML) into scientific endeavors is fundamentally reshaping the landscape of research and discovery across numerous disciplines. This transformative technology is proving instrumental in accelerating the pace of innovation, refining experimental methodologies, and unlocking unprecedented capabilities in data analysis. In the realm of drug discovery, ML algorithms are adept at identifying novel therapeutic targets and predicting the efficacy of potential drug candidates, thereby significantly shortening development cycles and reducing costs [1].
+
+Similarly, materials science is witnessing a revolution with ML's ability to predict the properties of new materials, guide synthesis processes, and optimize material performance for specific applications. This predictive power allows researchers to explore vast combinatorial spaces of potential materials that would be intractable through traditional experimentation alone [1].
+
+In climate modeling, ML is contributing to more accurate predictions of weather patterns, climate change impacts, and the effectiveness of mitigation strategies. By analyzing complex datasets from various sources, ML models can discern intricate relationships and provide insights that enhance our understanding of global climate systems [1].
+
+The field of natural language processing (NLP) has seen remarkable advancements due to deep learning techniques. These techniques enable machines to understand, interpret, and generate human language with increasing sophistication, driving progress in applications such as machine translation and sentiment analysis [2].
+
+Cybersecurity is another critical domain benefiting from ML's capabilities. The ability of ML algorithms to process vast quantities of network traffic and system logs allows for the real-time detection of anomalies indicative of malicious activity, thus bolstering defenses against evolving cyber threats [3].
+
+The healthcare sector is increasingly leveraging ML for a variety of applications, ranging from enhanced diagnostic accuracy through medical image analysis to the development of personalized treatment plans and accelerating drug development pipelines, ultimately aiming to improve patient outcomes and streamline healthcare operations [4].
+
+Robotics and autonomous systems are being propelled forward by reinforcement learning (RL), a subfield of ML. RL enables robots to learn complex control policies through experience, allowing them to navigate dynamic environments, perform intricate tasks, and interact more effectively with humans and their surroundings [5].
+
+Financial markets are also being influenced by ML, particularly in the areas of forecasting and algorithmic trading. ML models can analyze historical data and market sentiment to predict stock price movements and develop automated trading strategies, aiming to capitalize on market opportunities and manage risk [6].
+
+Intelligent transportation systems (ITS) are being enhanced by ML through applications such as traffic prediction, route optimization, and autonomous vehicle control. By integrating ML with sensor data and communication networks, ITS can improve road safety, reduce congestion, and boost overall transportation efficiency [7].
+
+In agriculture, ML is driving the adoption of precision farming techniques. By analyzing data from various sources, ML models can optimize resource allocation for irrigation, fertilization, and pest control, leading to increased crop yields, reduced environmental impact, and enhanced food security [8].
+\end{otherlanguage}
+
+\vspace{2em}
+
+% ==================== SIGNATURE BLOCK ====================
+\noindent
+\begin{minipage}{\linewidth}
+\noindent Sincerely,
+\\[1em]
+\noindent{\fontsize{10}{13}\sffamily\bfseries\color{color_107508}John Smith}\\
+Computer Science\\
+Australasian Medical Journal\\[0.5em]
+% ---- Rule at the END of the note ----
+\noindent\rule{\linewidth}{2.2pt}
+\end{minipage}
+
+\end{multicols*}
+
+\end{document}

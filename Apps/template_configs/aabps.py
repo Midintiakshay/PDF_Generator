@@ -81,7 +81,10 @@ class AabpsTemplate(BaseJournalTemplate):
         You are provided by a topic:
         topic : "{journal.topic}"
         journal name: "{journal.journalName}"
-        department: "{journal.authorsDepartment}" ignore the university name if mentioned. use the department name only as reference.
+        depart
+        
+        
+        ment: "{journal.authorsDepartment}" ignore the university name if mentioned. use the department name only as reference.
         ...
         IMPORTANT: Generate a structured output for the given topic containing subContent (a concise summary of the article's key insights), references (complete citation-style entries), and all remaining required fields. All references must be authentic, peer-reviewed journal articles published within the last five years, each with at least three legitimate authors. Use only reputable journals indexed in PubMed, Scopus, or Web of Science. Every reference must include authors, year, title, journal name, volume, issue, page range, DOI, and a working URL that leads to the real article. Do not create or fabricate any data, authors, journals, DOIs, or links.
 
@@ -129,8 +132,8 @@ class AabpsTemplate(BaseJournalTemplate):
             Produce only a valid JSON object with the following keys:
 
             "content": {{
-                "introduction": "...",
-                "description": "...",
+                "introduction": "Text for the first paragraph [1].\\n\\nText for the second paragraph [2].\\n\\n(continue for all 10 paragraphs...)",
+                "description": "Text for the first paragraph [1].\\n\\nText for the second paragraph [2].\\n\\n(continue for all 10 paragraphs...)",
                 "summary": "...", # Do not add any citations here
                 "abstract": "...",
                 "discussion": "...",
@@ -145,15 +148,17 @@ class AabpsTemplate(BaseJournalTemplate):
 
             Introduction
             - Word count: 500-700.
-            - Include sequential citation markers from the references: "C001" -> [1], "C002" -> [2], and so on.
-            - The Introduction must contain exactly 10 paragraphs, each corresponding to one reference.
-            - The citation marker must be placed at the end of the paragraph, immediately before the period, followed by two line breaks(\n).
+            - MUST INCLUDE exactly 10 paragraphs, each corresponding to one reference.
+            - You MUST map the reference IDs to numbered citations: "C001" becomes [1], "C002" becomes [2], and so on up to [10].
+            - MUST INCLUDE exactly one citation marker per paragraph, in sequential order: [1] in the first paragraph, [2] in the second, ..., [10] in the tenth.
+            - CRITICAL: DO NOT use citations in the middle of sentences. The citation marker MUST be placed at the VERY END of the paragraph, immediately before the final period, exactly like this: "last sentence of the paragraph [1]." followed by two line breaks(\\n).
 
             Description
             - Word count: 500-700.
-            - Include sequential citation markers: "C001" -> [1], "C002" -> [2], and so on.
-            - The Description must also contain exactly 10 paragraphs, each corresponding to one reference.
-            - The citation marker must be placed at the end of the paragraph, immediately before the period, followed by two line breaks(\n).
+            - MUST INCLUDE exactly 10 paragraphs, each corresponding to one reference.
+            - You MUST map the reference IDs to numbered citations: "C001" becomes [1], "C002" becomes [2], and so on up to [10].
+            - MUST INCLUDE exactly one citation marker per paragraph, in sequential order: [1] in the first paragraph, [2] in the second, ..., [10] in the tenth.
+            - CRITICAL: DO NOT use citations in the middle of sentences. The citation marker MUST be placed at the VERY END of the paragraph, immediately before the final period, exactly like this: "last sentence of the paragraph [2]." followed by two line breaks(\\n).
 
             Summary
             - Word count: 150-300.

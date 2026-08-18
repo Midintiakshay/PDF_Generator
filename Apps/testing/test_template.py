@@ -145,5 +145,5 @@ def run_test(template_name="ABAcademies.tex"):
     print(f"PDF successfully generated at {tex_file_path.with_suffix('.pdf')}")
 
 if __name__ == "__main__":
-    template_name = "jwhc.tex"
+    template_name = "amj_editorial.tex"
     run_test(template_name)

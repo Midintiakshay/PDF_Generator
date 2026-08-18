@@ -29,6 +29,7 @@ from .ejbi import EJBITemplate
 from .jrmds import JrmdsTemplate
 from .aabps import AabpsTemplate
 from .jwhc import JwhcTemplate
+from .amj_editorial import AmjEditorialTemplate
 
 
 # ---------------------------------------------------------------------------
@@ -47,6 +48,7 @@ _REGISTRY: dict[str, BaseJournalTemplate] = {
     "jrmds.tex":               JrmdsTemplate(),
     "aabps.tex":               AabpsTemplate(),
     "jwhc.tex":                JwhcTemplate(),
+    "amj_editorial.tex":       AmjEditorialTemplate(),
 }
 
 # Lazy default (used when brand is unknown / new template in progress)

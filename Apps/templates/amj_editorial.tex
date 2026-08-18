@@ -1,0 +1,114 @@
+\documentclass{article}
+
+% ============================================================
+% PIPELINE PREAMBLE — XeLaTeX font config injected here
+% (Calibri as main font, Cambria as \rmfamily via named font)
+% ============================================================
+\VAR{preamble | safe}
+
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage[margin=0.6in,top=0.6in,bottom=0.6in,paperwidth=596pt,paperheight=842pt]{geometry}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+
+\setlength{\columnsep}{24pt}
+\pagestyle{empty}
+
+% ==================== COLOUR DEFINITIONS ====================
+\definecolor{color_29791}{rgb}{0,0,0}
+\definecolor{color_107508}{rgb}{0.313726,0.105882,0}
+\definecolor{color_33106}{rgb}{0,0.4,0.6}
+\definecolor{color_183489}{rgb}{0.623529,0.109804,0.121569}
+\definecolor{color_283006}{rgb}{1,1,1}
+
+\hypersetup{
+    colorlinks=true,
+    urlcolor=color_33106,
+    linkcolor=black,
+}
+
+\begin{document}
+
+% ==================== HEADER BLOCK ====================
+\noindent
+\begin{minipage}{\textwidth}
+    % 1. Logo and Citation (Side-by-side)
+    \includegraphics[width=110pt,height=31pt,keepaspectratio]{../../../Logo/amj_logo.png}%
+    \hspace{15pt}%
+    % Citation text — Font Style: Cambria (rmfamily)
+    \raisebox{12pt}{\fontsize{9}{12}\rmfamily\selectfont\color{color_29791}[AMJ \VAR{year};\VAR{volume}(\VAR{issues}):\VAR{pdfNo}]}
+
+    \par\vspace{1em}\noindent
+
+    % 2. Main Red Header Banner — Font Style: Cambria (rmfamily)
+    \begin{tikzpicture}
+        \fill[color_183489] (0,0) rectangle (\textwidth, 1.4);
+        \draw[color_29791, line width=1.5pt] (0,0) rectangle (\textwidth, 1.4);
+        \node[text=color_283006, font=\bfseries\rmfamily, anchor=center] at (\textwidth/2, 0.9) {\fontsize{14}{16}\selectfont Editor’s Note};
+        \node[text=color_283006, font=\rmfamily, anchor=center] at (\textwidth/2, 0.3) {\fontsize{11}{13}\selectfont AMJ \VAR{year} \VAR{volume}(\VAR{issues})};
+    \end{tikzpicture}
+\end{minipage}
+\vspace{2em}
+
+% ==================== EDITOR'S NOTE HEADING (OUTSIDE MULTICOLS) ====================
+% Placed in a minipage sized exactly to one column width (half of textwidth minus half of columnsep)
+\noindent
+\begin{minipage}{\dimexpr0.5\textwidth-12pt\relax}
+    \noindent\rule{\linewidth}{2.2pt}\par
+    \vspace{8pt}
+    % Section heading — Font Style: Cambria Bold (rmfamily + bfseries), dark brown color
+    \centerline{\fontsize{11}{14}\rmfamily\bfseries\color{color_107508} Editor’s Note }\vspace{4pt}
+    \noindent\rule{\linewidth}{2.2pt}
+\end{minipage}
+
+% ==================== EVERYTHING BELOW FLOWS IN TWO COLUMNS ====================
+\begin{multicols*}{2}
+\sloppy
+\raggedcolumns
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+% Body font: Calibri (sffamily / normalfont as set by preamble via \familydefault=\sfdefault)
+\fontsize{10}{12}\sffamily\color{color_29791}
+\par
+\vspace*{-5pt}
+% ---- Author / Editor Info Block ----
+{\setlength{\leftskip}{8pt}
+\noindent {\fontsize{10}{13}\sffamily\bfseries\color{color_107508}Rick Steves}\\[0.3em]
+Managing Editor\\
+Australasian Medical Journal\\
+E-mail: \textcolor{color_33106}{\href{mailto:medicalsci@medicineinsights.com}{medicalsci@medicineinsights.com}}\par}
+
+% ---- Rule BELOW the E-mail line ----
+\noindent\rule{\linewidth}{2.2pt}
+\vspace*{-7pt}
+
+% ---- Body Content (Editorial Note text) ----
+\begin{otherlanguage}{\VAR{lang_name}}
+\noindent Dear Readers,\\[1em]  
+\noindent Season's greetings!\\[1em]
+\noindent \VAR{introduction | latex_escape | safe}
+\end{otherlanguage}
+
+\vspace{2em}
+
+% ==================== SIGNATURE BLOCK ====================
+\noindent
+\begin{minipage}{\linewidth}
+\noindent Sincerely,
+\\[1em]
+\noindent{\fontsize{10}{13}\sffamily\bfseries\color{color_107508}Rick Steves}\\
+Managing Editor\\
+Australasian Medical Journal\\[0.5em]
+% ---- Rule at the END of the note ----
+\noindent\rule{\linewidth}{2.2pt}
+\end{minipage}
+
+\end{multicols*}
+
+\end{document}
