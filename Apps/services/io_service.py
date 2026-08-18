@@ -1,5 +1,11 @@
 from Apps.library_import import json, Dict, Any, re
 from Apps.library_import import pathOfPathLib
+import threading
+
+# Module-level lock — shared across all threads in the process.
+# Protects read-modify-write operations on the JSON DB files so concurrent
+# ThreadPoolExecutor workers (process_journal_sync) cannot corrupt each other's entries.
+_db_lock = threading.Lock()
 
 
 class IOService:

@@ -112,6 +112,26 @@ def ui_pipeline(request: Request):
     )
 
 
+@router.get("/ui/excel-upload")
+def ui_excel_upload(request: Request):
+    allowed_ext_img = (".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".tiff", ".svg")
+    allowed_ext_temp = (".tex")
+    template_files = [
+        f
+        for f in os.listdir("Apps/templates")
+        if f.lower().endswith(allowed_ext_temp)
+    ]
+    image_files = [
+        f
+        for f in os.listdir("Apps/Logo")
+        if f.lower().endswith(allowed_ext_img)
+    ]
+    return templates.TemplateResponse(
+        "excelUpload.html",
+        {"request": request, "template_files": template_files, "images": image_files},
+    )
+
+
 @router.get("/ui/translate")
 def ui_translate(request: Request):
 

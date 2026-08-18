@@ -5,9 +5,23 @@ from Apps.language_fonts import LatexLanguageConfig
 from Apps.library_import import *
 from Apps.library_import import pathOfPathLib
 from Apps.template_configs import TemplateFactory
+import threading
+import time as _time
 
+# ---------------------------------------------------------------------------
+# Debug helpers
+# ---------------------------------------------------------------------------
 
-
+def _dbg(journal_id: str, msg: str, t0: float | None = None) -> None:
+    """
+    Print a timestamped debug line.
+    If t0 is supplied, also prints the elapsed seconds since that checkpoint.
+    Format: [HH:MM:SS.mmm] [thread-name] [journal_id] | msg  (+X.XXs)
+    """
+    ts   = _time.strftime("%H:%M:%S", _time.localtime()) + f".{int(_time.time() * 1000) % 1000:03d}"
+    thr  = threading.current_thread().name
+    elap = f"  (+{_time.time() - t0:.2f}s)" if t0 is not None else ""
+    print(f"[{ts}] [{thr}] [{journal_id}] | {msg}{elap}")
 
 
 class PipelineService:
@@ -27,7 +41,7 @@ class PipelineService:
         4. Generate PDF & HTML
         5. Return JSON status
         """
-        # ---------- Step 1: Store input ----------
+        # ---------- Step 1: Validate input (do NOT write to DB yet) ----------
         IOService.INPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
         data = IOService.fetchInputData()
         journal.id = journal.id.strip()
@@ -35,7 +49,7 @@ class PipelineService:
         if journal.id in data:
             raise HTTPException(status_code=400, detail="Journal ID already exists.")
         data[journal.id] = journal.model_dump(exclude=["id"])
-        print("Step 1 : Save journal input ✔")
+        print("Step 1 : Validated journal input (DB write deferred until PDF success) ✔")
 
         # ---------- Step 2: Build LLM Prompt ----------
         prompt = PipelineService._build_prompt(journal)
@@ -65,21 +79,23 @@ class PipelineService:
 
         print("Step 6 : Generated title ✔")
 
-        # ---------- Step 6: Save structured data ----------
+        # ---------- Step 6: Build final output ----------
         final_output = PipelineService._build_final_output(
             journal, gem_title, content_data, processed_sections["content"]
         )
-        IOService.saveInputData(data)
         output_data = IOService.fetchOutputData()
         pulsus_output_instance = PulsusOutputStr(**final_output[journal.id])
         output_data[journal.id] = pulsus_output_instance.model_dump()
-
         IOService.saveOutputData(output_data)
         print("Step 7 : Saved output data ✔")
 
         # ---------- Step 7: Generate files ----------
         PipelineService._generate_html_and_pdf(journal, output_data)
         print("Step 11 : Generated HTML and PDF ✔")
+
+        # ---------- Step 8: Write input to DB (only after PDF success) ----------
+        IOService.saveInputData(data)
+        print("Step 12 : Saved journal input to DB ✔")
 
         # ---------- Step 8: Return success ----------
         return JSONResponse(
@@ -88,6 +104,137 @@ class PipelineService:
                 "Status": f"Data added and files generated successfully in PDFStorePulsus/{journal.id}/ ✔."
             },
         )
+
+    # ------------------------------------------------------------------
+    # Synchronous twin — designed for concurrent ThreadPoolExecutor use.
+    # Returns a plain dict so the caller (excel_routes) can build SSE
+    # events without caring about HTTP response objects.
+    # All shared-file read-modify-write operations are performed while
+    # holding IOService._db_lock so concurrent workers cannot corrupt
+    # each other's DB entries.
+    # ------------------------------------------------------------------
+    @staticmethod
+    def process_journal_sync(journal: PulsusInputStr) -> dict:
+        """
+        Blocking (synchronous) version of process_journal().
+        Safe to run inside a ThreadPoolExecutor.
+
+        Returns:
+            {"status": "success", "id": journal_id}           on success
+            {"status": "error",   "id": journal_id, "error": str}  on failure
+        """
+        from Apps.services.io_service import _db_lock  # module-level threading.Lock
+
+        journal_id = journal.id.strip()
+        step_start = _time.time()          # wall-clock start of the whole job
+        t_step     = _time.time()          # reused per step for delta timing
+
+        _dbg(journal_id, "━━━ JOB START ━━━")
+        try:
+            # ---------- Step 1: Validate + stage input (do NOT write to DB yet) ----------
+            IOService.INPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
+
+            _dbg(journal_id, "Step 1 | Waiting for _db_lock (input validate)…")
+            t_step = _time.time()
+            with _db_lock:
+                _dbg(journal_id, "Step 1 | _db_lock acquired", t_step)
+                data = IOService.fetchInputData()
+                journal.id = journal_id
+                journal.author = journal.author.strip()
+                if journal.id in data:
+                    raise ValueError(f"Journal ID '{journal.id}' already exists in the database.")
+                data[journal.id] = journal.model_dump(exclude=["id"])
+                # Stage entry in memory; DB write is deferred until PDF is generated successfully
+            _dbg(journal_id, "Step 1 | _db_lock released — input staged ✔", t_step)
+
+            # ---------- Step 2: Build LLM Prompt ----------
+            t_step = _time.time()
+            _dbg(journal_id, "Step 2 | Building LLM prompt…")
+            prompt = PipelineService._build_prompt(journal)
+            _dbg(journal_id, "Step 2 | Prompt ready ✔", t_step)
+
+            # ---------- Step 3,4: Generate + Parse Gemini JSON ----------
+            t_step = _time.time()
+            _dbg(journal_id, "Step 3-4 | Sending references prompt to Gemini (may block)…")
+            content_data = PipelineService._parse_gemini_response(prompt)
+            _dbg(journal_id, "Step 3-4 | Gemini response parsed ✔", t_step)
+
+            # ---------- Step 5: Create title, abstract, summary ----------
+            t_step = _time.time()
+            _dbg(journal_id, "Step 5 | Sending sections prompt to Gemini (may block)…")
+            processed_sections = PipelineService._process_sections(content_data, journal)
+            processed_sections = PipelineService._normalize_content_structure(processed_sections)
+            _dbg(journal_id, "Step 5 | Sections generated ✔", t_step)
+
+            t_step = _time.time()
+            _dbg(journal_id, "Step 6a | Sending title prompt to Gemini (may block)…")
+            gem_title = PipelineService._generate_title(
+                processed_sections["content"]["summary"], journal
+            )
+            if gem_title and gem_title[-1] == ".":
+                gem_title = gem_title[:-1]
+            _dbg(journal_id, "Step 6a | Title generated ✔", t_step)
+
+            # ---------- Step 6b: Build final output + save output DB ----------
+            t_step = _time.time()
+            _dbg(journal_id, "Step 6b | Building final output dict…")
+            final_output = PipelineService._build_final_output(
+                journal, gem_title, content_data, processed_sections["content"]
+            )
+            _dbg(journal_id, "Step 6b | Final output dict built ✔", t_step)
+
+            _dbg(journal_id, "Step 7 | Waiting for _db_lock (save output DB)…")
+            t_step = _time.time()
+            with _db_lock:
+                _dbg(journal_id, "Step 7 | _db_lock acquired", t_step)
+                output_data = IOService.fetchOutputData()
+                pulsus_output_instance = PulsusOutputStr(**final_output[journal.id])
+                output_data[journal.id] = pulsus_output_instance.model_dump()
+                IOService.saveOutputData(output_data)
+            _dbg(journal_id, "Step 7 | _db_lock released — output DB saved ✔", t_step)
+
+            # ---------- Step 7b: Generate HTML + PDF (CPU-bound, no shared state) ----------
+            # Snapshot output_data under lock to avoid race with concurrent writers
+            _dbg(journal_id, "Step 7b | Waiting for _db_lock (snapshot output for HTML/PDF gen)…")
+            t_step = _time.time()
+            with _db_lock:
+                _dbg(journal_id, "Step 7b | _db_lock acquired", t_step)
+                output_data_for_gen = IOService.fetchOutputData()
+            _dbg(journal_id, "Step 7b | _db_lock released — output snapshot taken ✔", t_step)
+
+            t_step = _time.time()
+            _dbg(journal_id, "Step 8-11 | Starting HTML + PDF generation (xelatex, may take 30-120 s)…")
+            PipelineService._generate_html_and_pdf(journal, output_data_for_gen)
+            _dbg(journal_id, "Step 8-11 | HTML and PDF generated ✔", t_step)
+
+            # ---------- Step 12: Write input to DB (only after PDF success) ----------
+            _dbg(journal_id, "Step 12 | Waiting for _db_lock (save input DB)…")
+            t_step = _time.time()
+            with _db_lock:
+                _dbg(journal_id, "Step 12 | _db_lock acquired", t_step)
+                IOService.saveInputData(data)
+            _dbg(journal_id, "Step 12 | _db_lock released — input DB saved ✔", t_step)
+
+            _dbg(journal_id, f"━━━ JOB COMPLETE ✔  (total {_time.time() - step_start:.1f}s) ━━━")
+            return {"status": "success", "id": journal_id}
+
+        except Exception as exc:
+            _dbg(journal_id, f"━━━ JOB FAILED after {_time.time() - step_start:.1f}s | ERROR: {exc} ━━━")
+            # Rollback: remove orphaned output DB entry if it was written before failure
+            try:
+                _dbg(journal_id, "Rollback | Waiting for _db_lock…")
+                t_rb = _time.time()
+                with _db_lock:
+                    _dbg(journal_id, "Rollback | _db_lock acquired", t_rb)
+                    output_data_rollback = IOService.fetchOutputData()
+                    if journal_id in output_data_rollback:
+                        del output_data_rollback[journal_id]
+                        IOService.saveOutputData(output_data_rollback)
+                        _dbg(journal_id, "Rollback | orphaned output DB entry removed ✔")
+                _dbg(journal_id, "Rollback | _db_lock released", t_rb)
+            except Exception as rb_exc:
+                _dbg(journal_id, f"Rollback | FAILED: {rb_exc}")
+            return {"status": "error", "id": journal_id, "error": str(exc)}
 
     # =====================================================================================================================================
     # Internal helper methods
@@ -101,8 +248,10 @@ class PipelineService:
 
     @staticmethod
     def _ask_gemini_with_retries(prompt: str, retries: int = 10) -> str:
-        print(f"\\n--- DEBUG: Gemini Prompt ---\\n{prompt}\\n-----------------------------\\n")
+        thr = threading.current_thread().name
         for attempt in range(retries):
+            t_gem = _time.time()
+            print(f"[{_time.strftime('%H:%M:%S')}] [{thr}] Gemini call attempt {attempt + 1}/{retries} → sending {len(prompt)} chars…")
             try:
                 response = PipelineService.gemClient.models.generate_content(
                     model="gemini-2.5-flash-lite",
@@ -115,10 +264,12 @@ class PipelineService:
                     #     ]
                     # }
                 )
-                print(f"\033[96m\n--- DEBUG: Gemini Response ---\n{response.text}\n-----------------------------\n\033[0m")
+                elapsed = _time.time() - t_gem
+                print(f"[{_time.strftime('%H:%M:%S')}] [{thr}] Gemini response received in {elapsed:.2f}s ({len(response.text)} chars)")
                 return response.text
             except Exception as e:
-                print(f"Gemini attempt {attempt + 1} failed: {e}")
+                elapsed = _time.time() - t_gem
+                print(f"[{_time.strftime('%H:%M:%S')}] [{thr}] Gemini attempt {attempt + 1} FAILED after {elapsed:.2f}s: {e}")
                 time.sleep(3)
                 if attempt == retries - 1:
                     raise HTTPException(status_code=500, detail=str(e))
@@ -422,17 +573,31 @@ class PipelineService:
         tex_file_path.write_text(rendered_latex, encoding="utf-8")
 
         # Compile LaTeX to PDF. Run from within the journal's folder.
+        _XELATEX_TIMEOUT = 120  # seconds per xelatex pass — increase if needed
+        thr = threading.current_thread().name
         for i in range(2):
-            result = subprocess.run(
-                [
-                    "xelatex",
-                    "-interaction=nonstopmode",
-                    tex_file_path.name,
-                ],
-                capture_output=True,  # Capture stdout/stderr
-                text=True,
-                cwd=journal_folder,  # CRITICAL: Set the working directory
-            )
+            t_latex = _time.time()
+            print(f"[{_time.strftime('%H:%M:%S')}] [{thr}] [{journal.id}] xelatex pass {i + 1}/2 → starting (timeout={_XELATEX_TIMEOUT}s)…")
+            try:
+                result = subprocess.run(
+                    [
+                        "xelatex",
+                        "-interaction=nonstopmode",
+                        tex_file_path.name,
+                    ],
+                    capture_output=True,  # Capture stdout/stderr
+                    text=True,
+                    cwd=journal_folder,  # CRITICAL: Set the working directory
+                    timeout=_XELATEX_TIMEOUT,
+                )
+            except subprocess.TimeoutExpired:
+                elapsed = _time.time() - t_latex
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"xelatex pass {i + 1} timed out after {elapsed:.0f}s — possible infinite loop in LaTeX source.",
+                )
+            elapsed = _time.time() - t_latex
+            print(f"[{_time.strftime('%H:%M:%S')}] [{thr}] [{journal.id}] xelatex pass {i + 1}/2 → finished in {elapsed:.2f}s (returncode={result.returncode})")
 
             if result.returncode != 0:
                 log_file_path = log_folder / f"{journal.id}.log"
@@ -475,16 +640,28 @@ class PipelineService:
             rendered_latex_final = latex_template.render(**forPdf)
             tex_file_path.write_text(rendered_latex_final, encoding="utf-8")
 
-            result_final = subprocess.run(
-                [
-                    "xelatex",
-                    "-interaction=nonstopmode",
-                    tex_file_path.name,
-                ],
-                capture_output=True,
-                text=True,
-                cwd=journal_folder,
-            )
+            t_latex3 = _time.time()
+            print(f"[{_time.strftime('%H:%M:%S')}] [{thr}] [{journal.id}] xelatex pass 3/3 (page-count recompile) → starting (timeout={_XELATEX_TIMEOUT}s)…")
+            try:
+                result_final = subprocess.run(
+                    [
+                        "xelatex",
+                        "-interaction=nonstopmode",
+                        tex_file_path.name,
+                    ],
+                    capture_output=True,
+                    text=True,
+                    cwd=journal_folder,
+                    timeout=_XELATEX_TIMEOUT,
+                )
+            except subprocess.TimeoutExpired:
+                elapsed3 = _time.time() - t_latex3
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"xelatex pass 3 timed out after {elapsed3:.0f}s.",
+                )
+            elapsed3 = _time.time() - t_latex3
+            print(f"[{_time.strftime('%H:%M:%S')}] [{thr}] [{journal.id}] xelatex pass 3/3 → finished in {elapsed3:.2f}s (returncode={result_final.returncode})")
 
             if result_final.returncode != 0:
                 log_file_path = log_folder / f"{journal.id}.log"
@@ -502,7 +679,7 @@ class PipelineService:
                     detail=f"LaTeX final recompile (pass 3) failed:\n\n{error_text}",
                 )
 
-            print("Step 10b: Final PDF recompiled with real pdfNo ✔")
+            print(f"[{_time.strftime('%H:%M:%S')}] [{thr}] [{journal.id}] Step 10b: Final PDF recompiled with real pdfNo ✔")
 
         for ext in [".log", ".aux", ".out"]:
             src = journal_folder / f"{journal.id}{ext}"

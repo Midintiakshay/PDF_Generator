@@ -7,6 +7,7 @@ from Apps.routes.journal_routes import router as journal_router
 from Apps.routes.llm_routes import router as llm_router
 from Apps.routes.pipeline_routes import router as pipeline_router
 from Apps.routes.translation_routes import router as translation_router
+from Apps.routes.excel_routes import router as excel_router
 
 
 # Initialize translation service
@@ -22,6 +23,7 @@ app.include_router(journal_router)
 app.include_router(llm_router)
 app.include_router(pipeline_router)
 app.include_router(translation_router)
+app.include_router(excel_router)
 
 
 # Test routes
