@@ -1,0 +1,234 @@
+% iomc2.tex — Dynamic Jinja2 template for the IOMC2 journal brand
+% Journal of Diabetes Metabolism (Open Access) layout
+% Compiled by the pipeline using XeLaTeX (not pdfLaTeX).
+% pdfLaTeX packages (helvet, fontenc, inputenc) are NOT used here.
+% The pipeline injects XeLaTeX fontspec + polyglossia via the preamble block below.
+\documentclass[9pt,twocolumn]{extarticle}
+\usepackage[a4paper,top=3.3cm,left=1.05cm,right=1.05cm,bottom=1.55cm,columnsep=0.4cm,includefoot]{geometry}
+
+% === DYNAMIC PREAMBLE (XeLaTeX font + polyglossia) ===
+\VAR{preamble | safe}
+% === END DYNAMIC PREAMBLE ===
+
+% === ROBOTO FONT FAMILIES ===
+\newfontfamily\robotoBoldCondensedfont{Roboto-BoldCondensed}[Path=../../../Fonts/, UprightFont=*, ItalicFont=Roboto-BoldCondensedItalic, Extension=.ttf]
+\newfontfamily\robotoCondensedfont{Roboto-Condensed}[Path=../../../Fonts/, UprightFont=*, BoldFont=RobotoCondensed-Bold, ItalicFont=Roboto-CondensedItalic, BoldItalicFont=RobotoCondensed-BoldItalic, Extension=.ttf]
+\newfontfamily\robotoBoldfont{Roboto-Bold}[Path=../../../Fonts/, UprightFont=*, ItalicFont=Roboto-BoldItalic, Extension=.ttf]
+\newfontfamily\robotoItalicfont{Roboto-Italic}[Path=../../../Fonts/, UprightFont=*, Extension=.ttf]
+\newfontfamily\robotoRegularfont{Roboto-Regular}[Path=../../../Fonts/, UprightFont=*, BoldFont=Roboto-Bold, ItalicFont=Roboto-Italic, BoldItalicFont=Roboto-BoldItalic, Extension=.ttf]
+% === END ROBOTO FONT FAMILIES ===
+
+% === IOMC FONT COMMANDS ===
+% Article Type: Roboto-BoldCondensed, 8.5pt
+\newcommand{\articletypefont}{\fontsize{8.5}{10.2}\robotoBoldCondensedfont\bfseries\selectfont}
+% Article Title: Roboto-BoldCondensed, 16pt
+\newcommand{\articleTitleFont}{\fontsize{16}{19.2}\robotoBoldCondensedfont\bfseries\selectfont}
+% Abstract Heading: Roboto Condensed Bold, 10pt
+\newcommand{\abstractHeadingFont}{\fontsize{10}{12}\robotoCondensedfont\bfseries\selectfont}
+% Abstract Text: Roboto Condensed, 8.5pt, non-bold
+\newcommand{\abstractTextFont}{\fontsize{8.5}{10.2}\robotoCondensedfont\selectfont}
+% Author Names: Roboto Bold, 9pt
+\newcommand{\authorfont}{\fontsize{9}{10.8}\robotoBoldfont\bfseries\selectfont}
+% Author Affiliation: Roboto Italic, 8pt
+\newcommand{\affiliationfont}{\fontsize{8}{9.6}\robotoItalicfont\itshape\selectfont}
+% Correspondence Heading: Roboto Condensed Bold Italic, 9pt
+\newcommand{\corrHeadingFont}{\fontsize{9}{10.8}\robotoCondensedfont\bfseries\itshape\selectfont}
+% Correspondence Text: Roboto Condensed Bold Italic, 8.5pt
+\newcommand{\corrTextFont}{\fontsize{8.5}{10.2}\robotoCondensedfont\itshape\selectfont}
+% Dates: Roboto Condensed, 8pt
+\newcommand{\datesfont}{\fontsize{8}{9.6}\robotoCondensedfont\selectfont}
+% Citation (end of page): Roboto Condensed, 9pt
+\newcommand{\citationfont}{\fontsize{9}{10.8}\robotoCondensedfont\selectfont}
+% Copyright: Roboto Condensed, 8pt
+\newcommand{\copyrightfont}{\fontsize{8}{9.6}\robotoCondensedfont\selectfont}
+% IOMC Heading: Roboto BoldCondensed, 11pt, Black
+\newcommand{\iomcHeadingFont}{\fontsize{11}{13.2}\robotoBoldCondensedfont\bfseries\color{Black}\selectfont}
+% IOMC Sub-Heading: Roboto BoldCondensed, 10pt, Black
+\newcommand{\iomcSubHeadingFont}{\fontsize{10}{12}\robotoBoldCondensedfont\bfseries\color{Black}\selectfont}
+% IOMC Body Content: Roboto Condensed, 8.5pt, Black
+\newcommand{\iomcBodyFont}{\fontsize{8.5}{12}\robotoCondensedfont\color{Black}\selectfont}
+% IOMC References: Roboto Condensed, 8.5pt, Black
+\newcommand{\iomcRefFont}{\fontsize{8.5}{12}\robotoCondensedfont\color{Black}\selectfont}
+% Header Left: Roboto BoldCondensed, 8.5pt, Black
+\newcommand{\headerLeftFont}{\fontsize{8.5}{10.2}\robotoBoldCondensedfont\bfseries\color{Black}\selectfont}
+% === END IOMC FONT COMMANDS ===
+
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{balance}
+\usepackage{graphicx}
+\usepackage{lastpage}
+\usepackage{ifthen}
+\usepackage{mdframed}
+\linespread{0.94}
+
+% === COLORS ===
+\definecolor{jteal}{RGB}{0,128,116}
+\definecolor{jblue}{RGB}{31,73,125}
+\definecolor{Black}{rgb}{0,0,0}
+
+% === LINK COLORS ===
+\hypersetup{
+    colorlinks=true,
+    urlcolor=black,
+    citecolor=black,
+    linkcolor=black
+}
+
+% === SECTION FORMATTING ===
+% IOMC Headings: Roboto BoldCondensed, 11pt, Bold, Black
+\titleformat{\section}{\iomcHeadingFont}{\thesection}{0pt}{}
+\titlespacing{\section}{0pt}{5pt}{3pt}
+% IOMC Sub-Headings: Roboto BoldCondensed, 10pt, Bold, Black
+\titleformat{\subsection}{\iomcSubHeadingFont}{\thesubsection}{0pt}{}
+\titlespacing{\subsection}{0pt}{4pt}{2pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1.5pt}
+
+% ---------- Header / Footer (subsequent pages) ----------
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\setlength{\headheight}{14pt}
+\setlength{\headsep}{10pt}
+\fancyhead[L]{{\headerLeftFont \VAR{journalName | latex_escape | safe}: Open Access \VAR{year}, \VAR{volume}, \VAR{issues}, \VAR{pdfNo}.}}
+\fancyhead[R]{{\articletypefont \VAR{type | latex_escape | safe}}}
+\renewcommand{\footrulewidth}{0pt}
+\setlength{\footskip}{34pt}
+\fancyfoot[C]{%
+\ifthenelse{\equal{\thepage}{\pageref{LastPage}}}{%
+\begin{minipage}{\textwidth}
+\centering
+\fbox{
+\begin{minipage}{0.72\textwidth}
+\centering
+\BLOCK{ set parts = author.split(" ") }%
+\BLOCK{ set last = parts[-1] }%
+\BLOCK{ set initials = parts[0][0:1] }%
+{\citationfont Cite this article: \VAR{last} \VAR{initials}. \VAR{title | latex_escape | safe}. \VAR{shortJournalName | latex_escape | safe}, \VAR{year}, \VAR{volume}(\VAR{issues}), \VAR{pdfNo}. DOI:\\\VAR{doi | latex_escape | safe}}
+\end{minipage}
+}
+\end{minipage}
+}{}
+}
+\fancyfoot[R]{\small\thepage}
+
+\begin{document}
+
+% ---------- First-page style (no boxed footer, just page number) ----------
+\fancypagestyle{firstpage}{%
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyhead[L]{{\headerLeftFont \VAR{journalName | latex_escape | safe}: Open Access \VAR{year}, \VAR{volume}, \VAR{issues}, \VAR{pdfNo}.}}
+\fancyhead[R]{{\articletypefont \VAR{type | latex_escape | safe}}}
+\renewcommand{\footrulewidth}{0pt}
+\fancyfoot[C]{%
+\ifthenelse{\equal{\thepage}{\pageref{LastPage}}}{%
+\begin{minipage}{\textwidth}
+\centering
+\fbox{
+\begin{minipage}{0.72\textwidth}
+\centering
+\BLOCK{ set parts = author.split(" ") }%
+\BLOCK{ set last = parts[-1] }%
+\BLOCK{ set initials = parts[0][0:1] }%
+{\citationfont Cite this article: \VAR{last} \VAR{initials}. \VAR{title | latex_escape | safe}. \VAR{shortJournalName | latex_escape | safe}, \VAR{year}, \VAR{volume}(\VAR{issues}), \VAR{pdfNo}. DOI:\\\VAR{doi | latex_escape | safe}}
+\end{minipage}
+}
+\end{minipage}
+}{}
+}
+\fancyfoot[R]{\small\thepage}
+}
+\thispagestyle{firstpage}
+\balance
+
+% ================= Title box (full-width, above two columns) =================
+\twocolumn[
+\noindent
+\fbox{
+\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule}
+\vspace{4pt}
+\centering
+{\articleTitleFont \VAR{title | latex_escape | safe}}\par\vspace{4pt}
+{\authorfont \VAR{author | latex_escape | safe}*}\par\vspace{2pt}
+{\affiliationfont \VAR{authorsDepartment | latex_escape | safe}}\par
+\vspace{4pt}
+\end{minipage}
+}
+\vspace{8pt}
+]
+
+% ================= Two-column body begins here =================
+\iomcBodyFont
+
+% --- Corresponding author block ---
+\noindent{\corrHeadingFont\underline{Corresponding Authors*}}\par
+{\corrTextFont \VAR{author | latex_escape | safe}}\par
+{\corrTextFont \VAR{authorsDepartment | latex_escape | safe}}\par
+{\corrTextFont E-mail: \href{mailto:\VAR{email}}{\VAR{email | latex_escape | safe}}}
+
+\vspace{1pt}
+\noindent\rule{\linewidth}{0.4pt}\par
+\vspace{1pt}
+
+% --- Copyright block ---
+{\copyrightfont\bfseries Copyright:} {\copyrightfont \VAR{year} \VAR{author | latex_escape | safe}. This is an open-access article distributed under the terms of the Creative Commons Attribution License, which permits unrestricted use, distribution, and reproduction in any medium, provided the original author and source are credited.}
+
+\vspace{1pt}
+\noindent\rule{\linewidth}{0.4pt}\par
+\vspace{1pt}
+
+% --- Manuscript dates ---
+{\datesfont \textbf{Received:} \VAR{received}, Manuscript No. \VAR{manuscriptNo}; \textbf{Editor assigned:} \VAR{editorAssigned}, PreQC No. \VAR{preQCNo}(PQ); \textbf{Reviewed:} \VAR{reviewed}, QC No. \VAR{QCNo}; \textbf{Revised:} \VAR{revised}, Manuscript No. \VAR{RManuNo}(R); \textbf{Published Date:} \VAR{published}, DOI: \VAR{doi | latex_escape | safe}}
+
+\vspace{1pt}
+\noindent\rule{\linewidth}{0.4pt}\par
+
+% ================= Introduction =================
+\section*{Introduction}
+\begin{otherlanguage}{\VAR{lang_name}}
+\VAR{introduction | latex_escape | safe}
+\end{otherlanguage}
+
+% ================= Description =================
+\section*{Description}
+\begin{otherlanguage}{\VAR{lang_name}}
+\VAR{description | latex_escape | safe}
+\end{otherlanguage}
+
+% ================= Conclusion =================
+\section*{Conclusion}
+\begin{otherlanguage}{\VAR{lang_name}}
+\VAR{conclusion | latex_escape | safe}
+\end{otherlanguage}
+
+% ================= References =================
+\section*{References}
+\begin{enumerate}[leftmargin=1.4em,itemsep=0pt,topsep=1pt,label=\arabic*.]
+\iomcRefFont
+\BLOCK{ if content|length == 0 }
+    \item No references generated.
+\BLOCK{ else }
+\BLOCK{ for key, item in content.items() }
+    \item %
+        \VAR{item.authors_short | latex_escape | safe}
+        \BLOCK{ if item.url }
+            \href{\VAR{item.url | safe}}{\VAR{item.title | latex_escape | safe}.}
+        \BLOCK{ else }
+            \VAR{item.title | latex_escape | safe}.
+        \BLOCK{ endif }
+        \textit{\VAR{item.journalShortName | latex_escape | safe}}.
+        \BLOCK{ if item.issues }
+            \VAR{item.published};\VAR{item.volume}(\VAR{item.issues}):\VAR{item.pageRangeOrNumber}.
+        \BLOCK{ else }
+            \VAR{item.published};\VAR{item.volume}:\VAR{item.pageRangeOrNumber}.
+        \BLOCK{ endif }
+\BLOCK{ endfor }
+\BLOCK{ endif }
+\end{enumerate}
+
+\end{document}

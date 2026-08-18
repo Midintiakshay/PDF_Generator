@@ -21,6 +21,7 @@ from .allied_academy import AlliedAcademyTemplate
 from .hilaris import HilarisTemplate
 from .omics import OmicsTemplate
 from .iomc import IomcTemplate
+from .iomc2 import Iomc2Template
 from .irjesti import IrjestiTemplate
 from .ab_academies import ABAcademiesTemplate
 from .interesjournal import InteresJournalTemplate
@@ -30,6 +31,7 @@ from .jrmds import JrmdsTemplate
 from .aabps import AabpsTemplate
 from .jwhc import JwhcTemplate
 from .amj_editorial import AmjEditorialTemplate
+from .rroj import RrojTemplate
 
 
 # ---------------------------------------------------------------------------
@@ -40,6 +42,7 @@ _REGISTRY: dict[str, BaseJournalTemplate] = {
     "hilaris.tex":        HilarisTemplate(),
     "omics.tex":          OmicsTemplate(),
     "iomc.tex":           IomcTemplate(),
+    "iomc2.tex":          Iomc2Template(),
     "Irjesti.tex":        IrjestiTemplate(),
     "ABAcademies.tex":    ABAcademiesTemplate(),
     "Interesjournal.tex": InteresJournalTemplate(),
@@ -49,6 +52,7 @@ _REGISTRY: dict[str, BaseJournalTemplate] = {
     "aabps.tex":               AabpsTemplate(),
     "jwhc.tex":                JwhcTemplate(),
     "amj_editorial.tex":       AmjEditorialTemplate(),
+    "rroj.tex":                RrojTemplate(),
 }
 
 # Lazy default (used when brand is unknown / new template in progress)
