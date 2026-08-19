@@ -3,240 +3,1654 @@
 
 {% block content %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+  rel="stylesheet">
 
 <style>
-:root {
-  --ink:#0f0f1a; --surface:#16162a; --card:#1e1e36; --card-raise:#252540;
-  --border:rgba(255,255,255,.07); --indigo:#6c63ff; --indigo-lt:#9d97ff;
-  --teal:#2dd4bf; --rose:#f43f5e; --amber:#f59e0b; --emerald:#10b981;
-  --muted:#6b7280; --muted-lt:#9ca3af; --text:#e8e8f4; --text-dim:#a8a8c0;
-  --r:14px; --r-sm:8px; --shadow:0 8px 40px rgba(0,0,0,.55);
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--ink)!important;color:var(--text);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-.xup-page{max-width:1180px;margin:0 auto;padding:2rem 1.25rem 5rem}
+  :root {
+    --ink: #020509;
+    --surface: #050d14;
+    --card: #090f1a;
+    --card-raise: #0d1625;
+    --border: rgba(0, 170, 255, .08);
+    --indigo: #00aaff;
+    --indigo-lt: #60cfff;
+    --teal: #00e5cc;
+    --rose: #ff3860;
+    --amber: #ffb400;
+    --emerald: #00e676;
+    --muted: #3a5060;
+    --muted-lt: #6fa0b8;
+    --text: #d8eaf5;
+    --text-dim: #7aa8c0;
+    --r: 12px;
+    --r-sm: 7px;
+    --shadow: 0 8px 40px rgba(0, 0, 0, .8);
+    --neon-glow: 0 0 14px rgba(0, 170, 255, .55);
+    --neon-teal-glow: 0 0 12px rgba(0, 229, 204, .4);
+    --blue-neon: #00aaff;
+    --blue-neon-lt: #60cfff;
+    --blue-neon-glow: 0 0 18px rgba(0, 170, 255, .6);
+  }
 
-/* ── HERO ── */
-.xup-hero{position:relative;overflow:hidden;border-radius:var(--r);padding:3rem 2.5rem;margin-bottom:2.5rem;background:linear-gradient(135deg,#1a1a35 0%,#221a4a 45%,#1a2040 100%);border:1px solid var(--border)}
-.xup-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 80% at 80% 40%,rgba(108,99,255,.18) 0%,transparent 65%),radial-gradient(ellipse 50% 60% at 10% 70%,rgba(45,212,191,.08) 0%,transparent 55%);pointer-events:none}
-.xup-hero-inner{position:relative;z-index:1}
-.xup-badge{display:inline-flex;align-items:center;gap:.45rem;background:rgba(108,99,255,.15);border:1px solid rgba(108,99,255,.35);border-radius:999px;padding:.3rem .9rem;font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--indigo-lt);margin-bottom:1.1rem}
-.xup-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--indigo);animation:blink 1.4s ease-in-out infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.xup-hero h1{font-size:clamp(1.6rem,3vw,2.4rem);font-weight:800;color:#fff;letter-spacing:-.02em;line-height:1.15;margin-bottom:.7rem}
-.xup-hero h1 span{background:linear-gradient(120deg,var(--indigo-lt),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.xup-hero p{color:var(--muted-lt);font-size:.95rem;line-height:1.65;max-width:560px}
+  /* ── PAGE-LEVEL BOOTSTRAP OVERRIDES (scoped to this page only) ── */
+  body.bg-light {
+    background: var(--ink) !important
+  }
 
-/* ── STEPPER ── */
-.xup-stepper{display:flex;align-items:center;margin-top:2rem}
-.xup-step{display:flex;align-items:center;gap:.55rem}
-.step-connector{flex:1;min-width:40px;height:2px;background:var(--border);margin:0 .5rem;border-radius:99px;transition:background .5s}
-.step-connector.done{background:var(--indigo)}
-.step-dot{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--muted);transition:all .35s cubic-bezier(.4,0,.2,1)}
-.xup-step.active .step-dot{border-color:var(--indigo);background:var(--indigo);color:#fff;box-shadow:0 0 0 5px rgba(108,99,255,.2)}
-.xup-step.done .step-dot{border-color:var(--emerald);background:var(--emerald);color:#fff}
-.step-label{font-size:.7rem;font-weight:600;color:var(--muted);white-space:nowrap}
-.xup-step.active .step-label{color:var(--indigo-lt)}
-.xup-step.done .step-label{color:var(--emerald)}
+  body .container {
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    background: transparent !important
+  }
 
-/* ── GLASS CARD ── */
-.gc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem;margin-bottom:1.5rem;position:relative;overflow:hidden}
-.gc::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(108,99,255,.5),transparent)}
-.gc-title{display:flex;align-items:center;gap:.6rem;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted-lt);margin-bottom:1.25rem}
-.gc-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.85rem;background:rgba(108,99,255,.15);border:1px solid rgba(108,99,255,.25);flex-shrink:0}
+  body footer {
+    background: #0a0a14 !important;
+    border-top: 1px solid var(--border) !important;
+    color: var(--muted-lt) !important
+  }
 
-/* ── DROP ZONE ── */
-#dropZone{border:2px dashed rgba(108,99,255,.3);border-radius:var(--r);background:rgba(108,99,255,.04);padding:3.5rem 2rem;cursor:pointer;text-align:center;transition:all .3s ease;position:relative;overflow:hidden}
-#dropZone::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(108,99,255,.12) 0%,transparent 70%);opacity:0;transition:opacity .3s;pointer-events:none}
-#dropZone:hover::before,#dropZone.drag-over::before{opacity:1}
-#dropZone:hover,#dropZone.drag-over{border-color:rgba(108,99,255,.7);background:rgba(108,99,255,.08)}
-#dropZone.drag-over{transform:scale(1.01)}
-#dropZone.file-ready{border-color:rgba(16,185,129,.5);background:rgba(16,185,129,.04)}
-#dropZone.file-ready::before{background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(16,185,129,.1) 0%,transparent 70%);opacity:1}
-.dz-icon{font-size:3rem;line-height:1;margin-bottom:.75rem;display:block;transition:transform .3s}
-#dropZone:hover .dz-icon{transform:translateY(-4px) scale(1.05)}
-.dz-title{font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:.35rem}
-.dz-sub{color:var(--muted);font-size:.82rem}
-.dz-formats{display:inline-flex;gap:.5rem;margin-top:1rem}
-.dz-fmt{background:var(--card-raise);border:1px solid var(--border);border-radius:5px;padding:.2rem .55rem;font-size:.7rem;font-weight:600;color:var(--muted-lt);font-family:'JetBrains Mono',monospace}
-#fileInput{display:none}
+  body .navbar.bg-dark {
+    background: rgba(6, 6, 8, .95) !important;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px)
+  }
 
-.dz-selected{display:none;align-items:center;gap:1rem;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3);border-radius:10px;padding:1rem 1.25rem;margin-top:1.25rem}
-.dz-selected.show{display:flex}
-.dz-file-icon{font-size:2rem;flex-shrink:0}
-.dz-file-info{flex:1;min-width:0}
-.dz-file-name{font-weight:600;color:var(--text);font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.dz-file-size{font-size:.75rem;color:var(--muted);margin-top:.15rem}
-.dz-remove{background:transparent;border:1px solid rgba(244,63,94,.3);color:var(--rose);border-radius:6px;padding:.3rem .65rem;font-size:.75rem;cursor:pointer;transition:all .2s;flex-shrink:0}
-.dz-remove:hover{background:rgba(244,63,94,.1);border-color:var(--rose)}
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0
+  }
 
-/* ── COLUMN TAGS ── */
-.col-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.5rem}
-.ctag{display:inline-flex;align-items:center;padding:.25rem .65rem;border-radius:6px;font-size:.7rem;font-weight:600;letter-spacing:.02em;transition:transform .15s}
-.ctag:hover{transform:translateY(-1px)}
-.ctag-req{background:rgba(108,99,255,.12);color:#b3aeff;border:1px solid rgba(108,99,255,.25)}
-.ctag-opt{background:rgba(245,158,11,.1);color:#fbbf24;border:1px solid rgba(245,158,11,.25)}
-.ctag-unk{background:rgba(244,63,94,.1);color:#fb7185;border:1px solid rgba(244,63,94,.25)}
+  body {
+    background: var(--ink) !important;
+    color: var(--text);
+    font-family: Inter, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased
+  }
 
-/* ── VALIDATE BUTTON ── */
-.btn-validate{display:inline-flex;align-items:center;gap:.55rem;background:linear-gradient(135deg,#5b54e8,#7c6dfc);color:#fff;font-weight:700;font-size:.9rem;border:none;border-radius:10px;padding:.75rem 2rem;cursor:pointer;transition:all .25s;box-shadow:0 4px 20px rgba(108,99,255,.3);margin-top:1.25rem;font-family:inherit}
-.btn-validate:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 28px rgba(108,99,255,.45)}
-.btn-validate:disabled{opacity:.4;cursor:not-allowed;box-shadow:none;transform:none}
-.btn-spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none;flex-shrink:0}
-.btn-validate.loading .btn-spinner{display:block}
-.btn-validate.loading .btn-icon{display:none}
-@keyframes spin{to{transform:rotate(360deg)}}
+  .xup-page {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 5rem
+  }
 
-/* ── WARN STRIP ── */
-.warn-strip{display:none;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.25);border-radius:var(--r-sm);padding:.85rem 1.1rem;margin-bottom:1.25rem;align-items:flex-start;gap:.7rem}
-.warn-strip.show{display:flex}
-.warn-icon{font-size:1.1rem;flex-shrink:0;line-height:1.4}
-.warn-body strong{color:var(--amber);font-size:.82rem;font-weight:700;display:block;margin-bottom:.2rem}
-.warn-body p{color:var(--muted-lt);font-size:.78rem}
+  /* ── HERO ── */
+  .xup-hero {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--r);
+    padding: 3rem 2.5rem;
+    margin-bottom: 2.5rem;
+    background: #030a10;
+    border: 1px solid rgba(0, 170, 255, .22);
+    box-shadow: 0 0 60px rgba(0, 0, 0, .9), inset 0 0 90px rgba(0, 170, 255, .05)
+  }
 
-/* ── SUMMARY CHIPS ── */
-.summary-row{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;margin-bottom:1.25rem}
-.schip{display:flex;align-items:center;gap:.45rem;padding:.45rem 1rem;border-radius:8px;font-size:.82rem;font-weight:700}
-.schip-total{background:rgba(108,99,255,.12);color:#b3aeff;border:1px solid rgba(108,99,255,.2)}
-.schip-ok{background:rgba(16,185,129,.1);color:#34d399;border:1px solid rgba(16,185,129,.2)}
-.schip-err{background:rgba(244,63,94,.1);color:#fb7185;border:1px solid rgba(244,63,94,.2)}
-.chip-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.schip-total .chip-dot{background:var(--indigo)}
-.schip-ok .chip-dot{background:var(--emerald)}
-.schip-err .chip-dot{background:var(--rose)}
+  .xup-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 55% 75% at 85% 35%, rgba(0, 170, 255, .14) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 55% at 5% 75%, rgba(0, 229, 204, .07) 0%, transparent 50%),
+      repeating-linear-gradient(0deg, transparent, transparent 47px, rgba(0, 170, 255, .025) 48px);
+    pointer-events: none
+  }
 
-/* ── TOOLBAR ── */
-.tbl-toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.75rem;margin-bottom:.85rem}
-.tbl-hint{color:var(--muted);font-size:.78rem}
-.tbl-hint strong{color:var(--indigo-lt)}
-.tbl-actions{display:flex;gap:.5rem;align-items:center}
-.btn-pill{display:inline-flex;align-items:center;gap:.35rem;padding:.4rem 1rem;border-radius:7px;font-size:.75rem;font-weight:700;border:1px solid;cursor:pointer;transition:all .2s;white-space:nowrap;background:transparent;font-family:inherit}
-.btn-pill-err{border-color:rgba(244,63,94,.3);color:#fb7185}
-.btn-pill-err:hover{background:rgba(244,63,94,.1);border-color:rgba(244,63,94,.6)}
-.btn-pill-err.active{background:rgba(244,63,94,.2);border-color:var(--rose);color:#fda4af;box-shadow:0 0 14px rgba(244,63,94,.35)}
-.btn-pill-ind{border-color:rgba(108,99,255,.3);color:var(--indigo-lt)}
-.btn-pill-ind:hover{background:rgba(108,99,255,.1);border-color:rgba(108,99,255,.6)}
+  .xup-hero-inner {
+    position: relative;
+    z-index: 1
+  }
 
-/* ── VALIDATION TABLE ── */
-.tbl-wrap{overflow-x:auto;border-radius:var(--r-sm);border:1px solid var(--border);transition:border-color .3s,box-shadow .3s;max-height:52vh;overflow-y:auto}
-.tbl-wrap.err-active{border-color:rgba(244,63,94,.4);box-shadow:0 0 0 3px rgba(244,63,94,.12)}
-.val-table{width:100%;border-collapse:collapse;font-size:.78rem;min-width:1200px}
-.val-table thead th{position:sticky;top:0;z-index:5;background:#13132a;color:var(--muted-lt);padding:.7rem .85rem;font-weight:600;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);white-space:nowrap;text-align:left}
-.val-table tbody td{padding:.55rem .7rem;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:middle;color:var(--text-dim)}
-.val-table tbody tr{transition:background .15s}
-.val-table tbody tr:hover td{background:rgba(255,255,255,.025)}
-.val-table tbody tr:last-child td{border-bottom:none}
-.row-ok td:first-child{border-left:3px solid var(--emerald)}
-.row-err td:first-child{border-left:3px solid var(--rose)}
-.badge-ok,.badge-err{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .65rem;border-radius:5px;font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
-.badge-ok{background:rgba(16,185,129,.12);color:#34d399;border:1px solid rgba(16,185,129,.2)}
-.badge-err{background:rgba(244,63,94,.12);color:#fb7185;border:1px solid rgba(244,63,94,.2)}
-.cell-error{background:rgba(244,63,94,.05)!important}
-.cell-edit,.cell-select{width:100%;min-width:110px;background:#0d0d20;color:var(--text);border:1px solid rgba(244,63,94,.5);border-radius:5px;padding:.3rem .5rem;font-size:.76rem;outline:none;transition:border-color .2s,box-shadow .2s;font-family:inherit}
-.cell-edit:focus,.cell-select:focus{border-color:var(--indigo);box-shadow:0 0 0 2px rgba(108,99,255,.2)}
-.cell-edit.fixed,.cell-select.fixed{border-color:rgba(16,185,129,.6);box-shadow:0 0 0 2px rgba(16,185,129,.15)}
-.cell-select{appearance:none;cursor:pointer}
-.cell-select option{background:#1a1a30}
-.err-tip{color:#fda4af;font-size:.65rem;margin-top:3px;line-height:1.3}
-.apply-all-banner{display:none;align-items:center;gap:.5rem;background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.25);border-radius:5px;padding:.3rem .6rem;margin-top:4px;font-size:.7rem;color:var(--indigo-lt);flex-wrap:wrap}
-.apply-all-banner.show{display:flex}
-.btn-apply-all{background:linear-gradient(135deg,#4f46e5,#6c63ff);border:none;color:#fff;border-radius:4px;padding:.18rem .6rem;font-size:.68rem;font-weight:700;cursor:pointer;white-space:nowrap}
-.btn-dismiss-all{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:.8rem;padding:0 .2rem;line-height:1}
+  .xup-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    background: rgba(0, 170, 255, .07);
+    border: 1px solid rgba(0, 170, 255, .45);
+    border-radius: 3px;
+    padding: .25rem .85rem;
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--blue-neon-lt);
+    margin-bottom: 1.1rem;
+    box-shadow: 0 0 10px rgba(0, 170, 255, .35)
+  }
 
-/* ── START ROW ── */
-.start-row{display:none;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border)}
-.start-row.show{display:flex}
-.btn-start{display:inline-flex;align-items:center;gap:.6rem;background:linear-gradient(135deg,#059669,#10b981);color:#fff;font-weight:800;font-size:1rem;border:none;border-radius:12px;padding:.85rem 2.5rem;cursor:pointer;transition:all .25s;box-shadow:0 6px 28px rgba(16,185,129,.35);letter-spacing:-.01em;animation:startPulse 2.5s ease-in-out infinite;font-family:inherit}
-@keyframes startPulse{0%,100%{box-shadow:0 6px 24px rgba(16,185,129,.35)}50%{box-shadow:0 6px 40px rgba(16,185,129,.6)}}
-.btn-start:hover:not(:disabled){transform:translateY(-2px) scale(1.02)}
-.btn-start:disabled{opacity:.45;cursor:not-allowed;animation:none;box-shadow:none;transform:none}
-.workers-wrap{display:flex;align-items:center;gap:.65rem;background:var(--card-raise);border:1px solid var(--border);border-radius:10px;padding:.55rem 1rem}
-.workers-label{color:var(--muted-lt);font-size:.78rem;font-weight:500;white-space:nowrap}
-.workers-input{width:56px;background:var(--card);color:var(--text);border:1px solid rgba(108,99,255,.3);border-radius:6px;padding:.3rem;font-size:.88rem;text-align:center;font-weight:600;font-family:'JetBrains Mono',monospace;outline:none;transition:border-color .2s}
-.workers-input:focus{border-color:var(--indigo)}
-.workers-hint{color:var(--muted);font-size:.68rem;text-align:center;margin-top:.5rem;width:100%}
+  .xup-badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--blue-neon);
+    animation: blink 1.4s ease-in-out infinite
+  }
 
-/* ── PROGRESS ── */
-#progressSection{display:none}
-.progress-layout{display:grid;grid-template-columns:auto 1fr;gap:1.75rem;align-items:start}
-@media(max-width:640px){.progress-layout{grid-template-columns:1fr}}
-.ring-wrap{display:flex;flex-direction:column;align-items:center;gap:.6rem;flex-shrink:0}
-.ring-svg{transform:rotate(-90deg)}
-.ring-track{fill:none;stroke:rgba(255,255,255,.06);stroke-width:8}
-.ring-fill{fill:none;stroke:url(#ringGrad);stroke-width:8;stroke-linecap:round;stroke-dasharray:283;stroke-dashoffset:283;transition:stroke-dashoffset .6s cubic-bezier(.4,0,.2,1)}
-.ring-container{position:relative;width:100px;height:100px}
-.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.ring-pct{font-size:1.3rem;font-weight:800;color:var(--text);line-height:1}
-.ring-sub{font-size:.65rem;color:var(--muted);font-weight:500}
-.ring-label{font-size:.72rem;color:var(--muted-lt);text-align:center;font-weight:500;max-width:90px;line-height:1.35}
-.prog-right{min-width:0}
-.prog-bar-wrap{background:rgba(255,255,255,.05);border-radius:999px;height:10px;overflow:hidden;margin-bottom:1rem;border:1px solid var(--border)}
-.prog-bar-inner{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--indigo),var(--teal));background-size:200% 100%;width:0%;transition:width .5s cubic-bezier(.4,0,.2,1)}
-.prog-bar-inner.shimmer{animation:shimmer 1.8s linear infinite}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.prog-status{font-size:.8rem;color:var(--muted-lt);margin-bottom:1rem;min-height:1.2em}
-.terminal{background:#080814;border:1px solid var(--border);border-radius:10px;overflow:hidden}
-.terminal-bar{background:#111125;border-bottom:1px solid var(--border);padding:.5rem .85rem;display:flex;align-items:center;gap:.4rem}
-.tbar-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.tbar-title{font-size:.7rem;color:var(--muted);margin-left:.35rem;font-family:'JetBrains Mono',monospace}
-.terminal-body{padding:.75rem 1rem;max-height:230px;overflow-y:auto;font-family:'JetBrains Mono',monospace;font-size:.74rem}
-.tlog{padding:1.5px 0;display:flex;gap:.5rem;align-items:flex-start;line-height:1.5}
-.tlog-ts{color:var(--muted);flex-shrink:0}
-.tlog.ok .tlog-msg{color:#34d399}
-.tlog.err .tlog-msg{color:#fb7185}
-.tlog.info .tlog-msg{color:#93c5fd}
+  @keyframes blink {
 
-/* ── SKELETON ── */
-.skeleton-rows{display:flex;flex-direction:column;gap:.6rem;padding:.5rem 0}
-.skeleton-row{height:38px;border-radius:7px;background:linear-gradient(90deg,var(--card-raise) 25%,#2a2a48 50%,var(--card-raise) 75%);background-size:200% 100%;animation:skShim 1.4s infinite}
-@keyframes skShim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+    0%,
+    100% {
+      opacity: 1
+    }
 
-/* ── TOASTS ── */
-#toastStack{position:fixed;top:1.25rem;right:1.25rem;z-index:9999;display:flex;flex-direction:column;gap:.6rem;max-width:380px;width:calc(100vw - 2rem);pointer-events:none}
-.xtoast{pointer-events:all;display:flex;align-items:flex-start;gap:.75rem;background:#1e1e3a;border:1px solid var(--border);border-radius:10px;padding:.85rem 1rem;box-shadow:var(--shadow);animation:slideIn .3s ease}
-@keyframes slideIn{from{opacity:0;transform:translateX(20px) scale(.96)}to{opacity:1;transform:translateX(0) scale(1)}}
-.xtoast.removing{animation:fadeOut .25s ease forwards;pointer-events:none}
-@keyframes fadeOut{to{opacity:0;transform:scale(.9)}}
-.xtoast-icon{font-size:1.1rem;flex-shrink:0;line-height:1.4}
-.xtoast-body{flex:1}
-.xtoast-msg{font-size:.82rem;color:var(--text);line-height:1.4}
-.xtoast-close{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:1rem;line-height:1;align-self:flex-start;padding:0}
-.xtoast.danger{border-color:rgba(244,63,94,.35)}
-.xtoast.danger .xtoast-icon{color:var(--rose)}
-.xtoast.warning{border-color:rgba(245,158,11,.35)}
-.xtoast.warning .xtoast-icon{color:var(--amber)}
-.xtoast.success{border-color:rgba(16,185,129,.35)}
-.xtoast.success .xtoast-icon{color:var(--emerald)}
+    50% {
+      opacity: .3
+    }
+  }
 
-/* ── SECTION ANIMATIONS ── */
-.section-enter{animation:secIn .45s cubic-bezier(.4,0,.2,1)}
-@keyframes secIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-.section-leave{animation:secOut .35s cubic-bezier(.4,0,.2,1) forwards}
-@keyframes secOut{to{opacity:0;transform:translateY(-10px)}}
+  .xup-hero h1 {
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -.02em;
+    line-height: 1.15;
+    margin-bottom: .7rem
+  }
 
-/* ── FAILED JOBS PANEL ── */
-#failedSection{display:none;margin-top:1.5rem}
-.failed-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem}
-.failed-title{display:flex;align-items:center;gap:.6rem;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#fb7185}
-.failed-count-chip{background:rgba(244,63,94,.15);border:1px solid rgba(244,63,94,.3);color:#fb7185;font-size:.72rem;font-weight:700;padding:.2rem .65rem;border-radius:99px}
-.failed-list{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.25rem}
-.failed-item{display:flex;align-items:flex-start;gap:.75rem;background:rgba(244,63,94,.06);border:1px solid rgba(244,63,94,.2);border-radius:9px;padding:.75rem 1rem;transition:background .2s}
-.failed-item:hover{background:rgba(244,63,94,.1)}
-.fi-id{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:700;color:#fda4af;min-width:70px;flex-shrink:0;padding-top:.05rem}
-.fi-err{flex:1;font-size:.76rem;color:var(--muted-lt);line-height:1.45;word-break:break-word}
-.fi-err em{color:#fb7185;font-style:normal;font-weight:600}
-.btn-retry-all{display:inline-flex;align-items:center;gap:.55rem;background:linear-gradient(135deg,#b91c1c,#f43f5e);color:#fff;font-weight:800;font-size:.9rem;border:none;border-radius:10px;padding:.75rem 2rem;cursor:pointer;transition:all .25s;box-shadow:0 4px 20px rgba(244,63,94,.35);font-family:inherit}
-.btn-retry-all:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 28px rgba(244,63,94,.55)}
-.btn-retry-all:disabled{opacity:.45;cursor:not-allowed;box-shadow:none;transform:none}
-.btn-retry-all .btn-spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
-.btn-retry-all.loading .btn-spinner{display:block}
-.btn-retry-all.loading .btn-icon{display:none}
-.retry-workers-wrap{display:flex;align-items:center;gap:.65rem;background:var(--card-raise);border:1px solid var(--border);border-radius:10px;padding:.55rem 1rem}
+  .xup-hero h1 span {
+    color: var(--blue-neon-lt);
+    text-shadow: 0 0 20px rgba(0, 170, 255, .7), 0 0 40px rgba(0, 170, 255, .35)
+  }
 
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:99px}
+  .xup-hero p {
+    color: var(--muted-lt);
+    font-size: .95rem;
+    line-height: 1.65;
+    max-width: 560px
+  }
+
+  /* ── STEPPER ── */
+  .xup-stepper {
+    display: flex;
+    align-items: center;
+    margin-top: 2rem
+  }
+
+  .xup-step {
+    display: flex;
+    align-items: center;
+    gap: .55rem
+  }
+
+  .step-connector {
+    flex: 1;
+    min-width: 40px;
+    height: 2px;
+    background: var(--border);
+    margin: 0 .5rem;
+    border-radius: 99px;
+    transition: background .5s
+  }
+
+  .step-connector.done {
+    background: var(--indigo)
+  }
+
+  .step-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .75rem;
+    font-weight: 700;
+    border: 2px solid var(--border);
+    background: var(--card);
+    color: var(--muted);
+    transition: all .35s cubic-bezier(.4, 0, .2, 1)
+  }
+
+  .xup-step.active .step-dot {
+    border-color: var(--blue-neon);
+    background: rgba(0, 170, 255, .15);
+    color: var(--blue-neon-lt);
+    box-shadow: 0 0 0 5px rgba(0, 170, 255, .18), 0 0 14px rgba(0, 170, 255, .5)
+  }
+
+  .xup-step.done .step-dot {
+    border-color: var(--emerald);
+    background: var(--emerald);
+    color: #000
+  }
+
+  .step-label {
+    font-size: .7rem;
+    font-weight: 600;
+    color: var(--muted);
+    white-space: nowrap
+  }
+
+  .xup-step.active .step-label {
+    color: var(--blue-neon-lt)
+  }
+
+  .xup-step.done .step-label {
+    color: var(--emerald)
+  }
+
+  /* ── GLASS CARD ── */
+  .gc {
+    background: var(--card);
+    border: 1px solid rgba(0, 170, 255, .14);
+    border-radius: var(--r);
+    padding: 1.75rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden
+  }
+
+  .gc::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0, 170, 255, .55), transparent)
+  }
+
+  .gc-title {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    font-size: .8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--muted-lt);
+    margin-bottom: 1.25rem
+  }
+
+  .gc-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .85rem;
+    background: rgba(0, 170, 255, .12);
+    border: 1px solid rgba(0, 170, 255, .28);
+    box-shadow: 0 0 8px rgba(0, 170, 255, .2);
+    flex-shrink: 0
+  }
+
+  .gc.gc-green::before {
+    background: linear-gradient(90deg, transparent, rgba(0, 230, 118, .55), transparent);
+  }
+
+  .gc.gc-green .gc-icon {
+    background: rgba(0, 230, 118, .12);
+    border: 1px solid rgba(0, 230, 118, .28);
+    box-shadow: 0 0 8px rgba(0, 230, 118, .2);
+  }
+
+  /* ── DROP ZONE — Frosted Glass Card ── */
+
+  /* Gradient border wrapper */
+  .dz-border-wrap {
+    position: relative;
+    border-radius: calc(var(--r) + 2px);
+    padding: 2px;
+    background: linear-gradient(135deg, rgba(0, 170, 255, .6) 0%, rgba(0, 229, 204, .4) 50%, rgba(0, 170, 255, .6) 100%);
+    background-size: 300% 300%;
+    animation: borderShift 4s linear infinite;
+    transition: box-shadow .35s
+  }
+
+  .dz-border-wrap:hover,
+  .dz-border-wrap.drag-over {
+    box-shadow: 0 0 40px rgba(0, 170, 255, .35), 0 0 80px rgba(0, 229, 204, .12)
+  }
+
+  @keyframes borderShift {
+    0% {
+      background-position: 0% 50%
+    }
+
+    50% {
+      background-position: 100% 50%
+    }
+
+    100% {
+      background-position: 0% 50%
+    }
+  }
+
+  #dropZone {
+    border-radius: var(--r);
+    background: rgba(4, 14, 26, .82);
+    backdrop-filter: blur(20px) saturate(1.4);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    padding: 3rem 2.5rem;
+    cursor: pointer;
+    text-align: center;
+    transition: background .3s;
+    position: relative;
+    overflow: hidden
+  }
+
+  /* Subtle grid overlay */
+  #dropZone::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 32px, rgba(0, 170, 255, .018) 33px),
+      repeating-linear-gradient(90deg, transparent, transparent 32px, rgba(0, 170, 255, .018) 33px);
+    pointer-events: none;
+    border-radius: inherit
+  }
+
+  /* Radial glow on hover */
+  #dropZone::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 55% at 50% 50%, rgba(0, 170, 255, .09) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity .35s;
+    pointer-events: none;
+    z-index: 1
+  }
+
+  .dz-border-wrap:hover #dropZone::before,
+  .dz-border-wrap.drag-over #dropZone::before {
+    opacity: 1
+  }
+
+  .dz-border-wrap.drag-over {
+    transform: scale(1.01)
+  }
+
+  #dropZone>* {
+    position: relative;
+    z-index: 2
+  }
+
+  /* ── Animated upload arrow ── */
+  .dz-arrow-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 88px;
+    height: 88px;
+    margin: 0 auto 1.5rem;
+    flex-shrink: 0
+  }
+
+  /* Pulse ring 1 */
+  .dz-arrow-wrap::before {
+    content: '';
+    position: absolute;
+    inset: -10px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(0, 170, 255, .35);
+    animation: pulseRing 2.2s ease-out infinite
+  }
+
+  /* Pulse ring 2 (offset) */
+  .dz-arrow-wrap::after {
+    content: '';
+    position: absolute;
+    inset: -22px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 229, 204, .2);
+    animation: pulseRing 2.2s ease-out .7s infinite
+  }
+
+  @keyframes pulseRing {
+    0% {
+      transform: scale(.85);
+      opacity: .9
+    }
+
+    70% {
+      transform: scale(1);
+      opacity: 0
+    }
+
+    100% {
+      opacity: 0
+    }
+  }
+
+  .dz-arrow-bg {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: rgba(0, 170, 255, .08);
+    border: 1.5px solid rgba(0, 170, 255, .3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 24px rgba(0, 170, 255, .25), inset 0 0 18px rgba(0, 170, 255, .06);
+    transition: all .3s
+  }
+
+  .dz-border-wrap:hover .dz-arrow-bg {
+    background: rgba(0, 170, 255, .14);
+    box-shadow: 0 0 40px rgba(0, 170, 255, .5), inset 0 0 24px rgba(0, 170, 255, .1)
+  }
+
+  .dz-arrow-svg {
+    width: 38px;
+    height: 38px;
+    animation: floatUp 2.4s ease-in-out infinite
+  }
+
+  @keyframes floatUp {
+
+    0%,
+    100% {
+      transform: translateY(0)
+    }
+
+    50% {
+      transform: translateY(-5px)
+    }
+  }
+
+  .dz-border-wrap.drag-over .dz-arrow-svg {
+    animation: none;
+    transform: translateY(-6px)
+  }
+
+  .dz-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: .45rem;
+    letter-spacing: -.01em
+  }
+
+  .dz-sub {
+    color: var(--muted-lt);
+    font-size: .84rem;
+    line-height: 1.55
+  }
+
+  .dz-formats {
+    display: inline-flex;
+    gap: .5rem;
+    margin-top: 1.1rem
+  }
+
+  .dz-fmt {
+    background: rgba(0, 170, 255, .07);
+    border: 1px solid rgba(0, 170, 255, .25);
+    border-radius: 5px;
+    padding: .2rem .6rem;
+    font-size: .7rem;
+    font-weight: 600;
+    color: var(--blue-neon-lt);
+    font-family: 'JetBrains Mono', monospace;
+    box-shadow: 0 0 6px rgba(0, 170, 255, .2)
+  }
+
+  #fileInput {
+    display: none
+  }
+
+  /* ── Selected file card ── */
+  .dz-selected {
+    display: none;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(4, 14, 26, .8);
+    border: 1px solid rgba(0, 170, 255, .35);
+    border-radius: 12px;
+    padding: 1rem 1.35rem;
+    margin-top: 1.35rem;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 20px rgba(0, 170, 255, .08)
+  }
+
+  .dz-selected.show {
+    display: flex
+  }
+
+  /* Excel file icon circle */
+  .dz-file-icon-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: rgba(0, 170, 255, .12);
+    border: 1px solid rgba(0, 170, 255, .3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+    box-shadow: 0 0 12px rgba(0, 170, 255, .15)
+  }
+
+  .dz-file-info {
+    flex: 1;
+    min-width: 0
+  }
+
+  .dz-file-name {
+    font-weight: 600;
+    color: var(--text);
+    font-size: .9rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap
+  }
+
+  .dz-file-meta {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin-top: .25rem
+  }
+
+  .dz-file-size {
+    font-size: .72rem;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace
+  }
+
+  .dz-file-badge {
+    font-size: .65rem;
+    font-weight: 700;
+    color: var(--blue-neon-lt);
+    background: rgba(0, 170, 255, .12);
+    border: 1px solid rgba(0, 170, 255, .25);
+    border-radius: 4px;
+    padding: .1rem .45rem;
+    letter-spacing: .04em;
+    text-transform: uppercase
+  }
+
+  .dz-remove {
+    background: transparent;
+    border: 1px solid rgba(0, 170, 255, .25);
+    color: var(--blue-neon);
+    border-radius: 7px;
+    padding: .35rem .75rem;
+    font-size: .72rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+    flex-shrink: 0;
+    letter-spacing: .02em
+  }
+
+  .dz-remove:hover {
+    background: rgba(0, 170, 255, .1);
+    border-color: var(--blue-neon);
+    box-shadow: 0 0 12px rgba(0, 170, 255, .25)
+  }
+
+  /* ── COLUMN TAGS ── */
+  .col-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+    margin-top: .5rem
+  }
+
+  .ctag {
+    display: inline-flex;
+    align-items: center;
+    padding: .25rem .65rem;
+    border-radius: 6px;
+    font-size: .7rem;
+    font-weight: 600;
+    letter-spacing: .02em;
+    transition: transform .15s
+  }
+
+  .ctag:hover {
+    transform: translateY(-1px)
+  }
+
+  .ctag-req {
+    background: rgba(0, 170, 255, .09);
+    color: #60cfff;
+    border: 1px solid rgba(0, 170, 255, .25)
+  }
+
+  .ctag-opt {
+    background: rgba(245, 158, 11, .1);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, .25)
+  }
+
+  .ctag-unk {
+    background: rgba(244, 63, 94, .1);
+    color: #fb7185;
+    border: 1px solid rgba(244, 63, 94, .25)
+  }
+
+  /* ── VALIDATE BUTTON ── */
+  .btn-validate {
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+    background: linear-gradient(135deg, rgba(0, 150, 255, .12), rgba(0, 200, 255, .06));
+    color: var(--blue-neon-lt);
+    font-weight: 700;
+    font-size: .88rem;
+    border: 1px solid var(--blue-neon);
+    border-radius: 8px;
+    padding: .78rem 2.2rem;
+    cursor: pointer;
+    transition: all .25s;
+    box-shadow: var(--blue-neon-glow), inset 0 1px 0 rgba(255, 255, 255, .05);
+    margin-top: 1.25rem;
+    font-family: inherit;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden
+  }
+
+  .btn-validate::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0, 170, 255, .18) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity .25s
+  }
+
+  .btn-validate:hover:not(:disabled)::before {
+    opacity: 1
+  }
+
+  .btn-validate:hover:not(:disabled) {
+    box-shadow: 0 0 32px rgba(0, 170, 255, .7), 0 0 60px rgba(0, 170, 255, .2);
+    transform: translateY(-2px);
+    border-color: var(--blue-neon-lt)
+  }
+
+  .btn-validate:disabled {
+    opacity: .4;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none
+  }
+
+  .btn-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, .35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    display: none;
+    flex-shrink: 0
+  }
+
+  .btn-validate.loading .btn-spinner {
+    display: block
+  }
+
+  .btn-validate.loading .btn-icon {
+    display: none
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg)
+    }
+  }
+
+  /* ── WARN STRIP ── */
+  .warn-strip {
+    display: none;
+    background: rgba(245, 158, 11, .07);
+    border: 1px solid rgba(245, 158, 11, .25);
+    border-radius: var(--r-sm);
+    padding: .85rem 1.1rem;
+    margin-bottom: 1.25rem;
+    align-items: flex-start;
+    gap: .7rem
+  }
+
+  .warn-strip.show {
+    display: flex
+  }
+
+  .warn-icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    line-height: 1.4
+  }
+
+  .warn-body strong {
+    color: var(--amber);
+    font-size: .82rem;
+    font-weight: 700;
+    display: block;
+    margin-bottom: .2rem
+  }
+
+  .warn-body p {
+    color: var(--muted-lt);
+    font-size: .78rem
+  }
+
+  /* ── SUMMARY CHIPS ── */
+  .summary-row {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem
+  }
+
+  .schip {
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    padding: .45rem 1rem;
+    border-radius: 8px;
+    font-size: .82rem;
+    font-weight: 700
+  }
+
+  .schip-total {
+    background: rgba(0, 170, 255, .1);
+    color: #60cfff;
+    border: 1px solid rgba(0, 170, 255, .2)
+  }
+
+  .schip-ok {
+    background: rgba(16, 185, 129, .1);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, .2)
+  }
+
+  .schip-err {
+    background: rgba(244, 63, 94, .1);
+    color: #fb7185;
+    border: 1px solid rgba(244, 63, 94, .2)
+  }
+
+  .chip-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0
+  }
+
+  .schip-total .chip-dot {
+    background: var(--blue-neon)
+  }
+
+  .schip-ok .chip-dot {
+    background: var(--emerald)
+  }
+
+  .schip-err .chip-dot {
+    background: var(--rose)
+  }
+
+  /* ── TOOLBAR ── */
+  .tbl-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .75rem;
+    margin-bottom: .85rem
+  }
+
+  .tbl-hint {
+    color: var(--muted);
+    font-size: .78rem
+  }
+
+  .tbl-hint strong {
+    color: var(--blue-neon-lt)
+  }
+
+  .tbl-actions {
+    display: flex;
+    gap: .5rem;
+    align-items: center
+  }
+
+  .btn-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .4rem 1rem;
+    border-radius: 7px;
+    font-size: .75rem;
+    font-weight: 700;
+    border: 1px solid;
+    cursor: pointer;
+    transition: all .2s;
+    white-space: nowrap;
+    background: transparent;
+    font-family: inherit
+  }
+
+  .btn-pill-err {
+    border-color: rgba(244, 63, 94, .3);
+    color: #fb7185
+  }
+
+  .btn-pill-err:hover {
+    background: rgba(244, 63, 94, .1);
+    border-color: rgba(244, 63, 94, .6)
+  }
+
+  .btn-pill-err.active {
+    background: rgba(244, 63, 94, .2);
+    border-color: var(--rose);
+    color: #fda4af;
+    box-shadow: 0 0 14px rgba(244, 63, 94, .35)
+  }
+
+  .btn-pill-ind {
+    border-color: rgba(0, 170, 255, .3);
+    color: var(--blue-neon-lt)
+  }
+
+  .btn-pill-ind:hover {
+    background: rgba(0, 170, 255, .1);
+    border-color: rgba(0, 170, 255, .6)
+  }
+
+  /* ── VALIDATION TABLE ── */
+  .tbl-wrap {
+    overflow-x: auto;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--border);
+    transition: border-color .3s, box-shadow .3s;
+    max-height: 52vh;
+    overflow-y: auto
+  }
+
+  .tbl-wrap.err-active {
+    border-color: rgba(244, 63, 94, .4);
+    box-shadow: 0 0 0 3px rgba(244, 63, 94, .12)
+  }
+
+  .val-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .78rem;
+    min-width: 1200px
+  }
+
+  .val-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: #132a21;
+    color: var(--muted-lt);
+    padding: .7rem .85rem;
+    font-weight: 600;
+    font-size: .7rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    text-align: left
+  }
+
+  .val-table tbody td {
+    padding: .55rem .7rem;
+    border-bottom: 1px solid rgba(255, 255, 255, .03);
+    vertical-align: middle;
+    color: var(--text-dim)
+  }
+
+  .val-table tbody tr {
+    transition: background .15s
+  }
+
+  .val-table tbody tr:hover td {
+    background: rgba(255, 255, 255, .025)
+  }
+
+  .val-table tbody tr:last-child td {
+    border-bottom: none
+  }
+
+  .row-ok td:first-child {
+    border-left: 3px solid var(--emerald)
+  }
+
+  .row-err td:first-child {
+    border-left: 3px solid var(--rose)
+  }
+
+  .badge-ok,
+  .badge-err {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    padding: .2rem .65rem;
+    border-radius: 5px;
+    font-size: .68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em
+  }
+
+  .badge-ok {
+    background: rgba(16, 185, 129, .12);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, .2)
+  }
+
+  .badge-err {
+    background: rgba(244, 63, 94, .12);
+    color: #fb7185;
+    border: 1px solid rgba(244, 63, 94, .2)
+  }
+
+  .cell-error {
+    background: rgba(244, 63, 94, .05) !important
+  }
+
+  .cell-edit,
+  .cell-select {
+    width: 100%;
+    min-width: 110px;
+    background: #0d0d20;
+    color: var(--text);
+    border: 1px solid rgba(244, 63, 94, .5);
+    border-radius: 5px;
+    padding: .3rem .5rem;
+    font-size: .76rem;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+    font-family: inherit
+  }
+
+  .cell-edit:focus,
+  .cell-select:focus {
+    border-color: var(--blue-neon);
+    box-shadow: 0 0 0 2px rgba(0, 170, 255, .2)
+  }
+
+  .cell-edit.fixed,
+  .cell-select.fixed {
+    border-color: rgba(16, 185, 129, .6);
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, .15)
+  }
+
+  .cell-select {
+    appearance: none;
+    cursor: pointer
+  }
+
+  .cell-select option {
+    background: #1a1a30
+  }
+
+  .err-tip {
+    color: #fda4af;
+    font-size: .65rem;
+    margin-top: 3px;
+    line-height: 1.3
+  }
+
+  .apply-all-banner {
+    display: none;
+    align-items: center;
+    gap: .5rem;
+    background: rgba(0, 170, 255, .08);
+    border: 1px solid rgba(0, 170, 255, .22);
+    border-radius: 5px;
+    padding: .3rem .6rem;
+    margin-top: 4px;
+    font-size: .7rem;
+    color: var(--blue-neon-lt);
+    flex-wrap: wrap
+  }
+
+  .apply-all-banner.show {
+    display: flex
+  }
+
+  .btn-apply-all {
+    background: linear-gradient(135deg, #006bbf, #00aaff);
+    border: none;
+    color: #fff;
+    border-radius: 4px;
+    padding: .18rem .6rem;
+    font-size: .68rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap
+  }
+
+  .btn-dismiss-all {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: .8rem;
+    padding: 0 .2rem;
+    line-height: 1
+  }
+
+  /* ── START ROW ── */
+  .start-row {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border)
+  }
+
+  .start-row.show {
+    display: flex
+  }
+
+  .btn-start {
+    display: inline-flex;
+    align-items: center;
+    gap: .6rem;
+    background: transparent;
+    color: var(--emerald);
+    font-weight: 800;
+    font-size: 1rem;
+    border: 1px solid var(--emerald);
+    border-radius: 5px;
+    padding: .85rem 2.5rem;
+    cursor: pointer;
+    transition: all .25s;
+    box-shadow: var(--neon-teal-glow);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    animation: startPulse 2.5s ease-in-out infinite;
+    font-family: inherit
+  }
+
+  @keyframes startPulse {
+
+    0%,
+    100% {
+      box-shadow: 0 0 10px rgba(0, 230, 118, .3)
+    }
+
+    50% {
+      box-shadow: 0 0 28px rgba(0, 230, 118, .65)
+    }
+  }
+
+  .btn-start:hover:not(:disabled) {
+    background: rgba(0, 230, 118, .07);
+    box-shadow: 0 0 35px rgba(0, 230, 118, .5);
+    transform: translateY(-1px)
+  }
+
+  .btn-start:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+    animation: none;
+    box-shadow: none;
+    transform: none
+  }
+
+  .workers-wrap {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    background: var(--card-raise);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: .55rem 1rem
+  }
+
+  .workers-label {
+    color: var(--muted-lt);
+    font-size: .78rem;
+    font-weight: 500;
+    white-space: nowrap
+  }
+
+  .workers-input {
+    width: 56px;
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid rgba(0, 170, 255, .3);
+    border-radius: 6px;
+    padding: .3rem;
+    font-size: .88rem;
+    text-align: center;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    outline: none;
+    transition: border-color .2s
+  }
+
+  .workers-input:focus {
+    border-color: var(--blue-neon)
+  }
+
+  .workers-hint {
+    color: var(--muted);
+    font-size: .68rem;
+    text-align: center;
+    margin-top: .5rem;
+    width: 100%
+  }
+
+  /* ── PROGRESS ── */
+  #progressSection {
+    display: none
+  }
+
+  .progress-layout {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.75rem;
+    align-items: start
+  }
+
+  @media(max-width:640px) {
+    .progress-layout {
+      grid-template-columns: 1fr
+    }
+  }
+
+  .ring-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .6rem;
+    flex-shrink: 0
+  }
+
+  .ring-svg {
+    transform: rotate(-90deg)
+  }
+
+  .ring-track {
+    fill: none;
+    stroke: rgba(255, 255, 255, .06);
+    stroke-width: 8
+  }
+
+  .ring-fill {
+    fill: none;
+    stroke: url(#ringGrad);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 283;
+    stroke-dashoffset: 283;
+    transition: stroke-dashoffset .6s cubic-bezier(.4, 0, .2, 1)
+  }
+
+  .ring-container {
+    position: relative;
+    width: 100px;
+    height: 100px
+  }
+
+  .ring-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center
+  }
+
+  .ring-pct {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1
+  }
+
+  .ring-sub {
+    font-size: .65rem;
+    color: var(--muted);
+    font-weight: 500
+  }
+
+  .ring-label {
+    font-size: .72rem;
+    color: var(--muted-lt);
+    text-align: center;
+    font-weight: 500;
+    max-width: 90px;
+    line-height: 1.35
+  }
+
+  .prog-right {
+    min-width: 0
+  }
+
+  .prog-bar-wrap {
+    background: rgba(255, 255, 255, .05);
+    border-radius: 999px;
+    height: 10px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border)
+  }
+
+  .prog-bar-inner {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--blue-neon), var(--teal));
+    background-size: 200% 100%;
+    width: 0%;
+    transition: width .5s cubic-bezier(.4, 0, .2, 1)
+  }
+
+  .prog-bar-inner.shimmer {
+    animation: shimmer 1.8s linear infinite
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: 200% 0
+    }
+
+    100% {
+      background-position: -200% 0
+    }
+  }
+
+  .prog-status {
+    font-size: .8rem;
+    color: var(--muted-lt);
+    margin-bottom: 1rem;
+    min-height: 1.2em
+  }
+
+  .terminal {
+    background: #020509;
+    border: 1px solid rgba(0, 170, 255, .18);
+    border-radius: 4px;
+    overflow: hidden
+  }
+
+  .terminal-bar {
+    background: #04090f;
+    border-bottom: 1px solid rgba(0, 170, 255, .14);
+    padding: .5rem .85rem;
+    display: flex;
+    align-items: center;
+    gap: .4rem
+  }
+
+  .tbar-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0
+  }
+
+  .tbar-title {
+    font-size: .7rem;
+    color: var(--muted);
+    margin-left: .35rem;
+    font-family: 'JetBrains Mono', monospace
+  }
+
+  .terminal-body {
+    padding: .75rem 1rem;
+    max-height: 230px;
+    overflow-y: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .74rem
+  }
+
+  .tlog {
+    padding: 1.5px 0;
+    display: flex;
+    gap: .5rem;
+    align-items: flex-start;
+    line-height: 1.5
+  }
+
+  .tlog-ts {
+    color: var(--muted);
+    flex-shrink: 0
+  }
+
+  .tlog.ok .tlog-msg {
+    color: #34d399
+  }
+
+  .tlog.err .tlog-msg {
+    color: #fb7185
+  }
+
+  .tlog.info .tlog-msg {
+    color: #93c5fd
+  }
+
+  /* ── SKELETON ── */
+  .skeleton-rows {
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+    padding: .5rem 0
+  }
+
+  .skeleton-row {
+    height: 38px;
+    border-radius: 7px;
+    background: linear-gradient(90deg, var(--card-raise) 25%, #2a2a48 50%, var(--card-raise) 75%);
+    background-size: 200% 100%;
+    animation: skShim 1.4s infinite
+  }
+
+  @keyframes skShim {
+    0% {
+      background-position: 200% 0
+    }
+
+    100% {
+      background-position: -200% 0
+    }
+  }
+
+  /* ── TOASTS ── */
+  #toastStack {
+    position: fixed;
+    top: 1.25rem;
+    right: 1.25rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+    max-width: 380px;
+    width: calc(100vw - 2rem);
+    pointer-events: none
+  }
+
+  .xtoast {
+    pointer-events: all;
+    display: flex;
+    align-items: flex-start;
+    gap: .75rem;
+    background: #1e1e3a;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: .85rem 1rem;
+    box-shadow: var(--shadow);
+    animation: slideIn .3s ease
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(20px) scale(.96)
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0) scale(1)
+    }
+  }
+
+  .xtoast.removing {
+    animation: fadeOut .25s ease forwards;
+    pointer-events: none
+  }
+
+  @keyframes fadeOut {
+    to {
+      opacity: 0;
+      transform: scale(.9)
+    }
+  }
+
+  .xtoast-icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    line-height: 1.4
+  }
+
+  .xtoast-body {
+    flex: 1
+  }
+
+  .xtoast-msg {
+    font-size: .82rem;
+    color: var(--text);
+    line-height: 1.4
+  }
+
+  .xtoast-close {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+    align-self: flex-start;
+    padding: 0
+  }
+
+  .xtoast.danger {
+    border-color: rgba(244, 63, 94, .35)
+  }
+
+  .xtoast.danger .xtoast-icon {
+    color: var(--rose)
+  }
+
+  .xtoast.warning {
+    border-color: rgba(245, 158, 11, .35)
+  }
+
+  .xtoast.warning .xtoast-icon {
+    color: var(--amber)
+  }
+
+  .xtoast.success {
+    border-color: rgba(16, 185, 129, .35)
+  }
+
+  .xtoast.success .xtoast-icon {
+    color: var(--emerald)
+  }
+
+  /* ── SECTION ANIMATIONS ── */
+  .section-enter {
+    animation: secIn .45s cubic-bezier(.4, 0, .2, 1)
+  }
+
+  @keyframes secIn {
+    from {
+      opacity: 0;
+      transform: translateY(16px)
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0)
+    }
+  }
+
+  .section-leave {
+    animation: secOut .35s cubic-bezier(.4, 0, .2, 1) forwards
+  }
+
+  @keyframes secOut {
+    to {
+      opacity: 0;
+      transform: translateY(-10px)
+    }
+  }
+
+  /* ── FAILED JOBS PANEL ── */
+  #failedSection {
+    display: none;
+    margin-top: 1.5rem
+  }
+
+  .failed-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: .75rem;
+    margin-bottom: 1rem
+  }
+
+  .failed-title {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    font-size: .8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: #fb7185
+  }
+
+  .failed-count-chip {
+    background: rgba(244, 63, 94, .15);
+    border: 1px solid rgba(244, 63, 94, .3);
+    color: #fb7185;
+    font-size: .72rem;
+    font-weight: 700;
+    padding: .2rem .65rem;
+    border-radius: 99px
+  }
+
+  .failed-list {
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+    margin-bottom: 1.25rem
+  }
+
+  .failed-item {
+    display: flex;
+    align-items: flex-start;
+    gap: .75rem;
+    background: rgba(244, 63, 94, .06);
+    border: 1px solid rgba(244, 63, 94, .2);
+    border-radius: 9px;
+    padding: .75rem 1rem;
+    transition: background .2s
+  }
+
+  .failed-item:hover {
+    background: rgba(244, 63, 94, .1)
+  }
+
+  .fi-id {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .78rem;
+    font-weight: 700;
+    color: #fda4af;
+    min-width: 70px;
+    flex-shrink: 0;
+    padding-top: .05rem
+  }
+
+  .fi-err {
+    flex: 1;
+    font-size: .76rem;
+    color: var(--muted-lt);
+    line-height: 1.45;
+    word-break: break-word
+  }
+
+  .fi-err em {
+    color: #fb7185;
+    font-style: normal;
+    font-weight: 600
+  }
+
+  .btn-retry-all {
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+    background: transparent;
+    color: var(--rose);
+    font-weight: 800;
+    font-size: .9rem;
+    border: 1px solid var(--rose);
+    border-radius: 5px;
+    padding: .75rem 2rem;
+    cursor: pointer;
+    transition: all .25s;
+    box-shadow: 0 0 10px rgba(255, 56, 96, .3);
+    font-family: inherit;
+    letter-spacing: .04em;
+    text-transform: uppercase
+  }
+
+  .btn-retry-all:hover:not(:disabled) {
+    background: rgba(255, 56, 96, .07);
+    box-shadow: 0 0 24px rgba(255, 56, 96, .6);
+    transform: translateY(-1px)
+  }
+
+  .btn-retry-all:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none
+  }
+
+  .btn-retry-all .btn-spinner {
+    width: 15px;
+    height: 15px;
+    border: 2px solid rgba(255, 255, 255, .35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    display: none
+  }
+
+  .btn-retry-all.loading .btn-spinner {
+    display: block
+  }
+
+  .btn-retry-all.loading .btn-icon {
+    display: none
+  }
+
+  .retry-workers-wrap {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    background: var(--card-raise);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: .55rem 1rem
+  }
+
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, .1);
+    border-radius: 99px
+  }
 </style>
 
 <!-- Toast container -->
@@ -246,8 +1660,8 @@ body{background:var(--ink)!important;color:var(--text);font-family:Inter,system-
 <svg width="0" height="0" style="position:absolute;pointer-events:none">
   <defs>
     <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#6c63ff"/>
-      <stop offset="100%" stop-color="#2dd4bf"/>
+      <stop offset="0%" stop-color="#00aaff" />
+      <stop offset="100%" stop-color="#00e5cc" />
     </linearGradient>
   </defs>
 </svg>
@@ -259,7 +1673,8 @@ body{background:var(--ink)!important;color:var(--text);font-family:Inter,system-
     <div class="xup-hero-inner">
       <div class="xup-badge">⚡ Batch Processing Engine</div>
       <h1>Excel Batch <span>Upload &amp; Generate</span></h1>
-      <p>Drop your spreadsheet, validate every row in seconds, fix issues inline — then generate all PDFs in parallel at full speed.</p>
+      <p>Drop your spreadsheet, validate every row in seconds, fix issues inline — then generate all PDFs in parallel at
+        full speed.</p>
 
       <div class="xup-stepper">
         <div class="xup-step active" id="stepper-s1">
@@ -282,34 +1697,63 @@ body{background:var(--ink)!important;color:var(--text);font-family:Inter,system-
 
   <!-- ══ STEP 1 — UPLOAD ══ -->
   <div class="gc section-enter" id="step1">
-    <div class="gc-title"><div class="gc-icon">📂</div>Upload Excel File</div>
 
-    <div id="dropZone">
-      <span class="dz-icon">📊</span>
-      <div class="dz-title">Drag &amp; drop your Excel file here</div>
-      <div class="dz-sub">or <strong style="color:var(--indigo-lt)">click to browse</strong> from your computer</div>
-      <div class="dz-formats">
-        <span class="dz-fmt">.xlsx</span>
-        <span class="dz-fmt">.xls</span>
-      </div>
-      <input type="file" id="fileInput" accept=".xlsx,.xls">
+    <!-- Card header -->
+    <div class="gc-title">
+      <div class="gc-icon">📂</div>Upload Excel File
     </div>
 
-    <!-- File selected info -->
+    <!-- Gradient-border dropzone wrapper -->
+    <div class="dz-border-wrap" id="dropZoneBorder">
+      <div id="dropZone">
+
+        <!-- Animated upload arrow -->
+        <div class="dz-arrow-wrap">
+          <div class="dz-arrow-bg">
+            <svg class="dz-arrow-svg" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19 26V12" stroke="#60cfff" stroke-width="2.5" stroke-linecap="round" />
+              <path d="M12 19L19 12L26 19" stroke="#60cfff" stroke-width="2.5" stroke-linecap="round"
+                stroke-linejoin="round" />
+              <path d="M10 30H28" stroke="rgba(0,229,204,.55)" stroke-width="2" stroke-linecap="round" />
+            </svg>
+          </div>
+        </div>
+
+        <div class="dz-title">Drop your Excel file here</div>
+        <div class="dz-sub">or <strong style="color:var(--blue-neon-lt);text-shadow:0 0 10px rgba(0,170,255,.5)">click
+            to browse</strong> from your computer</div>
+
+        <div class="dz-formats">
+          <span class="dz-fmt">.xlsx</span>
+          <span class="dz-fmt">.xls</span>
+        </div>
+
+        <input type="file" id="fileInput" accept=".xlsx,.xls">
+      </div>
+    </div>
+
+    <!-- Selected file card -->
     <div class="dz-selected" id="fileSelected">
-      <span class="dz-file-icon">📄</span>
+      <div class="dz-file-icon-wrap">📗</div>
       <div class="dz-file-info">
         <div class="dz-file-name" id="selFileName"></div>
-        <div class="dz-file-size" id="selFileSize"></div>
+        <div class="dz-file-meta">
+          <span class="dz-file-size" id="selFileSize"></span>
+          <span class="dz-file-badge">Excel</span>
+        </div>
       </div>
       <button class="dz-remove" id="btnRemoveFile">✕ Remove</button>
     </div>
 
     <!-- Column reference -->
     <div style="margin-top:1.5rem">
-      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:.55rem">Required Columns</div>
+      <div
+        style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:.55rem">
+        Required Columns</div>
       <div class="col-tags">
-        {% set req_cols = ["Date","JournalID","Type","ManuscriptNo","Brand","JournalName","ShortName","Link","ISSN","VolumeNo","IssueNo","DOI","PDFNo","Keyword","AuthorName","Mail ID","Affiliation"] %}
+        {% set req_cols =
+        ["Date","JournalID","Type","ManuscriptNo","Brand","JournalName","ShortName","Link","ISSN","VolumeNo","IssueNo","DOI","PDFNo","Keyword","AuthorName","Mail
+        ID","Affiliation"] %}
         {% for c in req_cols %}<span class="ctag ctag-req">{{ c }}</span>{% endfor %}
         <span class="ctag ctag-opt">ImgPath (optional)</span>
       </div>
@@ -335,8 +1779,10 @@ body{background:var(--ink)!important;color:var(--text);font-family:Inter,system-
       </div>
     </div>
 
-    <div class="gc">
-      <div class="gc-title"><div class="gc-icon">✅</div>Review &amp; Fix Validation Results</div>
+    <div class="gc gc-green">
+      <div class="gc-title">
+        <div class="gc-icon">✅</div>Review &amp; Fix Validation Results
+      </div>
 
       <!-- Summary -->
       <div class="summary-row" id="summaryRow"></div>
@@ -372,7 +1818,8 @@ body{background:var(--ink)!important;color:var(--text);font-family:Inter,system-
         <button class="btn-start" id="btnStart">🚀&nbsp; Start PDF Generation</button>
         <div class="workers-wrap">
           <span class="workers-label">⚡ Parallel Workers</span>
-          <input type="number" class="workers-input" id="maxWorkers" min="1" max="10" value="4" title="1–10 concurrent jobs">
+          <input type="number" class="workers-input" id="maxWorkers" min="1" max="10" value="4"
+            title="1–10 concurrent jobs">
         </div>
         <div class="workers-hint">Higher = faster batch. Recommended: 4</div>
       </div>
@@ -381,15 +1828,17 @@ body{background:var(--ink)!important;color:var(--text);font-family:Inter,system-
 
   <!-- ══ STEP 3 — PROGRESS ══ -->
   <div class="gc section-enter" id="progressSection">
-    <div class="gc-title"><div class="gc-icon">⚙️</div>Generating PDFs</div>
+    <div class="gc-title">
+      <div class="gc-icon">⚙️</div>Generating PDFs
+    </div>
     <div class="progress-layout">
 
       <!-- Circular ring -->
       <div class="ring-wrap">
         <div class="ring-container">
           <svg class="ring-svg" width="100" height="100" viewBox="0 0 100 100">
-            <circle class="ring-track" cx="50" cy="50" r="45"/>
-            <circle class="ring-fill" cx="50" cy="50" r="45" id="ringFill"/>
+            <circle class="ring-track" cx="50" cy="50" r="45" />
+            <circle class="ring-fill" cx="50" cy="50" r="45" id="ringFill" />
           </svg>
           <div class="ring-center">
             <div class="ring-pct" id="ringPct">0%</div>
@@ -431,7 +1880,8 @@ body{background:var(--ink)!important;color:var(--text);font-family:Inter,system-
       <div style="display:flex;align-items:center;gap:.65rem;flex-wrap:wrap">
         <div class="retry-workers-wrap">
           <span class="workers-label">⚡ Workers</span>
-          <input type="number" class="workers-input" id="retryMaxWorkers" min="1" max="10" value="4" title="1–10 concurrent jobs">
+          <input type="number" class="workers-input" id="retryMaxWorkers" min="1" max="10" value="4"
+            title="1–10 concurrent jobs">
         </div>
         <button class="btn-retry-all" id="btnRetryFailed">
           <span class="btn-spinner"></span>
@@ -441,150 +1891,152 @@ body{background:var(--ink)!important;color:var(--text);font-family:Inter,system-
       </div>
     </div>
     <div class="failed-list" id="failedList"></div>
-    <div style="font-size:.73rem;color:var(--muted);margin-top:-.25rem">These rows will be re-submitted directly to Step 3 (Gemini generation) — no need to re-upload.</div>
+    <div style="font-size:.73rem;color:var(--muted);margin-top:-.25rem">These rows will be re-submitted directly to Step
+      3 (Gemini generation) — no need to re-upload.</div>
   </div>
 
 </div><!-- /xup-page -->
 
 <script>
-/* ─── Server options ──────────────────────────────────── */
-let availableBrands = [];
-let availableImages = [];
-(async () => {
-  try {
-    const r = await fetch("/excel/options");
-    if (r.ok) { const d = await r.json(); availableBrands = d.brands||[]; availableImages = d.images||[]; }
-  } catch(e) { console.warn(e); }
-})();
+  /* ─── Server options ──────────────────────────────────── */
+  let availableBrands = [];
+  let availableImages = [];
+  (async () => {
+    try {
+      const r = await fetch("/excel/options");
+      if (r.ok) { const d = await r.json(); availableBrands = d.brands || []; availableImages = d.images || []; }
+    } catch (e) { console.warn(e); }
+  })();
 
-/* ─── Constants ───────────────────────────────────────── */
-const COLUMNS = ["Date","JournalID","Type","ManuscriptNo","Brand","JournalName","ShortName","Link","ISSN","VolumeNo","IssueNo","DOI","PDFNo","Keyword","AuthorName","Mail ID","Affiliation","ImgPath"];
-const COL_KEY_MAP = {"Date":"received","JournalID":"id","Type":"type","ManuscriptNo":"manuscriptNo","Brand":"brandName","JournalName":"journalName","ShortName":"shortJournalName","Link":"parentLink","ISSN":"ISSN","VolumeNo":"volume","IssueNo":"issues","DOI":"doi","PDFNo":"pdfNo","Keyword":"topic","AuthorName":"author","Mail ID":"email","Affiliation":"authorsDepartment","ImgPath":"imgPath"};
+  /* ─── Constants ───────────────────────────────────────── */
+  const COLUMNS = ["Date", "JournalID", "Type", "ManuscriptNo", "Brand", "JournalName", "ShortName", "Link", "ISSN", "VolumeNo", "IssueNo", "DOI", "PDFNo", "Keyword", "AuthorName", "Mail ID", "Affiliation", "ImgPath"];
+  const COL_KEY_MAP = { "Date": "received", "JournalID": "id", "Type": "type", "ManuscriptNo": "manuscriptNo", "Brand": "brandName", "JournalName": "journalName", "ShortName": "shortJournalName", "Link": "parentLink", "ISSN": "ISSN", "VolumeNo": "volume", "IssueNo": "issues", "DOI": "doi", "PDFNo": "pdfNo", "Keyword": "topic", "AuthorName": "author", "Mail ID": "email", "Affiliation": "authorsDepartment", "ImgPath": "imgPath" };
 
-/* ─── State ───────────────────────────────────────────── */
-let uploadedFile = null, validationResult = null, rowEdits = {}, doneCount = 0, errorsOnlyActive = false;
+  /* ─── State ───────────────────────────────────────────── */
+  let uploadedFile = null, validationResult = null, rowEdits = {}, doneCount = 0, errorsOnlyActive = false;
 
-// Track failed rows across the current batch so we can retry them
-let failedRows = []; // Array of { id, error, rowData }
+  // Track failed rows across the current batch so we can retry them
+  let failedRows = []; // Array of { id, error, rowData }
 
-/* ─── Drop zone ───────────────────────────────────────── */
-const dropZone    = document.getElementById("dropZone");
-const fileInput   = document.getElementById("fileInput");
-const btnValidate = document.getElementById("btnValidate");
-const fileSelected = document.getElementById("fileSelected");
+  /* ─── Drop zone ───────────────────────────────────────── */
+  const dropZone = document.getElementById("dropZone");
+  const dropZoneBorder = document.getElementById("dropZoneBorder");
+  const fileInput = document.getElementById("fileInput");
+  const btnValidate = document.getElementById("btnValidate");
+  const fileSelected = document.getElementById("fileSelected");
 
-dropZone.addEventListener("click", () => fileInput.click());
-dropZone.addEventListener("dragover",  e => { e.preventDefault(); dropZone.classList.add("drag-over"); });
-dropZone.addEventListener("dragleave", ()  => dropZone.classList.remove("drag-over"));
-dropZone.addEventListener("drop", e => {
-  e.preventDefault(); dropZone.classList.remove("drag-over");
-  const f = e.dataTransfer.files[0]; if (f) setFile(f);
-});
-fileInput.addEventListener("change", () => { if (fileInput.files[0]) setFile(fileInput.files[0]); });
-document.getElementById("btnRemoveFile").addEventListener("click", e => { e.stopPropagation(); clearFile(); });
-
-function setFile(f) {
-  uploadedFile = f;
-  document.getElementById("selFileName").textContent = f.name;
-  document.getElementById("selFileSize").textContent = fmtBytes(f.size);
-  fileSelected.classList.add("show");
-  dropZone.classList.add("file-ready");
-  btnValidate.disabled = false;
-}
-function clearFile() {
-  uploadedFile = null; fileInput.value = "";
-  fileSelected.classList.remove("show"); dropZone.classList.remove("file-ready");
-  btnValidate.disabled = true;
-}
-function fmtBytes(n) {
-  if (n < 1024) return n + " B";
-  if (n < 1048576) return (n/1024).toFixed(1) + " KB";
-  return (n/1048576).toFixed(1) + " MB";
-}
-
-/* ─── Stepper ─────────────────────────────────────────── */
-function setStep(n) {
-  [1,2,3].forEach(i => {
-    const s = document.getElementById("stepper-s" + i);
-    s.classList.remove("active","done");
-    if (i < n) s.classList.add("done");
-    else if (i === n) s.classList.add("active");
+  dropZone.addEventListener("click", () => fileInput.click());
+  dropZone.addEventListener("dragover", e => { e.preventDefault(); dropZoneBorder.classList.add("drag-over"); });
+  dropZone.addEventListener("dragleave", () => dropZoneBorder.classList.remove("drag-over"));
+  dropZone.addEventListener("drop", e => {
+    e.preventDefault(); dropZoneBorder.classList.remove("drag-over");
+    const f = e.dataTransfer.files[0]; if (f) setFile(f);
   });
-  if (n >= 2) { document.getElementById("conn1").classList.add("done"); document.getElementById("dot1").textContent = "✓"; }
-  if (n >= 3) { document.getElementById("conn2").classList.add("done"); document.getElementById("dot2").textContent = "✓"; }
-}
+  fileInput.addEventListener("change", () => { if (fileInput.files[0]) setFile(fileInput.files[0]); });
+  document.getElementById("btnRemoveFile").addEventListener("click", e => { e.stopPropagation(); clearFile(); });
 
-/* ─── Validate ────────────────────────────────────────── */
-btnValidate.addEventListener("click", async () => {
-  if (!uploadedFile) return;
-  btnValidate.disabled = true; btnValidate.classList.add("loading");
-  const fd = new FormData(); fd.append("file", uploadedFile);
-  try {
-    const resp = await fetch("/excel/validate", { method:"POST", body:fd });
-    const data = await resp.json();
-    if (!resp.ok) {
-      toast(data.detail?.message || JSON.stringify(data.detail), "danger");
-      if (data.detail?.missingColumns) toast("Missing columns: " + data.detail.missingColumns.join(", "), "danger");
-      return;
-    }
-    validationResult = data; rowEdits = {};
-    renderValidationTable(data);
-    setStep(2);
-    document.getElementById("step2").style.display = "block";
-    document.getElementById("step2").classList.add("section-enter");
-    requestAnimationFrame(() => document.getElementById("step2").scrollIntoView({ behavior:"smooth", block:"start" }));
-  } catch(err) { toast("Network error: " + err.message, "danger"); }
-  finally { btnValidate.classList.remove("loading"); btnValidate.disabled = false; }
-});
+  function setFile(f) {
+    uploadedFile = f;
+    document.getElementById("selFileName").textContent = f.name;
+    document.getElementById("selFileSize").textContent = fmtBytes(f.size);
+    fileSelected.classList.add("show");
+    dropZoneBorder.classList.add("file-ready");
+    btnValidate.disabled = false;
+  }
+  function clearFile() {
+    uploadedFile = null; fileInput.value = "";
+    fileSelected.classList.remove("show"); dropZoneBorder.classList.remove("file-ready");
+    btnValidate.disabled = true;
+  }
+  function fmtBytes(n) {
+    if (n < 1024) return n + " B";
+    if (n < 1048576) return (n / 1024).toFixed(1) + " KB";
+    return (n / 1048576).toFixed(1) + " MB";
+  }
 
-/* ─── Render table ────────────────────────────────────── */
-function renderValidationTable(data) {
-  errorsOnlyActive = false;
-  const fb = document.getElementById("btnFilterErrors");
-  fb.classList.remove("active"); fb.innerHTML = "🔴&nbsp; Errors Only";
-  document.getElementById("tblWrap").classList.remove("err-active");
+  /* ─── Stepper ─────────────────────────────────────────── */
+  function setStep(n) {
+    [1, 2, 3].forEach(i => {
+      const s = document.getElementById("stepper-s" + i);
+      s.classList.remove("active", "done");
+      if (i < n) s.classList.add("done");
+      else if (i === n) s.classList.add("active");
+    });
+    if (n >= 2) { document.getElementById("conn1").classList.add("done"); document.getElementById("dot1").textContent = "✓"; }
+    if (n >= 3) { document.getElementById("conn2").classList.add("done"); document.getElementById("dot2").textContent = "✓"; }
+  }
 
-  // Unknown columns
-  const ub = document.getElementById("unknownColBox");
-  const ut = document.getElementById("unknownColTags");
-  if (data.unknownColumns?.length > 0) {
-    ut.innerHTML = data.unknownColumns.map(c => `<span class="ctag ctag-unk">${c}</span>`).join("");
-    ub.classList.add("show");
-  } else { ub.classList.remove("show"); }
+  /* ─── Validate ────────────────────────────────────────── */
+  btnValidate.addEventListener("click", async () => {
+    if (!uploadedFile) return;
+    btnValidate.disabled = true; btnValidate.classList.add("loading");
+    const fd = new FormData(); fd.append("file", uploadedFile);
+    try {
+      const resp = await fetch("/excel/validate", { method: "POST", body: fd });
+      const data = await resp.json();
+      if (!resp.ok) {
+        toast(data.detail?.message || JSON.stringify(data.detail), "danger");
+        if (data.detail?.missingColumns) toast("Missing columns: " + data.detail.missingColumns.join(", "), "danger");
+        return;
+      }
+      validationResult = data; rowEdits = {};
+      renderValidationTable(data);
+      setStep(2);
+      document.getElementById("step2").style.display = "block";
+      document.getElementById("step2").classList.add("section-enter");
+      requestAnimationFrame(() => document.getElementById("step2").scrollIntoView({ behavior: "smooth", block: "start" }));
+    } catch (err) { toast("Network error: " + err.message, "danger"); }
+    finally { btnValidate.classList.remove("loading"); btnValidate.disabled = false; }
+  });
 
-  // Summary
-  document.getElementById("summaryRow").innerHTML = `
+  /* ─── Render table ────────────────────────────────────── */
+  function renderValidationTable(data) {
+    errorsOnlyActive = false;
+    const fb = document.getElementById("btnFilterErrors");
+    fb.classList.remove("active"); fb.innerHTML = "🔴&nbsp; Errors Only";
+    document.getElementById("tblWrap").classList.remove("err-active");
+
+    // Unknown columns
+    const ub = document.getElementById("unknownColBox");
+    const ut = document.getElementById("unknownColTags");
+    if (data.unknownColumns?.length > 0) {
+      ut.innerHTML = data.unknownColumns.map(c => `<span class="ctag ctag-unk">${c}</span>`).join("");
+      ub.classList.add("show");
+    } else { ub.classList.remove("show"); }
+
+    // Summary
+    document.getElementById("summaryRow").innerHTML = `
     <div class="schip schip-total"><div class="chip-dot"></div>${data.totalRows} Total</div>
     <div class="schip schip-ok"><div class="chip-dot"></div>${data.validRows} Valid</div>
     <div class="schip schip-err"><div class="chip-dot"></div>${data.errorRows} Errors</div>`;
 
-  // Header
-  document.getElementById("valTableHead").innerHTML =
-    `<tr><th>#</th><th>Status</th>${COLUMNS.map(c => `<th>${c}</th>`).join("")}</tr>`;
+    // Header
+    document.getElementById("valTableHead").innerHTML =
+      `<tr><th>#</th><th>Status</th>${COLUMNS.map(c => `<th>${c}</th>`).join("")}</tr>`;
 
-  // Body
-  const tbody = document.getElementById("valTableBody"); tbody.innerHTML = "";
-  data.rows.forEach(row => {
-    const tr = document.createElement("tr");
-    tr.classList.add(row.valid ? "row-ok" : "row-err");
-    tr.dataset.rowIndex = row.rowIndex;
-    tr.appendChild(mkTd(`<span style="color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:.72rem">${row.rowIndex}</span>`));
-    tr.appendChild(mkTd(row.valid ? `<span class="badge-ok">● Valid</span>` : `<span class="badge-err">● Error</span>`));
+    // Body
+    const tbody = document.getElementById("valTableBody"); tbody.innerHTML = "";
+    data.rows.forEach(row => {
+      const tr = document.createElement("tr");
+      tr.classList.add(row.valid ? "row-ok" : "row-err");
+      tr.dataset.rowIndex = row.rowIndex;
+      tr.appendChild(mkTd(`<span style="color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:.72rem">${row.rowIndex}</span>`));
+      tr.appendChild(mkTd(row.valid ? `<span class="badge-ok">● Valid</span>` : `<span class="badge-err">● Error</span>`));
 
-    COLUMNS.forEach(col => {
-      const hasErr = !!row.errors[col];
-      const rawVal = getCellVal(row, col);
-      const cell   = document.createElement("td");
-      if (hasErr) cell.classList.add("cell-error");
+      COLUMNS.forEach(col => {
+        const hasErr = !!row.errors[col];
+        const rawVal = getCellVal(row, col);
+        const cell = document.createElement("td");
+        if (hasErr) cell.classList.add("cell-error");
 
-      if (hasErr) {
-        const iid = `edit_${row.rowIndex}_${col.replace(/\s/g,"_")}`;
-        const tip = `<div class="err-tip">⚠ ${escHtml(row.errors[col])}</div>`;
+        if (hasErr) {
+          const iid = `edit_${row.rowIndex}_${col.replace(/\s/g, "_")}`;
+          const tip = `<div class="err-tip">⚠ ${escHtml(row.errors[col])}</div>`;
 
-        if (col === "Brand" && availableBrands.length > 0) {
-          const opts = availableBrands.map(b => `<option value="${escHtml(b)}"${b===rawVal?" selected":""}>${escHtml(b)}</option>`).join("");
-          const nm   = rawVal && !availableBrands.includes(rawVal) ? `<option value="${escHtml(rawVal)}" selected disabled>${escHtml(rawVal)} (invalid)</option>` : "";
-          cell.innerHTML = `
+          if (col === "Brand" && availableBrands.length > 0) {
+            const opts = availableBrands.map(b => `<option value="${escHtml(b)}"${b === rawVal ? " selected" : ""}>${escHtml(b)}</option>`).join("");
+            const nm = rawVal && !availableBrands.includes(rawVal) ? `<option value="${escHtml(rawVal)}" selected disabled>${escHtml(rawVal)} (invalid)</option>` : "";
+            cell.innerHTML = `
             <select class="cell-select" id="${iid}" data-row="${row.rowIndex}" data-col="Brand">
               <option value="">— select brand —</option>${nm}${opts}
             </select>${tip}
@@ -593,269 +2045,269 @@ function renderValidationTable(data) {
               <button class="btn-apply-all" data-source-row="${row.rowIndex}">✔ Apply to All</button>
               <button class="btn-dismiss-all" data-banner="${row.rowIndex}">✕</button>
             </div>`;
-          const sel = cell.querySelector("select");
-          sel.addEventListener("change", () => {
-            if (!rowEdits[row.rowIndex]) rowEdits[row.rowIndex] = {};
-            rowEdits[row.rowIndex]["Brand"] = sel.value; sel.classList.add("fixed");
-            const others = document.querySelectorAll(`select[data-col="Brand"]:not([data-row="${row.rowIndex}"])`);
-            const banner = document.getElementById("apply-banner-" + row.rowIndex);
-            if (others.length > 0 && sel.value) {
-              document.getElementById("apply-label-" + row.rowIndex).textContent = sel.value;
-              banner.classList.add("show");
-            } else { banner.classList.remove("show"); }
-          });
-          cell.querySelector(".btn-apply-all")?.addEventListener("click", () => {
-            const brand = sel.value;
-            document.querySelectorAll(`select[data-col="Brand"]`).forEach(o => {
-              o.value = brand; o.classList.add("fixed");
-              const r = parseInt(o.dataset.row);
-              if (!rowEdits[r]) rowEdits[r] = {};
-              rowEdits[r]["Brand"] = brand;
-              const ob = document.getElementById("apply-banner-" + r); if (ob) ob.classList.remove("show");
+            const sel = cell.querySelector("select");
+            sel.addEventListener("change", () => {
+              if (!rowEdits[row.rowIndex]) rowEdits[row.rowIndex] = {};
+              rowEdits[row.rowIndex]["Brand"] = sel.value; sel.classList.add("fixed");
+              const others = document.querySelectorAll(`select[data-col="Brand"]:not([data-row="${row.rowIndex}"])`);
+              const banner = document.getElementById("apply-banner-" + row.rowIndex);
+              if (others.length > 0 && sel.value) {
+                document.getElementById("apply-label-" + row.rowIndex).textContent = sel.value;
+                banner.classList.add("show");
+              } else { banner.classList.remove("show"); }
             });
-            document.getElementById("apply-banner-" + row.rowIndex).classList.remove("show");
-          });
-          cell.querySelector(".btn-dismiss-all")?.addEventListener("click", () => {
-            document.getElementById("apply-banner-" + row.rowIndex).classList.remove("show");
-          });
+            cell.querySelector(".btn-apply-all")?.addEventListener("click", () => {
+              const brand = sel.value;
+              document.querySelectorAll(`select[data-col="Brand"]`).forEach(o => {
+                o.value = brand; o.classList.add("fixed");
+                const r = parseInt(o.dataset.row);
+                if (!rowEdits[r]) rowEdits[r] = {};
+                rowEdits[r]["Brand"] = brand;
+                const ob = document.getElementById("apply-banner-" + r); if (ob) ob.classList.remove("show");
+              });
+              document.getElementById("apply-banner-" + row.rowIndex).classList.remove("show");
+            });
+            cell.querySelector(".btn-dismiss-all")?.addEventListener("click", () => {
+              document.getElementById("apply-banner-" + row.rowIndex).classList.remove("show");
+            });
 
-        } else if (col === "ImgPath" && availableImages.length > 0) {
-          const opts = availableImages.map(img => `<option value="${escHtml(img)}"${img===rawVal?" selected":""}>${escHtml(img)}</option>`).join("");
-          const nm   = rawVal && !availableImages.includes(rawVal) ? `<option value="${escHtml(rawVal)}" selected disabled>${escHtml(rawVal)} (invalid)</option>` : "";
-          cell.innerHTML = `
+          } else if (col === "ImgPath" && availableImages.length > 0) {
+            const opts = availableImages.map(img => `<option value="${escHtml(img)}"${img === rawVal ? " selected" : ""}>${escHtml(img)}</option>`).join("");
+            const nm = rawVal && !availableImages.includes(rawVal) ? `<option value="${escHtml(rawVal)}" selected disabled>${escHtml(rawVal)} (invalid)</option>` : "";
+            cell.innerHTML = `
             <select class="cell-select" id="${iid}" data-row="${row.rowIndex}" data-col="ImgPath">
               <option value="">— none —</option>${nm}${opts}
             </select>${tip}`;
-          const sel = cell.querySelector("select");
-          sel.addEventListener("change", () => {
-            if (!rowEdits[row.rowIndex]) rowEdits[row.rowIndex] = {};
-            rowEdits[row.rowIndex]["ImgPath"] = sel.value; sel.classList.add("fixed");
-          });
+            const sel = cell.querySelector("select");
+            sel.addEventListener("change", () => {
+              if (!rowEdits[row.rowIndex]) rowEdits[row.rowIndex] = {};
+              rowEdits[row.rowIndex]["ImgPath"] = sel.value; sel.classList.add("fixed");
+            });
 
+          } else {
+            cell.innerHTML = `<input class="cell-edit" id="${iid}" data-row="${row.rowIndex}" data-col="${col}" value="${escHtml(rawVal)}" placeholder="${escHtml(col)}">${tip}`;
+            const inp = cell.querySelector("input");
+            inp.addEventListener("input", () => {
+              if (!rowEdits[row.rowIndex]) rowEdits[row.rowIndex] = {};
+              rowEdits[row.rowIndex][col] = inp.value; inp.classList.add("fixed");
+            });
+          }
         } else {
-          cell.innerHTML = `<input class="cell-edit" id="${iid}" data-row="${row.rowIndex}" data-col="${col}" value="${escHtml(rawVal)}" placeholder="${escHtml(col)}">${tip}`;
-          const inp = cell.querySelector("input");
-          inp.addEventListener("input", () => {
-            if (!rowEdits[row.rowIndex]) rowEdits[row.rowIndex] = {};
-            rowEdits[row.rowIndex][col] = inp.value; inp.classList.add("fixed");
-          });
+          cell.innerHTML = `<span style="color:var(--text-dim)">${escHtml(rawVal)}</span>`;
         }
-      } else {
-        cell.innerHTML = `<span style="color:var(--text-dim)">${escHtml(rawVal)}</span>`;
-      }
-      tr.appendChild(cell);
+        tr.appendChild(cell);
+      });
+      tbody.appendChild(tr);
     });
-    tbody.appendChild(tr);
-  });
-  updateStartBtn(data.errorRows === 0);
-}
-
-/* ─── Re-validate ─────────────────────────────────────── */
-document.getElementById("btnRevalidate").addEventListener("click", async () => {
-  if (!validationResult) return;
-  const pRows = validationResult.rows.map(row => {
-    if (!rowEdits[row.rowIndex]) return row;
-    const nd = { ...row.data };
-    for (const [col, val] of Object.entries(rowEdits[row.rowIndex])) { const k = COL_KEY_MAP[col]; if (k) nd[k] = val; }
-    return { ...row, data: nd };
-  });
-  document.getElementById("tblSkeleton").style.display = "flex";
-  document.getElementById("valTable").style.visibility = "hidden";
-  try {
-    const resp = await fetch("/excel/revalidate", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ rows: pRows }) });
-    if (resp.ok) { const d = await resp.json(); validationResult = d; rowEdits = {}; renderValidationTable(d); toast("Re-validation complete", "success"); }
-    else { const e = await resp.json(); toast("Re-validation failed: " + JSON.stringify(e.detail), "danger"); }
-  } catch(e) { toast("Re-validation error: " + e.message, "danger"); }
-  finally { document.getElementById("tblSkeleton").style.display = "none"; document.getElementById("valTable").style.visibility = ""; }
-});
-
-/* ─── Error filter ────────────────────────────────────── */
-document.getElementById("btnFilterErrors").addEventListener("click", () => { errorsOnlyActive = !errorsOnlyActive; applyErrFilter(); });
-function applyErrFilter() {
-  const btn  = document.getElementById("btnFilterErrors");
-  const wrap = document.getElementById("tblWrap");
-  const rows = document.querySelectorAll("#valTableBody tr");
-  if (errorsOnlyActive) {
-    btn.classList.add("active"); btn.innerHTML = "🔴&nbsp; Show All Rows"; wrap.classList.add("err-active");
-    rows.forEach(tr => { tr.style.display = tr.classList.contains("row-err") ? "" : "none"; });
-  } else {
-    btn.classList.remove("active"); btn.innerHTML = "🔴&nbsp; Errors Only"; wrap.classList.remove("err-active");
-    rows.forEach(tr => { tr.style.display = ""; });
+    updateStartBtn(data.errorRows === 0);
   }
-}
 
-/* ─── Start generation ────────────────────────────────── */
-document.getElementById("btnStart").addEventListener("click", async () => {
-  if (!validationResult) return;
-  const validRows = validationResult.rows.filter(r => r.valid).map(r => r.data);
-  if (validRows.length === 0) { toast("No valid rows to process.", "warning"); return; }
-
-  setStep(3);
-  const step2 = document.getElementById("step2");
-  step2.classList.add("section-leave");
-  setTimeout(() => { step2.style.display = "none"; }, 370);
-
-  const progSec = document.getElementById("progressSection");
-  progSec.style.display = "block";
-  setTimeout(() => progSec.scrollIntoView({ behavior:"smooth" }), 50);
-
-  document.getElementById("btnStart").disabled = true;
-  document.getElementById("logBox").innerHTML = "";
-  // Reset failure tracking for a fresh batch
-  failedRows = []; doneCount = 0;
-  document.getElementById("failedSection").style.display = "none";
-  const total = validRows.length;
-  setProgress(0, total, "Starting batch of " + total + " article(s)…");
-
-  try {
-    const mw = Math.max(1, Math.min(10, parseInt(document.getElementById("maxWorkers").value) || 4));
-    const resp = await fetch("/excel/start-batch", {
-      method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({ rows: validRows, max_workers: mw })
+  /* ─── Re-validate ─────────────────────────────────────── */
+  document.getElementById("btnRevalidate").addEventListener("click", async () => {
+    if (!validationResult) return;
+    const pRows = validationResult.rows.map(row => {
+      if (!rowEdits[row.rowIndex]) return row;
+      const nd = { ...row.data };
+      for (const [col, val] of Object.entries(rowEdits[row.rowIndex])) { const k = COL_KEY_MAP[col]; if (k) nd[k] = val; }
+      return { ...row, data: nd };
     });
-    if (!resp.ok) { const e = await resp.json(); logLine("err", "❌ Failed to start: " + JSON.stringify(e.detail)); return; }
+    document.getElementById("tblSkeleton").style.display = "flex";
+    document.getElementById("valTable").style.visibility = "hidden";
+    try {
+      const resp = await fetch("/excel/revalidate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ rows: pRows }) });
+      if (resp.ok) { const d = await resp.json(); validationResult = d; rowEdits = {}; renderValidationTable(d); toast("Re-validation complete", "success"); }
+      else { const e = await resp.json(); toast("Re-validation failed: " + JSON.stringify(e.detail), "danger"); }
+    } catch (e) { toast("Re-validation error: " + e.message, "danger"); }
+    finally { document.getElementById("tblSkeleton").style.display = "none"; document.getElementById("valTable").style.visibility = ""; }
+  });
 
-    const reader = resp.body.getReader(); const decoder = new TextDecoder(); let buffer = "";
-    while (true) {
-      const { done, value } = await reader.read(); if (done) break;
-      buffer += decoder.decode(value, { stream:true });
-      const parts = buffer.split("\n\n"); buffer = parts.pop();
-      for (const part of parts) {
-        const line = part.trim(); if (!line.startsWith("data:")) continue;
-        const json = line.slice(5).trim(); if (!json) continue;
-        try { handleSSE(JSON.parse(json), total); } catch {}
-      }
-    }
-  } catch(err) { logLine("err", "❌ Stream error: " + err.message); }
-});
-
-function handleSSE(ev, total) {
-  if (ev.event === "start") {
-    logLine("info", "▶ Starting: " + ev.id);
-    if (doneCount === 0) setProgress(0.05, total, "Processing " + ev.id + "…");
-  } else if (ev.event === "done") {
-    doneCount++;
-    logLine("ok", "✓ Done: " + ev.id + "  [" + doneCount + "/" + total + "]");
-    setProgress(doneCount, total, "Completed " + doneCount + " of " + total);
-  } else if (ev.event === "error") {
-    doneCount++;
-    logLine("err", "✕ Error in " + ev.id + ": " + ev.error);
-    setProgress(doneCount, total, "⚠ Error on " + ev.id + " [" + doneCount + "/" + total + "]");
-    // Record the failed row so the retry panel can re-submit it
-    const rowData = validationResult?.rows?.find(r => r.data?.id === ev.id)?.data || null;
-    failedRows.push({ id: ev.id, error: ev.error || "Unknown error", rowData });
-  } else if (ev.event === "complete") {
-    const successCount = total - failedRows.length;
-    if (failedRows.length === 0) {
-      setProgress(total, total, "🎉 All " + total + " articles processed!");
-      logLine("ok", "🎉 Batch complete — saved to: " + (ev.bulkFolder || "BulkPDF"));
-      toast(total + " PDFs generated successfully!", "success");
+  /* ─── Error filter ────────────────────────────────────── */
+  document.getElementById("btnFilterErrors").addEventListener("click", () => { errorsOnlyActive = !errorsOnlyActive; applyErrFilter(); });
+  function applyErrFilter() {
+    const btn = document.getElementById("btnFilterErrors");
+    const wrap = document.getElementById("tblWrap");
+    const rows = document.querySelectorAll("#valTableBody tr");
+    if (errorsOnlyActive) {
+      btn.classList.add("active"); btn.innerHTML = "🔴&nbsp; Show All Rows"; wrap.classList.add("err-active");
+      rows.forEach(tr => { tr.style.display = tr.classList.contains("row-err") ? "" : "none"; });
     } else {
-      setProgress(total, total, "⚠ " + successCount + "/" + total + " succeeded — " + failedRows.length + " failed");
-      logLine("ok", "Batch complete — " + successCount + " OK, " + failedRows.length + " failed");
-      toast(failedRows.length + " journal(s) failed — see retry panel below.", "warning");
-      showFailedPanel();
+      btn.classList.remove("active"); btn.innerHTML = "🔴&nbsp; Errors Only"; wrap.classList.remove("err-active");
+      rows.forEach(tr => { tr.style.display = ""; });
     }
-    document.getElementById("progressBar").classList.remove("shimmer");
-    document.getElementById("btnStart").disabled = false;
   }
-}
 
-/* ─── Failed Journals Retry Panel ─────────────────────── */
-function showFailedPanel() {
-  const section = document.getElementById("failedSection");
-  const list    = document.getElementById("failedList");
-  const chip    = document.getElementById("failedCountChip");
+  /* ─── Start generation ────────────────────────────────── */
+  document.getElementById("btnStart").addEventListener("click", async () => {
+    if (!validationResult) return;
+    const validRows = validationResult.rows.filter(r => r.valid).map(r => r.data);
+    if (validRows.length === 0) { toast("No valid rows to process.", "warning"); return; }
 
-  chip.textContent = failedRows.length + " failed";
-  list.innerHTML = failedRows.map(f => `
+    setStep(3);
+    const step2 = document.getElementById("step2");
+    step2.classList.add("section-leave");
+    setTimeout(() => { step2.style.display = "none"; }, 370);
+
+    const progSec = document.getElementById("progressSection");
+    progSec.style.display = "block";
+    setTimeout(() => progSec.scrollIntoView({ behavior: "smooth" }), 50);
+
+    document.getElementById("btnStart").disabled = true;
+    document.getElementById("logBox").innerHTML = "";
+    // Reset failure tracking for a fresh batch
+    failedRows = []; doneCount = 0;
+    document.getElementById("failedSection").style.display = "none";
+    const total = validRows.length;
+    setProgress(0, total, "Starting batch of " + total + " article(s)…");
+
+    try {
+      const mw = Math.max(1, Math.min(10, parseInt(document.getElementById("maxWorkers").value) || 4));
+      const resp = await fetch("/excel/start-batch", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rows: validRows, max_workers: mw })
+      });
+      if (!resp.ok) { const e = await resp.json(); logLine("err", "❌ Failed to start: " + JSON.stringify(e.detail)); return; }
+
+      const reader = resp.body.getReader(); const decoder = new TextDecoder(); let buffer = "";
+      while (true) {
+        const { done, value } = await reader.read(); if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const parts = buffer.split("\n\n"); buffer = parts.pop();
+        for (const part of parts) {
+          const line = part.trim(); if (!line.startsWith("data:")) continue;
+          const json = line.slice(5).trim(); if (!json) continue;
+          try { handleSSE(JSON.parse(json), total); } catch { }
+        }
+      }
+    } catch (err) { logLine("err", "❌ Stream error: " + err.message); }
+  });
+
+  function handleSSE(ev, total) {
+    if (ev.event === "start") {
+      logLine("info", "▶ Starting: " + ev.id);
+      if (doneCount === 0) setProgress(0.05, total, "Processing " + ev.id + "…");
+    } else if (ev.event === "done") {
+      doneCount++;
+      logLine("ok", "✓ Done: " + ev.id + "  [" + doneCount + "/" + total + "]");
+      setProgress(doneCount, total, "Completed " + doneCount + " of " + total);
+    } else if (ev.event === "error") {
+      doneCount++;
+      logLine("err", "✕ Error in " + ev.id + ": " + ev.error);
+      setProgress(doneCount, total, "⚠ Error on " + ev.id + " [" + doneCount + "/" + total + "]");
+      // Record the failed row so the retry panel can re-submit it
+      const rowData = validationResult?.rows?.find(r => r.data?.id === ev.id)?.data || null;
+      failedRows.push({ id: ev.id, error: ev.error || "Unknown error", rowData });
+    } else if (ev.event === "complete") {
+      const successCount = total - failedRows.length;
+      if (failedRows.length === 0) {
+        setProgress(total, total, "🎉 All " + total + " articles processed!");
+        logLine("ok", "🎉 Batch complete — saved to: " + (ev.bulkFolder || "BulkPDF"));
+        toast(total + " PDFs generated successfully!", "success");
+      } else {
+        setProgress(total, total, "⚠ " + successCount + "/" + total + " succeeded — " + failedRows.length + " failed");
+        logLine("ok", "Batch complete — " + successCount + " OK, " + failedRows.length + " failed");
+        toast(failedRows.length + " journal(s) failed — see retry panel below.", "warning");
+        showFailedPanel();
+      }
+      document.getElementById("progressBar").classList.remove("shimmer");
+      document.getElementById("btnStart").disabled = false;
+    }
+  }
+
+  /* ─── Failed Journals Retry Panel ─────────────────────── */
+  function showFailedPanel() {
+    const section = document.getElementById("failedSection");
+    const list = document.getElementById("failedList");
+    const chip = document.getElementById("failedCountChip");
+
+    chip.textContent = failedRows.length + " failed";
+    list.innerHTML = failedRows.map(f => `
     <div class="failed-item">
       <div class="fi-id">${escHtml(f.id)}</div>
       <div class="fi-err"><em>Error:</em> ${escHtml(f.error)}</div>
     </div>
   `).join("");
 
-  section.style.display = "block";
-  requestAnimationFrame(() => section.scrollIntoView({ behavior: "smooth", block: "start" }));
-}
+    section.style.display = "block";
+    requestAnimationFrame(() => section.scrollIntoView({ behavior: "smooth", block: "start" }));
+  }
 
-document.getElementById("btnRetryFailed").addEventListener("click", async () => {
-  const retryable = failedRows.filter(f => f.rowData !== null);
-  if (retryable.length === 0) { toast("No retryable rows (row data not available).", "warning"); return; }
+  document.getElementById("btnRetryFailed").addEventListener("click", async () => {
+    const retryable = failedRows.filter(f => f.rowData !== null);
+    if (retryable.length === 0) { toast("No retryable rows (row data not available).", "warning"); return; }
 
-  const btn = document.getElementById("btnRetryFailed");
-  btn.disabled = true; btn.classList.add("loading");
+    const btn = document.getElementById("btnRetryFailed");
+    btn.disabled = true; btn.classList.add("loading");
 
-  // Reset failed tracking for this retry round
-  failedRows = [];
-  doneCount  = 0;
+    // Reset failed tracking for this retry round
+    failedRows = [];
+    doneCount = 0;
 
-  // Switch back to progress view
-  document.getElementById("failedSection").style.display = "none";
-  const progSec = document.getElementById("progressSection");
-  progSec.style.display = "block";
-  document.getElementById("logBox").innerHTML = "";
-  document.getElementById("progressBar").classList.add("shimmer");
-  const total = retryable.length;
-  setProgress(0, total, "Retrying " + total + " failed article(s)…");
-  setTimeout(() => progSec.scrollIntoView({ behavior: "smooth" }), 50);
+    // Switch back to progress view
+    document.getElementById("failedSection").style.display = "none";
+    const progSec = document.getElementById("progressSection");
+    progSec.style.display = "block";
+    document.getElementById("logBox").innerHTML = "";
+    document.getElementById("progressBar").classList.add("shimmer");
+    const total = retryable.length;
+    setProgress(0, total, "Retrying " + total + " failed article(s)…");
+    setTimeout(() => progSec.scrollIntoView({ behavior: "smooth" }), 50);
 
-  try {
-    const mw = Math.max(1, Math.min(10, parseInt(document.getElementById("retryMaxWorkers").value) || 4));
-    const resp = await fetch("/excel/start-batch", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ rows: retryable.map(f => f.rowData), max_workers: mw })
-    });
-    if (!resp.ok) { const e = await resp.json(); logLine("err", "❌ Failed to start retry: " + JSON.stringify(e.detail)); return; }
+    try {
+      const mw = Math.max(1, Math.min(10, parseInt(document.getElementById("retryMaxWorkers").value) || 4));
+      const resp = await fetch("/excel/start-batch", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rows: retryable.map(f => f.rowData), max_workers: mw })
+      });
+      if (!resp.ok) { const e = await resp.json(); logLine("err", "❌ Failed to start retry: " + JSON.stringify(e.detail)); return; }
 
-    const reader = resp.body.getReader(); const decoder = new TextDecoder(); let buffer = "";
-    while (true) {
-      const { done, value } = await reader.read(); if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const parts = buffer.split("\n\n"); buffer = parts.pop();
-      for (const part of parts) {
-        const line = part.trim(); if (!line.startsWith("data:")) continue;
-        const json = line.slice(5).trim(); if (!json) continue;
-        try { handleSSE(JSON.parse(json), total); } catch {}
+      const reader = resp.body.getReader(); const decoder = new TextDecoder(); let buffer = "";
+      while (true) {
+        const { done, value } = await reader.read(); if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const parts = buffer.split("\n\n"); buffer = parts.pop();
+        for (const part of parts) {
+          const line = part.trim(); if (!line.startsWith("data:")) continue;
+          const json = line.slice(5).trim(); if (!json) continue;
+          try { handleSSE(JSON.parse(json), total); } catch { }
+        }
       }
-    }
-  } catch(err) { logLine("err", "❌ Retry stream error: " + err.message); }
-  finally { btn.classList.remove("loading"); btn.disabled = false; }
-});
+    } catch (err) { logLine("err", "❌ Retry stream error: " + err.message); }
+    finally { btn.classList.remove("loading"); btn.disabled = false; }
+  });
 
-/* ─── Helpers ─────────────────────────────────────────── */
-function setProgress(done, total, label) {
-  const pct = total > 0 ? Math.min(100, Math.round((done / total) * 100)) : 0;
-  document.getElementById("progressBar").style.width = pct + "%";
-  document.getElementById("progressLabel").textContent = label;
-  document.getElementById("ringFill").style.strokeDashoffset = 283 - (pct / 100) * 283;
-  document.getElementById("ringPct").textContent = pct + "%";
-  document.getElementById("ringLabel").textContent = label.substring(0, 42);
-}
-function updateStartBtn(ok) { document.getElementById("startRow").classList.toggle("show", ok); }
-function getCellVal(row, col) { return row.data[COL_KEY_MAP[col]] ?? ""; }
-function logLine(type, msg) {
-  const box = document.getElementById("logBox"); const div = document.createElement("div"); div.className = "tlog " + type;
-  const ts = new Date().toLocaleTimeString("en-US", { hour12:false, hour:"2-digit", minute:"2-digit", second:"2-digit" });
-  div.innerHTML = `<span class="tlog-ts">${ts}</span><span class="tlog-msg">${escHtml(msg)}</span>`;
-  box.appendChild(div); box.scrollTop = box.scrollHeight;
-}
-function mkTd(html) { const el = document.createElement("td"); el.innerHTML = html; return el; }
-function escHtml(s) { return String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+  /* ─── Helpers ─────────────────────────────────────────── */
+  function setProgress(done, total, label) {
+    const pct = total > 0 ? Math.min(100, Math.round((done / total) * 100)) : 0;
+    document.getElementById("progressBar").style.width = pct + "%";
+    document.getElementById("progressLabel").textContent = label;
+    document.getElementById("ringFill").style.strokeDashoffset = 283 - (pct / 100) * 283;
+    document.getElementById("ringPct").textContent = pct + "%";
+    document.getElementById("ringLabel").textContent = label.substring(0, 42);
+  }
+  function updateStartBtn(ok) { document.getElementById("startRow").classList.toggle("show", ok); }
+  function getCellVal(row, col) { return row.data[COL_KEY_MAP[col]] ?? ""; }
+  function logLine(type, msg) {
+    const box = document.getElementById("logBox"); const div = document.createElement("div"); div.className = "tlog " + type;
+    const ts = new Date().toLocaleTimeString("en-US", { hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    div.innerHTML = `<span class="tlog-ts">${ts}</span><span class="tlog-msg">${escHtml(msg)}</span>`;
+    box.appendChild(div); box.scrollTop = box.scrollHeight;
+  }
+  function mkTd(html) { const el = document.createElement("td"); el.innerHTML = html; return el; }
+  function escHtml(s) { return String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
 
-/* ─── Toast notifications ─────────────────────────────── */
-const TOAST_ICONS = { danger:"❌", warning:"⚠️", success:"✅", info:"ℹ️" };
-function toast(msg, type="info", dur=6000) {
-  const stack = document.getElementById("toastStack"); const t = document.createElement("div"); t.className = "xtoast " + type;
-  t.innerHTML = `<span class="xtoast-icon">${TOAST_ICONS[type]||"ℹ️"}</span><div class="xtoast-body"><div class="xtoast-msg">${escHtml(msg)}</div></div><button class="xtoast-close" onclick="dismissToast(this.parentElement)">✕</button>`;
-  stack.appendChild(t); setTimeout(() => dismissToast(t), dur);
-}
-function dismissToast(el) {
-  if (!el || el.classList.contains("removing")) return;
-  el.classList.add("removing"); setTimeout(() => el.remove(), 260);
-}
-/* Override layout spinner — we use toasts instead */
-window.showLoading = () => {}; window.hideLoading = () => {};
+  /* ─── Toast notifications ─────────────────────────────── */
+  const TOAST_ICONS = { danger: "❌", warning: "⚠️", success: "✅", info: "ℹ️" };
+  function toast(msg, type = "info", dur = 6000) {
+    const stack = document.getElementById("toastStack"); const t = document.createElement("div"); t.className = "xtoast " + type;
+    t.innerHTML = `<span class="xtoast-icon">${TOAST_ICONS[type] || "ℹ️"}</span><div class="xtoast-body"><div class="xtoast-msg">${escHtml(msg)}</div></div><button class="xtoast-close" onclick="dismissToast(this.parentElement)">✕</button>`;
+    stack.appendChild(t); setTimeout(() => dismissToast(t), dur);
+  }
+  function dismissToast(el) {
+    if (!el || el.classList.contains("removing")) return;
+    el.classList.add("removing"); setTimeout(() => el.remove(), 260);
+  }
+  /* Override layout spinner — we use toasts instead */
+  window.showLoading = () => { }; window.hideLoading = () => { };
 </script>
 
 {% endblock %}
