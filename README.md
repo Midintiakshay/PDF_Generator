@@ -258,7 +258,7 @@ Please replace the placeholders above with actual contact details. To report bug
 
 MIT License
 
-Copyright (c) 2026 John Doe
+Copyright (c) 2026 Akshay
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
