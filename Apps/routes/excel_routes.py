@@ -33,7 +33,7 @@ REQUIRED_COLUMNS = [
     "IssueNo", "DOI", "PDFNo", "Keyword", "AuthorName",
     "Mail ID", "Affiliation",
 ]
-OPTIONAL_COLUMNS = ["ImgPath"]
+OPTIONAL_COLUMNS = ["ImgPath", "IssueType"]
 ALL_COLUMNS = REQUIRED_COLUMNS + OPTIONAL_COLUMNS
 
 # Valid brand template filenames (loaded lazily inside the validator)
@@ -227,6 +227,16 @@ def _validate_row(
             f"Leave blank if not applicable."
         )
 
+    # --- IssueType (optional, only 'Issue' or 'Special Issue' are valid) ---
+    issue_type = get("IssueType")
+    valid_issue_types = {"Issue", "Special Issue"}
+    if issue_type and issue_type not in valid_issue_types:
+        errors["IssueType"] = (
+            f"IssueType '{issue_type}' is invalid. "
+            f"Allowed values: Issue, Special Issue."
+        )
+    issue_type = issue_type if issue_type in valid_issue_types else "Issue"
+
     # --- ISSN / DOI (optional, no format enforcement) ---
 
     cleaned = {
@@ -248,6 +258,7 @@ def _validate_row(
         "email": email,
         "authorsDepartment": get("Affiliation"),
         "imgPath": img_path or None,
+        "issueType": issue_type,
     }
 
     return {
@@ -384,6 +395,7 @@ async def revalidate_rows(payload: dict):
             "Mail ID":      data.get("email", ""),
             "Affiliation":  data.get("authorsDepartment", ""),
             "ImgPath":      data.get("imgPath", ""),
+            "IssueType":    data.get("issueType", "Issue"),
         }
 
     existing_db_ids = set(IOService.fetchInputData().keys())

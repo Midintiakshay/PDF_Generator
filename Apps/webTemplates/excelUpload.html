@@ -1756,6 +1756,7 @@
         ID","Affiliation"] %}
         {% for c in req_cols %}<span class="ctag ctag-req">{{ c }}</span>{% endfor %}
         <span class="ctag ctag-opt">ImgPath (optional)</span>
+        <span class="ctag ctag-opt">IssueType (optional)</span>
       </div>
     </div>
 
@@ -1909,8 +1910,8 @@
   })();
 
   /* ─── Constants ───────────────────────────────────────── */
-  const COLUMNS = ["Date", "JournalID", "Type", "ManuscriptNo", "Brand", "JournalName", "ShortName", "Link", "ISSN", "VolumeNo", "IssueNo", "DOI", "PDFNo", "Keyword", "AuthorName", "Mail ID", "Affiliation", "ImgPath"];
-  const COL_KEY_MAP = { "Date": "received", "JournalID": "id", "Type": "type", "ManuscriptNo": "manuscriptNo", "Brand": "brandName", "JournalName": "journalName", "ShortName": "shortJournalName", "Link": "parentLink", "ISSN": "ISSN", "VolumeNo": "volume", "IssueNo": "issues", "DOI": "doi", "PDFNo": "pdfNo", "Keyword": "topic", "AuthorName": "author", "Mail ID": "email", "Affiliation": "authorsDepartment", "ImgPath": "imgPath" };
+  const COLUMNS = ["Date", "JournalID", "Type", "ManuscriptNo", "Brand", "JournalName", "ShortName", "Link", "ISSN", "VolumeNo", "IssueNo", "DOI", "PDFNo", "Keyword", "AuthorName", "Mail ID", "Affiliation", "ImgPath", "IssueType"];
+  const COL_KEY_MAP = { "Date": "received", "JournalID": "id", "Type": "type", "ManuscriptNo": "manuscriptNo", "Brand": "brandName", "JournalName": "journalName", "ShortName": "shortJournalName", "Link": "parentLink", "ISSN": "ISSN", "VolumeNo": "volume", "IssueNo": "issues", "DOI": "doi", "PDFNo": "pdfNo", "Keyword": "topic", "AuthorName": "author", "Mail ID": "email", "Affiliation": "authorsDepartment", "ImgPath": "imgPath", "IssueType": "issueType" };
 
   /* ─── State ───────────────────────────────────────────── */
   let uploadedFile = null, validationResult = null, rowEdits = {}, doneCount = 0, errorsOnlyActive = false;
@@ -2082,6 +2083,20 @@
             sel.addEventListener("change", () => {
               if (!rowEdits[row.rowIndex]) rowEdits[row.rowIndex] = {};
               rowEdits[row.rowIndex]["ImgPath"] = sel.value; sel.classList.add("fixed");
+            });
+
+          } else if (col === "IssueType") {
+            const issueTypes = ["Issue", "Special Issue"];
+            const curVal = rawVal || "Issue";
+            const opts = issueTypes.map(t => `<option value="${t}"${t === curVal ? " selected" : ""}>${t}</option>`).join("");
+            cell.innerHTML = `
+            <select class="cell-select" id="${iid}" data-row="${row.rowIndex}" data-col="IssueType">
+              ${opts}
+            </select>${tip}`;
+            const sel = cell.querySelector("select");
+            sel.addEventListener("change", () => {
+              if (!rowEdits[row.rowIndex]) rowEdits[row.rowIndex] = {};
+              rowEdits[row.rowIndex]["IssueType"] = sel.value; sel.classList.add("fixed");
             });
 
           } else {
